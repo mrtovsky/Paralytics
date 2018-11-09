@@ -86,8 +86,8 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
             Returns the instance itself.
         
         """
-        assert isinstance(X, pd.DataFrame), 'Input must be an instance of \
-                                             pandas.DataFrame()'
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
 
         call_method = getattr(self, self.method)
         self.bins_ = {}
@@ -123,11 +123,11 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
             getattr(self, 'bins_')
         except AttributeError:
             raise RuntimeError('Could not find the attribute.\n'
-                               + 'Fitting is necessary before you do '
-                               + 'the transformation.')
+                               'Fitting is necessary before you do '
+                               'the transformation.')
 
-        assert isinstance(X, pd.DataFrame), 'Input must be an instance of \
-                                             pandas.DataFrame()'
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
 
         X_new = pd.DataFrame()
         for col in X.columns.values:

@@ -50,25 +50,26 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
             X data with projected values onto specified dtype.
 
         """
-        assert isinstance(X, pd.DataFrame), 'Input must be an instance of \
-                                             pandas.DataFrame()'
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
 
         columns = X.columns.values
         if self.manual_projection is not None:
             assert isinstance(manual_projection, dict), \
                 'manual_projection must be an instance of the dictionary!'
             for col_type, col_names in manual_projection.items():
-                assert isinstance(col_names, list), \
-                    'Values of manual_projection must \
-                     be an instance of the list!'
+                assert isinstance(col_names, list), (
+                    'Values of manual_projection must be an instance ' 
+                    'of the list!'
+                )
                 try:
                     X[col_names] = X[col_names].astype(col_type)
                     columns = [col for col in columns 
                                if col not in col_names]
                 except KeyError:
                     cols_error = list(set(col_names) - set(X.columns.values))
-                    raise KeyError("C'mon, those columns ain't in \
-                                    the DataFrame: %s" % cols_error)
+                    raise KeyError("C'mon, those columns ain't in "
+                                   "the DataFrame: %s" % cols_error)
 
         for col in columns:
             if set(X[col]) <= {0, 1}:

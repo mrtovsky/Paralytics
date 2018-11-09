@@ -101,10 +101,12 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         """In every iteration removes variable with the highest VIF value.  
 
         """
-        assert isinstance(X, pd.DataFrame), 'Given input must be a DataFrame.'
-        assert ~(X.isnull().values).any(), \
-            'DataFrame cannot contain any missing values, consider changing ' \
-             + 'impute parameter to True.'
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
+        assert ~(X.isnull().values).any(), (
+            'DataFrame cannot contain any missing values, consider changing '
+            'impute parameter to True.'
+        )
         assert all(is_numeric_dtype(X[col]) for col in X.columns), \
             'Only numeric dtypes are acceptable.'
         

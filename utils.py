@@ -14,8 +14,8 @@ class Utils(object):
         """Removes correlated columns exceeding the thresh value.
         
         """
-        assert isinstance(X, pd.DataFrame), 'Input must be an instance of \
-                                             pandas.DataFrame()'
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
 
         df = X.corr()
         # Create matrix of ones of the same size as the dataframe
