@@ -44,6 +44,13 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
     min_bins: int (default: 3)
         Minimum number of bins that will be created.
 
+    max_tree_depth: int
+        Specifies maximum tree depth.
+        
+    min_samples_leaf: float (default: .05)
+        Specifies the minimum part of the entire population that must be 
+        included in the leaf.
+
     Attributes
     ----------
     bins_: dictionary, length = n_features
