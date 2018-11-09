@@ -89,12 +89,13 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
         assert isinstance(X, pd.DataFrame), 'Input must be an instance of \
                                              pandas.DataFrame()'
 
-        method_to_call = getattr(self, self.method)
+        call_method = getattr(self, self.method)
         self.bins_ = {}
-        for col in X.dtypes.index:
+        for col in X.columns.values:
             # Checking whether columns are non-binary numeric (excluding nans) 
             if self.is_numeric(X[col]):
-                self.bins_[col] = method_to_call(X[col], y, **params)
+                self.bins_[col] = call_method(X[col], np.asarray(y).ravel(), 
+                                              **params)
             else:
                 self.bins_[col] = np.unique(X[col].astype(str))
 
@@ -139,7 +140,25 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
         return X_new
 
     def sapling(self, X, y, **params):
-        """
+        """Creates finitely many intervals for a continuous vector using 
+        DecisionTreeClassifier optimizing splits with respect to Gini impurity
+        criterium.
+
+        Parameters
+        ----------
+        X: array-like, shape (n_samples, )
+            Vector passed as an one-dimensional array-like object where 
+            n_samples in the number of samples.
+
+        y: array-like, shape (n_samples, )
+            Vector of corresponding to X values passed as an one-dimensional 
+            array-like object where n_samples is the number of samples.
+
+        Returns
+        -------
+        bins: array, shape (n_bins, )
+            Vector of successive cut-off points being upper limits of the 
+            corresponding intervals as well as containing a minimum value. 
 
         """
         y = np.asarray(y)
@@ -153,13 +172,16 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
         clf = DecisionTreeClassifier(max_depth=self.max_tree_depth,
                                      min_samples_leaf=self.min_samples_leaf,
                                      max_leaf_nodes=self.max_bins)
+        X = X.reshape(-1, 1)
+        
         clf.fit(X, y)
-
-        bins = clf.tree_.threshold[clf.tree_.feature != -2]
-        bins = np.unique(bins)
-
+        
         min_val = min(X)
         max_val = max(X)
+        
+        bins = clf.tree_.threshold[clf.tree_.feature != -2]
+        np.append(bins, [min_val, max_val])
+        bins = np.unique(bins)
 
         cols_out_idx = []
         for idx, val in enumerate(bins):
@@ -178,7 +200,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
         ----------
         X: array-like, shape (n_samples, )
             Vector passed as an one-dimensional array-like object where 
-            n_samples in the number of samples.
+            n_samples is the number of samples.
 
         y: array-like, shape (n_samples, )
             Vector of corresponding to X values passed as an one-dimensional 
