@@ -16,8 +16,6 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
     Reduces continuous variables to a finite number of intervals with use of 
     declared methods.
     
-    It supports one-dimensional array-like objects.
-
     Parameters
     ----------
     method: string {'sapling', 'spearman'}
@@ -46,7 +44,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
 
     max_tree_depth: int
         Specifies maximum tree depth.
-        
+
     min_samples_leaf: float (default: .05)
         Specifies the minimum part of the entire population that must be 
         included in the leaf.
@@ -94,7 +92,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
         method_to_call = getattr(self, self.method)
         self.bins_ = {}
         for col in X.dtypes.index:
-            # Checking if columns is non-binary numeric (excluding nans) 
+            # Checking whether columns are non-binary numeric (excluding nans) 
             if self.is_numeric(X[col]):
                 self.bins_[col] = method_to_call(X[col], y, **params)
             else:
@@ -131,7 +129,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
                                              pandas.DataFrame()'
 
         X_new = pd.DataFrame()
-        for col in X.dtypes.index:
+        for col in X.columns.values:
             if self.is_numeric(X[col]):
                 X_new[col] = self.finger(X[col], 
                                          cut_points=self.bins_[col][1:-1])
@@ -260,10 +258,10 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
                 Assigns default values to group names by numbering them.
             
         min_val: float
-            Determines lower limit value.
+            Determines lower limit value. If not specified takes -np.inf.
 
         max_val: float
-            Determines upper limit value.
+            Determines upper limit value. If not specified takes np.inf.
 
         Returns
         -------
@@ -279,10 +277,10 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
             raise RuntimeError('Not enough unique values.')
 
         if min_val is None:
-            min_val = x.min()
+            min_val = -np.inf
 
         if max_val is None:    
-            max_val = x.max()
+            max_val = np.inf
 
         # Default break_points in case of no declaration of cut_points
         if cut_points is None:
