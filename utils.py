@@ -73,4 +73,4 @@ class Utils(object):
         bool
 
         """
-        return (is_numeric_dtype(X) and ~(set(X) <= {0, 1})
+        return is_numeric_dtype(X) and not set(X) <= {0, 1}
