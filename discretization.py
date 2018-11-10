@@ -171,7 +171,8 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
 
         clf = DecisionTreeClassifier(max_depth=self.max_tree_depth,
                                      min_samples_leaf=self.min_samples_leaf,
-                                     max_leaf_nodes=self.max_bins)
+                                     max_leaf_nodes=self.max_bins,
+                                     **params)
         X = X.reshape(-1, 1)
         
         clf.fit(X, y)
