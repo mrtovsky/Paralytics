@@ -171,8 +171,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
 
         clf = DecisionTreeClassifier(max_depth=self.max_tree_depth,
                                      min_samples_leaf=self.min_samples_leaf,
-                                     max_leaf_nodes=self.max_bins,
-                                     **params)
+                                     max_leaf_nodes=self.max_bins)
         X = X.reshape(-1, 1)
         
         clf.fit(X, y)
@@ -186,7 +185,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
 
         cols_out_idx = []
         for idx, val in enumerate(bins):
-            if ~(min_val <= val <= max_val):
+            if not (min_val <= val <= max_val):
                 cols_out_idx.append(idx) 
 
         bins = np.delete(bins, cols_out_idx)
