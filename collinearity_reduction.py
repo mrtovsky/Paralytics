@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd 
-import inspect 
 
+from inspect import currentframe, getargvalues
 from pandas.api.types import is_numeric_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.impute import SimpleImputer
@@ -36,14 +36,14 @@ class VIFSelector(BaseEstimator, TransformerMixin):
     imputer_: estimator
         The estimator by means of which missing values imputation is performed.
     
-    dropped_cols_: list, length = n_features
-        List of removed features from a given dataset.
+    viffed_cols_: list, length = n_features
+        List of features from a given dataset that exceeded thresh.
 
     """
 
     def __init__(self, thresh=5.0, impute=True, impute_strat='mean'):
-        icf = inspect.currentframe()    
-        args, _, _, values = inspect.getargvalues(icf)
+        icf = currentframe()    
+        args, _, _, values = getargvalues(icf)
         values.pop('self')
 
         for param, value in values.items():
@@ -53,7 +53,9 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             self.imputer_ = SimpleImputer(strategy=impute_strat)
 
     def fit(self, X, y=None):
-        """If specified fit the imputer on X.
+        """Fits columns with a VIF value exceeding the threshold.
+
+        If specified, fits the imputer on X.
 
         Parameters
         ----------
@@ -69,6 +71,8 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         """
         if hasattr(self, 'imputer_'):
             self.imputer_.fit(X)
+
+        self.viffed_cols_ = self._viffing(X, self.thresh)
         
         return self
 
@@ -90,14 +94,23 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             X data with variables remaining after applying feature elimination.
 
         """
+        try:
+            getattr(self, 'viffed_cols_')
+        except AttributeError:
+            raise RuntimeError('Could not find the attribute.\n'
+                               'Fitting is necessary before you do '
+                               'the transformation.')
+
         cols = X.columns.tolist()
         if hasattr(self, 'imputer_'):
             X = pd.DataFrame(self.imputer_.transform(X), columns=cols)
-        X_new, self.dropped_cols_ = self._viffing(X)
+        
+        X_new = X.drop(self.viffed_cols_, axis=1)
         
         return X_new
 
-    def _viffing(self, X):
+    @staticmethod
+    def _viffing(X, thresh):
         """In every iteration removes variable with the highest VIF value.  
 
         """
@@ -111,26 +124,126 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             'Only numeric dtypes are acceptable.'
         
         X_new = X.copy()
-        dropped_cols = []
+        viffed_cols = []
 
         keep_digging = True
         while keep_digging:
-            
+            keep_digging = False
             if len(X_new.columns) == 1:
                 print("Last variable survived, I'm stopping it right now!")
                 break
 
-            keep_digging = False
             vifs = [variance_inflation_factor(X_new.values,
                 X_new.columns.get_loc(var)) for var in X_new.columns]
             
             max_vif = max(vifs)
-            if max_vif > self.thresh:
+            if max_vif > thresh:
                 max_loc = vifs.index(max_vif)
                 col_out = X_new.columns[max_loc]
-                print(f'Dropping {col_out} with vif={max_vif}')
+                print(f'{col_out} with vif={max_vif} is exceeds thresh')
                 X_new.drop([col_out], axis=1, inplace=True)
-                dropped_cols.append(col_out)
+                viffed_cols.append(col_out)
                 keep_digging=True
         
-        return X_new, dropped_cols
+        return viffed_cols
+
+
+class CorrelationReducer(BaseEstimator, TransformerMixin):
+    """Removes correlated columns exceeding the thresh value.
+
+    Parameters
+    ----------
+    method: string {'pearson', 'kendall', 'spearman'} (default: 'pearson')
+        Compute pairwise correlation of columns, excluding NA/null values
+        (basing on pandas.DataFrame.corr).
+            pearson: 
+                standard correlation coefficient.
+            kendall:
+                Kendall Tau correlation coefficient.
+            spearman:
+                Spearman rank correlation.
+
+    thresh: float (default: .8)
+        Threshold value after which further rejection of variables is 
+        discontinued.
+
+    Attributes
+    ----------
+    correlated_cols_: list
+        List of correlated features from a given dataset that exceeded thresh.
+
+    """
+    def __init__(self, thresh=.8, method='pearson'):
+        icf = currentframe()    
+        args, _, _, values = getargvalues(icf)
+        values.pop('self')
+
+        for param, value in values.items():
+            setattr(self, param, value)
+
+    def fit(self, X, y=None):
+        """Fits columns with a correlation coefficients exceeding the threshold.
+
+        Parameters
+        ----------
+        X: DataFrame, shape (n_samples, n_features)
+            Input data, where n_samples is the number of samples and n_features
+            is the number of features.
+
+        Returns
+        -------
+        self: object
+            Returns the instance itself.
+
+        """
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
+
+        self.correlated_cols_ = self._reduce_corr(X, self.thresh, self.method)
+        
+        return self
+  
+    def transform(self, X):
+        """Apply feature selection based on correlation coefficients.
+
+        Removes correlated features with coefficient higher than the threshold
+        value.
+
+        Parameters
+        ----------
+        X: DataFrame, shape (n_samples, n_features)
+            Input data on which variables elimination will be applied.
+
+        Returns
+        -------
+        X_new: DataFrame, shape (n_samples, n_features_new)
+            X data with variables remaining after applying feature elimination.
+
+        """
+        try:
+            getattr(self, 'correlated_cols_')
+        except AttributeError:
+            raise RuntimeError('Could not find the attribute.\n'
+                               'Fitting is necessary before you do '
+                               'the transformation.')
+        
+        X_new = X.drop(self.correlated_cols_, axis=1)
+        
+        return X_new
+
+    @staticmethod
+    def _reduce_corr(X, thresh, method):
+        """Returns correlated columns exceeding the thresh value.
+        """
+        df = X.corr()
+
+        # Create matrix of ones of the same size as the dataframe
+        arr_one = np.ones(shape=df.shape, dtype=bool)
+
+        # Set the value above the main diagonal to zero creating L-matrix
+        L_arr_one = np.tril(arr_one)
+        df.mask(L_arr_one, other=0., inplace=True)
+        corr_cols = (df.abs() >= thresh).any()
+        cols_out = corr_cols[corr_cols == True].index.tolist()
+
+        return cols_out
