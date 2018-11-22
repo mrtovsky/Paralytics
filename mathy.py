@@ -9,3 +9,7 @@ def lcm(x, y):
     return lcm_value
 
 
+def custom_round(value_list, n):
+    """Rounds n to the closest value from the given value_list.
+    """
+    return min(value_list, key=lambda x: abs(x-n))
