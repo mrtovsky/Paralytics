@@ -7,10 +7,10 @@ import pandas.core.algorithms as algos
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.tree import DecisionTreeClassifier
 
-from .utils import Utils
+from .utils.validation import is_numeric
 
 
-class Discretization(BaseEstimator, TransformerMixin, Utils):
+class Discretizer(BaseEstimator, TransformerMixin):
     """Discretizes variables in a given data set.
     
     Reduces continuous variables to a finite number of intervals with use of 
@@ -93,7 +93,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
         self.bins_ = {}
         for col in X.columns.values:
             # Checking whether columns are non-binary numeric (excluding nans) 
-            if self.is_numeric(X[col]):
+            if is_numeric(X[col]):
                 self.bins_[col] = call_method(X[col], np.asarray(y).ravel(), 
                                               **params)
             else:
@@ -118,7 +118,6 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
             string type. 
         
         """
-        # Checking whether estimator fitting was done.
         try:
             getattr(self, 'bins_')
         except AttributeError:
@@ -131,7 +130,7 @@ class Discretization(BaseEstimator, TransformerMixin, Utils):
 
         X_new = pd.DataFrame()
         for col in X.columns.values:
-            if self.is_numeric(X[col]):
+            if is_numeric(X[col]):
                 X_new[col] = self.finger(X[col], 
                                          cut_points=self.bins_[col][1:-1])
             else:
