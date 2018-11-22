@@ -221,3 +221,54 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
                 X[col] = X[col].astype('category')
 
         return X
+
+
+class ColumnSelector(BaseEstimator, TransformerMixin):
+    """
+    Taken from:
+    https://ramhiser.com/post/2018-04-16-building-scikit-learn-pipeline-
+    with-pandas-dataframe/
+
+    """
+    def __init__(self, columns):
+        self.columns = columns
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        """
+
+        """
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
+
+        try:
+            return X[self.columns]
+        except KeyError:
+            cols_error = list(set(self.columns) - set(X.columns))
+            raise KeyError("C'mon, those columns ain't in the DataFrame: %s" 
+                           % cols_error)
+
+
+class TypeSelector(BaseEstimator, TransformerMixin):
+    """
+    Taken from:
+    https://ramhiser.com/post/2018-04-16-building-scikit-learn-pipeline-
+    with-pandas-dataframe/
+    
+    """
+    def __init__(self, col_type):
+        self.col_type = col_type
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        """
+
+        """
+        assert isinstance(X, pd.DataFrame), \
+            'Input must be an instance of pandas.DataFrame()'
+
+        return X.select_dtypes(include=[self.col_type])
