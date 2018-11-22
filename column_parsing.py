@@ -192,7 +192,7 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
 
-        columns = X.columns.values
+        columns = X.columns
         if self.manual_projection is not None:
             assert isinstance(manual_projection, dict), \
                 'manual_projection must be an instance of the dictionary!'
@@ -206,7 +206,7 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
                     columns = [col for col in columns 
                                if col not in col_names]
                 except KeyError:
-                    cols_error = list(set(col_names) - set(X.columns.values))
+                    cols_error = list(set(col_names) - set(X.columns))
                     raise KeyError("C'mon, those columns ain't in "
                                    "the DataFrame: %s" % cols_error)
 
