@@ -6,7 +6,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
-    """Encodes categorical features with the corresponding target mean value.
+    """Encodes categorical features with the corresponding target aggregated
+     value.
 
     Accepts DataFrames with categorical features only. 
     
