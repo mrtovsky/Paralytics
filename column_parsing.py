@@ -199,9 +199,9 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
         X_new = X.copy()
         columns = X_new.columns
         if self.manual_projection is not None:
-            assert isinstance(manual_projection, dict), \
+            assert isinstance(self.manual_projection, dict), \
                 'manual_projection must be an instance of the dictionary!'
-            for col_type, col_names in manual_projection.items():
+            for col_type, col_names in self.manual_projection.items():
                 assert isinstance(col_names, list), (
                     'Values of manual_projection must be an instance ' 
                     'of the list!'
