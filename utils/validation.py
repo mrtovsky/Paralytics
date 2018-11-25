@@ -69,3 +69,51 @@ def is_numeric(X):
 
     """
     return is_numeric_dtype(X) and not set(X) <= {0, 1}
+
+
+def find_sparsity(X, thresh=.01):
+    """Finds columns with highly sparse categories.
+    
+    For categorical and binary features finds columns where categories with 
+    relative frequencies under the threshold are present.
+    
+    For numerical features (excluding binary variables) returns columns 
+    where NaNs or 0 are dominating in the given dataset.
+    
+    Parameters
+    ----------
+    X: DataFrame
+        Data to be checked for sparsity.
+    
+    thresh: float (default: .01)
+        Fraction of one of the categories under which the sparseness will be 
+        reported.
+        
+    Returns
+    -------
+    sparse_{num, bin, cat}: list
+        List of {numerical, binary, categorical} X column names where high 
+        sparsity was detected.
+
+    """
+    assert isinstance(X, pd.DataFrame), \
+        'Input must be an instance of pandas.DataFrame()'
+    assert len(X) > 0, 'Input data can not be empty!'
+
+    sparse_num, sparse_bin, sparse_cat = [[] for _ in range(3)]
+    
+    for col in X.columns:
+        tab_counter = X[col].value_counts(normalize=True, dropna=False)
+        if is_numeric(X[col]):
+            most_freq = tab_counter.index[0]
+            if most_freq != most_freq or most_freq == 0:
+                sparse_num.append(col)
+        else:
+            min_frac = tab_counter.iloc[-1]
+            if min_frac < thresh:
+                if set(X[col]) <= {0, 1}:
+                    sparse_bin.append(col)
+                else:
+                    sparse_cat.append(col)
+
+    return sparse_num, sparse_bin, sparse_cat
