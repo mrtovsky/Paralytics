@@ -78,12 +78,11 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
             
         self.imp_cats_ = {}
         if self.method == 'freq':
-            sum_obs = len(X)
             for col in self.cat_cols_:
                 tracker, i = 0, 0
-                sorted_series = X[col].value_counts()
+                sorted_series = X[col].value_counts(normalize=True)
                 while tracker < 1 - self.percentile_thresh:  
-                    tracker += sorted_series.iloc[i] / sum_obs
+                    tracker += sorted_series.iloc[i]
                     i += 1
                 sparse_cats = sorted_series.index[i:].tolist()
                 if len(sparse_cats) > 1:
@@ -119,7 +118,12 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
         
         X_new = X.copy()
         for col in self.cat_cols_:
-            X_new.loc[X_new[col].isin(self.imp_cats_[col]), col] = self.new_cat
+            row_indices = X_new[col].isin(self.imp_cats_[col])
+            if X_new[col].dtype.name == 'category':
+                X_new[col].cat.add_categories(self.new_cat, inplace=True)
+                X_new[col].cat.remove_categories(self.imp_cats_[col], 
+                                                 inplace=True)
+            X_new.loc[row_indices, col] = self.new_cat
         
         return X_new
     
@@ -185,14 +189,15 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X: DataFrame, shape (n_samples, n_features)
+        X_new: DataFrame, shape (n_samples, n_features)
             X data with projected values onto specified dtype.
 
         """
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
 
-        columns = X.columns
+        X_new = X.copy()
+        columns = X_new.columns
         if self.manual_projection is not None:
             assert isinstance(manual_projection, dict), \
                 'manual_projection must be an instance of the dictionary!'
@@ -202,25 +207,25 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
                     'of the list!'
                 )
                 try:
-                    X[col_names] = X[col_names].astype(col_type)
+                    X_new[col_names] = X_new[col_names].astype(col_type)
                     columns = [col for col in columns 
                                if col not in col_names]
                 except KeyError:
-                    cols_error = list(set(col_names) - set(X.columns))
+                    cols_error = list(set(col_names) - set(X_new.columns))
                     raise KeyError("C'mon, those columns ain't in "
                                    "the DataFrame: %s" % cols_error)
 
         for col in columns:
-            if set(X[col]) <= {0, 1}:
-                X[col] = X[col].astype(bool)
-            elif num_to_float and is_numeric_dtype(X):
-                X[col] = X[col].astype(float)
-            elif is_numeric_dtype(X):
-                X[col] = X[col].astype(int)
+            if set(X_new[col]) <= {0, 1}:
+                X_new[col] = X_new[col].astype(bool)
+            elif self.num_to_float and is_numeric_dtype(X_new):
+                X_new[col] = X_new[col].astype(float)
+            elif is_numeric_dtype(X_new):
+                X_new[col] = X_new[col].astype(int)
             else:
-                X[col] = X[col].astype('category')
+                X_new[col] = X_new[col].astype('category')
 
-        return X
+        return X_new
 
 
 class ColumnSelector(BaseEstimator, TransformerMixin):
