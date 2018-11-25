@@ -218,9 +218,9 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
         for col in columns:
             if set(X_new[col]) <= {0, 1}:
                 X_new[col] = X_new[col].astype(bool)
-            elif self.num_to_float and is_numeric_dtype(X_new):
+            elif self.num_to_float and is_numeric_dtype(X_new[col]):
                 X_new[col] = X_new[col].astype(float)
-            elif is_numeric_dtype(X_new):
+            elif is_numeric_dtype(X_new[col]):
                 X_new[col] = X_new[col].astype(int)
             else:
                 X_new[col] = X_new[col].astype('category')
