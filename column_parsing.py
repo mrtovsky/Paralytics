@@ -120,7 +120,12 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
         for col in self.cat_cols_:
             row_indices = X_new[col].isin(self.imp_cats_[col])
             if X_new[col].dtype.name == 'category':
-                X_new[col].cat.add_categories(self.new_cat, inplace=True)
+                try:
+                    X_new[col].cat.add_categories(self.new_cat, inplace=True)
+                except ValueError:
+                    print('You need to specify different "new_cat" value, '
+                          'because the current one is already included in the '
+                          'category names.')
                 X_new[col].cat.remove_categories(self.imp_cats_[col], 
                                                  inplace=True)
             X_new.loc[row_indices, col] = self.new_cat
