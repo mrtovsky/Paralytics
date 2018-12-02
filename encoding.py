@@ -89,7 +89,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         df = X.assign(target=y)
 
         for col in self.columns:
-            # TODO: define own agg function with additional alpha regularization
             agg_dict = df.groupby(col).target.agg(self._penalized_mean,
                                                   y=y,
                                                   alpha=self.alpha).to_dict()
