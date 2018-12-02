@@ -138,14 +138,14 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
         """Returns categorical columns including the user's corrections.
         
         """
-        num_cols = X.select_dtypes('number').columns
-        cat_cols = [col for col in X.columns if col not in num_cols]
-        
+        cat_cols = X.select_dtypes('category').columns.tolist()
+
         if include is not None:
             assert isinstance(include, list), \
                 'Columns to include must be given as an instance of a list!'
-            cat_cols = cat_cols + list(set(include) - set(cat_cols))
-        
+            cat_cols = [col for col in X.columns if col in cat_cols
+                                                 or col in include]
+                                                 
         if exclude is not None:
             assert isinstance(exclude, list), \
                 'Columns to exclude must be given as an instance of a list!'
