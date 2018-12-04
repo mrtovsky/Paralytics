@@ -54,12 +54,13 @@ def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
             print('Consider changing the "plot_type" parameter.')
             raise
 
-def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
-                        n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
+def plot_learning_curve(estimator, title, X, y, ylim=None, 
+                        cv=None, scoring=None, n_jobs=None, 
+                        train_sizes=np.linspace(.1, 1.0, 5), random_state=None):
     """
     Generate a simple plot of the test and training learning curve.
 
-    Taken from:
+    Based on:
     https://scikit-learn.org/stable/auto_examples/model_selection/
     plot_learning_curve.html
 
@@ -113,14 +114,15 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
         be big enough to contain at least one sample from each class.
         (default: np.linspace(0.1, 1.0, 5))
     """
-    plt.figure()
+    plt.figure(figsize=(12, 8))
     plt.title(title)
     if ylim is not None:
         plt.ylim(*ylim)
     plt.xlabel("Training examples")
     plt.ylabel("Score")
     train_sizes, train_scores, test_scores = learning_curve(
-        estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
+        estimator, X, y, cv=cv, scoring=scoring, n_jobs=n_jobs, 
+        train_sizes=train_sizes, random_state=random_state)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
