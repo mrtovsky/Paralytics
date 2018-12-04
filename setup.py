@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages 
+from setuptools import setup
 
 
 with open('requirements.txt') as f:
@@ -13,6 +13,6 @@ setup(
     url='https://github.com/mrtovsky/Paralytics',
     install_requires=requirements,
     license='MIT',
-    packages=find_packages(),
+    packages=['paralytics'],
     zip_safe=False
 )
