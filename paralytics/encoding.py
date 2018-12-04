@@ -155,6 +155,29 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             
         return X_new
 
+    def fit_transform(self, X, y=None):
+        """Fit to data then transform it.
+        
+        Fits transformer to X and y and returns transformed version of X.
+
+        Parameters
+        ----------
+        X: DataFrame, shape (n_samples, n_features)
+            Training data of independent categorical variables.
+        
+        y: array-like, shape (n_samples, )
+            Vector of target variable values corresponding to X data.
+        
+        Returns
+        -------
+        X_new: DataFrame, shape (n_samples, n_features)
+            X data with substituted values to their respective target aggregated
+            values.
+
+        """
+        return self.fit(X, y).transform(X, y)
+
+
     def _transform_train_cv(self, X, y):
         """This method is only applied for a training set. 
 
