@@ -14,5 +14,5 @@ setup(
     install_requires=requirements,
     license='MIT',
     packages=['paralytics'],
-    zip_safe=False
+    zip_safe=True
 )
