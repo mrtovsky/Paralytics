@@ -1,3 +1,6 @@
+from math import ceil, sqrt
+
+
 def lcm(x, y):
     """Calculates least common multiple of two integers x and y.
     """
@@ -13,3 +16,21 @@ def custom_round(value_list, n):
     """Rounds n to the closest value from the given value_list.
     """
     return min(value_list, key=lambda x: abs(x-n))
+
+
+def check_prime(n):
+    """Checks whether the given value is a prime number.
+    
+    """
+    assert (isinstance(n, int) and n >= 1), \
+        'Expected integer greater than or equal to 1 as parameter!'
+    
+    if n == 1:
+        return False
+    elif not n % 2 and n > 2:
+        return False
+    else:
+        for divider in range(3, ceil(sqrt(n)) + 1, 2):
+            if not n % divider:
+                return False
+        return True
