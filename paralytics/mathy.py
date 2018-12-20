@@ -22,10 +22,10 @@ def check_prime(n):
     """Checks whether the given value is a prime number.
     
     """
-    assert (isinstance(n, int) and n >= 1), \
+    assert (isinstance(n, int) and n >= 0), \
         'Expected integer greater than or equal to 1 as parameter!'
     
-    if n == 1:
+    if n in (0, 1):
         return False
     elif not n % 2 and n > 2:
         return False
