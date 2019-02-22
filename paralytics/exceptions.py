@@ -1,6 +1,6 @@
 """
 This module includes all custom warnings and error classes used across 
-scitkit-learn.
+paralytics.
 """
 
 __all__ = ['UniqueValuesError']
