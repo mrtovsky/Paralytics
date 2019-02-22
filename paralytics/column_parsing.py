@@ -73,8 +73,9 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
             'Input must be an instance of pandas.DataFrame()!'
         assert len(X) > 0, 'Input data can not be empty!'
         
-        self.cat_cols_ = self._cat_cols_selection(X, self.include_cols, 
-                                                  self.exclude_cols)
+        self.cat_cols_ = self._cat_cols_selection(
+            X, self.include_cols, self.exclude_cols
+        )
             
         self.imp_cats_ = {}
         if self.method == 'freq':
@@ -122,13 +123,21 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
             if X_new[col].dtype.name == 'category':
                 try:
                     X_new[col].cat.add_categories(self.new_cat, inplace=True)
-                except ValueError:
-                    print('You need to specify different "new_cat" value, '
-                          'because the current one is already included in the '
-                          'category names.')
-                    raise
-                X_new[col].cat.remove_categories(self.imp_cats_[col], 
-                                                 inplace=True)
+                except ValueError as e:
+                    raise ValueError(
+                        'You need to specify different "new_cat" value, '
+                        'because the current one is already included in the '
+                        'category names.'
+                    ).with_traceback(e.__traceback__)
+                cat_removals = list(
+                    set(self.imp_cats_[col]).intersection(
+                        X_new[col].cat.categories
+                    )
+                )
+                X_new[col].cat.remove_categories(
+                    cat_removals, 
+                    inplace=True
+                )
             X_new.loc[row_indices, col] = self.new_cat
         
         return X_new
@@ -166,12 +175,13 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
         Dictionary where keys are dtype names onto which specified columns 
         will be projected and values are lists containing names of variables to
         be projected onto given dtype.
-            Example: manual_projection={
-                                        float: ['foo', 'bar'],
-                                        'category': ['baz'],
-                                        int: ['qux'],
-                                        bool: ['quux']
-                     }
+            Example: 
+                manual_projection={
+                    float: ['foo', 'bar'],
+                    'category': ['baz'],
+                    int: ['qux'],
+                    bool: ['quux']
+                }
 
     num_to_float: boolean (default: True)
         Specifies whether numerical variables should be projected onto float
