@@ -1,12 +1,13 @@
+import inspect
 import numpy as np
 import pandas as pd
-import scipy.stats as stats
-import inspect
 import pandas.core.algorithms as algos
+import scipy.stats as stats
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.tree import DecisionTreeClassifier
 
+from .exceptions import *
 from .utils.validation import is_numeric
 
 
@@ -94,8 +95,14 @@ class Discretizer(BaseEstimator, TransformerMixin):
         for col in X.columns.values:
             # Checking whether columns are non-binary numeric (excluding nans) 
             if is_numeric(X[col]):
-                self.bins_[col] = call_method(X[col], np.asarray(y).ravel(), 
-                                              **params)
+                try:
+                    self.bins_[col] = call_method(
+                        X[col], np.asarray(y).ravel(), **params
+                    )
+                except UniqueValuesError as e:
+                    e.args += (f'The problem occured for the column: {col}.',)
+                    print(e)
+                    self.bins_[col] = np.unique(X[col].astype(str))
             else:
                 self.bins_[col] = np.unique(X[col].astype(str))
 
@@ -131,10 +138,17 @@ class Discretizer(BaseEstimator, TransformerMixin):
         X_new = pd.DataFrame()
         for col in X.columns.values:
             if is_numeric(X[col]):
-                X_new[col] = self.finger(X[col], 
-                                         cut_points=self.bins_[col][1:-1])
+                try:
+                    X_new[col] = self.finger(
+                        X[col], 
+                        cut_points=self.bins_[col][1:-1]
+                    ).astype(str)
+                except UniqueValuesError as e:
+                    e.args += (f'The problem occured for the column: {col}.',)
+                    print(e)
+                    X_new[col] = X[col].astype(str)
             else:
-                X_new[col] = X[col]
+                X_new[col] = X[col].astype(str)
         
         return X_new
 
@@ -166,7 +180,10 @@ class Discretizer(BaseEstimator, TransformerMixin):
         X = X[~np.isnan(X)]
 
         if len(np.unique(X)) < self.min_bins:
-            raise RuntimeError('not enough unique values in the array')
+            raise UniqueValuesError(
+                'Not enough unique values in the array. ' 
+                'Minimum {} unique values required.'.format(self.min_bins)
+            )
 
         clf = DecisionTreeClassifier(max_depth=self.max_tree_depth,
                                      min_samples_leaf=self.min_samples_leaf,
@@ -295,7 +312,8 @@ class Discretizer(BaseEstimator, TransformerMixin):
         x = X[~np.isnan(X)]
         
         if len(np.unique(x)) <= 1:
-            raise RuntimeError('Not enough unique values.')
+            raise UniqueValuesError(
+                'The same value for every element of the array.')
 
         if min_val is None:
             min_val = -np.inf
