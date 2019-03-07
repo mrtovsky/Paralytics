@@ -156,7 +156,8 @@ class VIFSelector(BaseEstimator, TransformerMixin):
                 col_out = X_new.columns[max_loc]
                 if verbose:
                     print(
-                        f'{col_out} with vif={max_vif} exceeds the threshold.'
+                        '{0} with vif={1:.2f} exceeds the threshold.'
+                        .format(col_out, max_vif)
                     )
                 X_new.drop([col_out], axis=1, inplace=True)
                 viffed_cols.append(col_out)
