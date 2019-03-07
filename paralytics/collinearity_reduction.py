@@ -40,8 +40,11 @@ class VIFSelector(BaseEstimator, TransformerMixin):
     imputer_: estimator
         The estimator by means of which missing values imputation is performed.
 
-    viffed_cols_: list, length = n_features
+    viffed_cols_: list
         List of features from a given dataset that exceeded thresh.
+
+    kept_cols_: list
+        List of features that left after the vif procedure.
 
     """
 
@@ -77,7 +80,9 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         if hasattr(self, 'imputer_'):
             self.imputer_.fit(X)
 
-        self.viffed_cols_ = self._viffing(X, self.thresh, self.verbose)
+        self.viffed_cols_, self.kept_cols_ = self._viffing(
+            X, self.thresh, self.verbose
+        )
 
         return self
 
@@ -101,13 +106,15 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         """
         try:
             getattr(self, 'viffed_cols_')
+            getattr(self, 'kept_cols_')
         except AttributeError:
             raise RuntimeError('Could not find the attribute.\n'
                                'Fitting is necessary before you do '
                                'the transformation.')
         X_new = X.copy()
-        cols = X_new.columns.tolist()
+
         if hasattr(self, 'imputer_'):
+            cols = X_new.columns.tolist()
             X_new = pd.DataFrame(self.imputer_.transform(X_new), columns=cols)
 
         X_new = X_new.drop(self.viffed_cols_, axis=1)
@@ -155,7 +162,9 @@ class VIFSelector(BaseEstimator, TransformerMixin):
                 viffed_cols.append(col_out)
                 keep_digging = True
 
-        return viffed_cols
+        kept_cols = X_new.columns.tolist()
+
+        return viffed_cols, kept_cols
 
 
 class CorrelationReducer(BaseEstimator, TransformerMixin):
