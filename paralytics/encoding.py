@@ -137,7 +137,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             getattr(self, 'cat_aggval_')
         except AttributeError:
             raise RuntimeError(
-                'Could not find the attribute.\nFitting is necessary before'
+                'Could not find the attribute.\nFitting is necessary before '
                 'you do the transformation!'
             )
         assert isinstance(X, pd.DataFrame), \
