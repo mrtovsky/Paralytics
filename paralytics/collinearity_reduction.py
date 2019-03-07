@@ -41,7 +41,8 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, thresh=5.0, impute=True, impute_strat='mean'):
+    def __init__(self, thresh=5.0, impute=True,
+                 impute_strat='mean', verbose=0):
         icf = currentframe()
         args, _, _, values = getargvalues(icf)
         values.pop('self')
@@ -142,7 +143,10 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             if max_vif > thresh:
                 max_loc = vifs.index(max_vif)
                 col_out = X_new.columns[max_loc]
-                print(f'{col_out} with vif={max_vif} is exceeds thresh')
+                if self.verbose:
+                    print(
+                        f'{col_out} with vif={max_vif} exceeds the threshold.'
+                    )
                 X_new.drop([col_out], axis=1, inplace=True)
                 viffed_cols.append(col_out)
                 keep_digging = True
