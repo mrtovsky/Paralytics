@@ -31,6 +31,10 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         Declares imputation strategy for the scikit-learn SimpleImputer
         transformation.
 
+    verbose: int, default = 0
+        Controls verbosity of output. If 0 there is no output, if 1 displays
+        which features were removed.
+
     Attributes
     ---------
     imputer_: estimator
@@ -73,7 +77,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         if hasattr(self, 'imputer_'):
             self.imputer_.fit(X)
 
-        self.viffed_cols_ = self._viffing(X, self.thresh)
+        self.viffed_cols_ = self._viffing(X, self.thresh, self.verbose)
 
         return self
 
@@ -111,7 +115,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         return X_new
 
     @staticmethod
-    def _viffing(X, thresh):
+    def _viffing(X, thresh, verbose):
         """In every iteration removes variable with the highest VIF value."""
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
@@ -143,7 +147,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             if max_vif > thresh:
                 max_loc = vifs.index(max_vif)
                 col_out = X_new.columns[max_loc]
-                if self.verbose:
+                if verbose:
                     print(
                         f'{col_out} with vif={max_vif} exceeds the threshold.'
                     )
