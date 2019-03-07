@@ -290,12 +290,50 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
         Specifies whether numerical variables should be projected onto float
         (if True) or onto int (if False).
 
+    Attributes
+    ----------
+    automatic_projection_: dict
+        Dictionary where key is the dtype name onto which specified columns
+        will be projected chosen automatically (when manual_projection is
+        specified then this manunal assignment is decisive).
     """
     def __init__(self, manual_projection=None, num_to_float=True):
         self.manual_projection = manual_projection
         self.num_to_float = num_to_float
 
     def fit(self, X, y=None):
+        """Fits corresponding dtypes to X.
+
+        Parameters
+        ----------
+        X: DataFrame, shape (n_samples, n_features)
+            Training data of independent variable values.
+
+        y: ignore
+
+        Returns
+        -------
+        self: object
+            Returns the instance itself.
+
+        """
+        self.automatic_projection_ = {'category': [], bool: []}
+
+        if self.num_to_float:
+            self.automatic_projection_[float] = []
+        else:
+            self.automatic_projection_[int] = []
+
+        for col in X.columns:
+            if set(X[col]) <= {0, 1}:
+                self.automatic_projection_[bool].append(col)
+            elif self.num_to_float and is_numeric_dtype(X[col]):
+                self.automatic_projection_[float].append(col)
+            elif is_numeric_dtype(X[col]):
+                self.automatic_projection_[int].append(col)
+            else:
+                self.automatic_projection_['category'].append(col)
+
         return self
 
     def transform(self, X):
@@ -312,39 +350,56 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
             X data with projected values onto specified dtype.
 
         """
+        try:
+            getattr(self, 'automatic_projection_')
+        except AttributeError:
+            raise RuntimeError(
+                'Could not find the attribute.\nFitting is necessary before '
+                'you do the transformation!'
+            )
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
 
-        X_new = X.copy()
-        columns = X_new.columns
-        if self.manual_projection is not None:
-            assert isinstance(self.manual_projection, dict), \
-                'manual_projection must be an instance of the dictionary!'
-            for col_type, col_names in self.manual_projection.items():
-                assert isinstance(col_names, list), (
-                    'Values of manual_projection must be an instance '
-                    'of the list!'
-                )
-                try:
-                    X_new[col_names] = X_new[col_names].astype(col_type)
-                    columns = [col for col in columns
-                               if col not in col_names]
-                except KeyError:
-                    cols_error = list(set(col_names) - set(X_new.columns))
-                    raise KeyError("C'mon, those columns ain't in "
-                                   "the DataFrame: %s" % cols_error)
-
-        for col in columns:
-            if set(X_new[col]) <= {0, 1}:
-                X_new[col] = X_new[col].astype(bool)
-            elif self.num_to_float and is_numeric_dtype(X_new[col]):
-                X_new[col] = X_new[col].astype(float)
-            elif is_numeric_dtype(X_new[col]):
-                X_new[col] = X_new[col].astype(int)
-            else:
-                X_new[col] = X_new[col].astype('category')
+        X_new, columns_projected = self._project(X, self.manual_projection)
+        X_new, _ = self._project(
+            X_new, self.automatic_projection_, skip_columns=columns_projected
+        )
 
         return X_new
+
+    @staticmethod
+    def _project(X, projection_dict, skip_columns=None):
+        """Projects X in accordance with the guidelines provided."""
+        X_new = X.copy()
+        columns_projected = []
+
+        if skip_columns is None:
+            skip_columns = []
+
+        if projection_dict is not None:
+            assert isinstance(projection_dict, dict), \
+                'projection_dict must be an instance of the dictionary!'
+            for col_type, col_names in projection_dict.items():
+                assert isinstance(col_names, list), (
+                    'Values of projection_dict must be an instance '
+                    'of the list!'
+                )
+                cols_to_project = [
+                    col for col in col_names if col not in skip_columns
+                ]
+                try:
+                    X_new[cols_to_project] = (
+                        X_new[cols_to_project].astype(col_type)
+                    )
+                except KeyError:
+                    cols_error = list(
+                        set(cols_to_project) - set(X_new.columns)
+                    )
+                    raise KeyError("C'mon, those columns ain't in "
+                                   "the DataFrame: %s" % cols_error)
+                columns_projected.extend(cols_to_project)
+
+        return X_new, columns_projected
 
 
 class ColumnSelector(BaseEstimator, TransformerMixin):
