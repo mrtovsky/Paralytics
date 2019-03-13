@@ -10,8 +10,7 @@ __all__ = [
 
 class UniqueValuesError(ValueError):
     """Exception class to raise if number of unique values is not matching
-    the required threshold.
-    """
+    the required threshold."""
 
 
 class NothingSelectedWarning(UserWarning):
