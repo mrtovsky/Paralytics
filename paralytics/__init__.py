@@ -1,5 +1,6 @@
 from . import preprocessing, utils
 from .collinearity_reduction import *
+from .decorators import *
 from .discretization import *
 from .encoding import *
 from .exceptions import *
