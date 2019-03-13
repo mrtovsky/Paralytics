@@ -4,12 +4,12 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
 from sklearn.model_selection import learning_curve
 
 
-def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6), 
+def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
                   plot_type='scatterplot', **params):
     """Paints any specified plot from the seaborn library multiple times.
 
@@ -23,7 +23,7 @@ def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
 
     n{rows, cols}: int (default: 1)
         Number of {rows, cols} transferred to plt.subplots().
-    
+
     figsize: list-like
         Size of every figure created on subsequent axes.
 
@@ -37,28 +37,29 @@ def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
     Returns
     -------
     None
-    
+
     """
     assert isinstance(data, pd.DataFrame), \
         'Input "data" must be an instance of pandas.DataFrame()!'
     assert isinstance(x, list), \
         'Input "x" must be the list of data columns to plot!'
-    
+
     fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     axes = axes.flatten()
     for idx, ax in enumerate(axes):
         plt.sca(ax)
         try:
             getattr(sns, plot_type)(x[idx], data=data, **params)
-        except AttributeError as e:
+        except AttributeError:
             print('Consider changing the "plot_type" parameter.')
             raise
 
-def plot_learning_curve(estimator, title, X, y, ylim=None, 
-                        cv=None, scoring=None, n_jobs=None, 
-                        train_sizes=np.linspace(.1, 1.0, 5), random_state=None):
-    """
-    Generate a simple plot of the test and training learning curve.
+
+def plot_learning_curve(
+    estimator, title, X, y, ylim=None, cv=None, scoring=None,
+    n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5), random_state=None
+):
+    """Generate a simple plot of the test and training learning curve.
 
     Based on:
     https://scikit-learn.org/stable/auto_examples/model_selection/
@@ -121,7 +122,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=None,
     plt.xlabel("Training examples")
     plt.ylabel("Score")
     train_sizes, train_scores, test_scores = learning_curve(
-        estimator, X, y, cv=cv, scoring=scoring, n_jobs=n_jobs, 
+        estimator, X, y, cv=cv, scoring=scoring, n_jobs=n_jobs,
         train_sizes=train_sizes, random_state=random_state)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
