@@ -10,6 +10,8 @@ def force_context_manager(cls):
     """Prevents user from calling objects of decorated classes without using
     the `with` statement."""
     class Wrapper(object):
+        original = cls
+
         def __init__(self, *args, **kwargs):
             check_exit = getattr(cls, '__exit__', None)
             if check_exit is None:
