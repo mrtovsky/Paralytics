@@ -10,5 +10,7 @@ pytz>=2018.7
 scikit-learn>=0.20.1
 scipy>=1.1.0
 seaborn>=0.9.0
+selenium>=3.141.0
 six>=1.11.0
 statsmodels>=0.9.0
+urllib3>=1.24.1

@@ -25,6 +25,11 @@ wheels/
 *.egg
 MANIFEST
 
+# Editor files
+.project
+.settings
+.idea
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -47,6 +52,10 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
+# OS generated files
+.DS_Store
+Thumbs.db
+
 # Translations
 *.mo
 *.pot
@@ -65,6 +74,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/_static/
+docs/_templates/
+docs/api/
 
 # PyBuilder
 target/
