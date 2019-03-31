@@ -3,9 +3,9 @@ Paralytics
 ==========
 
 .. image:: https://img.shields.io/badge/python-3.7-blue.svg
-    :target: # TODO: http://badge.fury.io/py/<package>
+    :target: http://badge.fury.io/py/Paralytics
 
-* Documentation: # TODO: <>.
+* Documentation: .
 
 What is it?
 -----------
@@ -61,11 +61,11 @@ For visualizations:
 * `seaborn <https://seaborn.pydata.org/>`_ (>= 0.9.0)
 * `matplotlib <https://matplotlib.org/>`_ (>= 3.0.2)
 
-The easiest way to install the package is using ``pip`` ::
+The easiest way to install the package is using ``pip``: ::
 
     pip install Paralytics
 
-or directly from the github `repository <https://github.com/Paralytics/Paralytics.git>`_ ::
+or directly from the github `repository <https://github.com/Paralytics/Paralytics.git>`_: ::
 
     pip install git+https://github.com/Paralytics/Paralytics.git
 

@@ -7,6 +7,8 @@ Python analytical scripts that will overcome paralysis in your data analysis.
    :caption: Contents:
 
    readme
+   example
+   changelog
 
 Indices and tables
 ==================
