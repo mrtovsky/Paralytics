@@ -67,5 +67,5 @@ The easiest way to install the package is using ``pip``: ::
 
 or directly from the github `repository <https://github.com/mrtovsky/Paralytics.git>`_: ::
 
-    pip install git+https://github.com/Paralytics/Paralytics.git
+    pip install git+https://github.com/mrtovsky/Paralytics.git
 

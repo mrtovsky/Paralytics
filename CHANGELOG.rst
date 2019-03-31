@@ -1,6 +1,11 @@
 History
 =======
 
+0.2.1 (31.03.2019)
+------------------
+* Fixed references to correct redirections
+    * Repairs links to valid websites.
+
 0.2 (31.03.2019)
 ----------------
 * Changed the topology of the repository
