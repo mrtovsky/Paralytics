@@ -1,6 +1,9 @@
 History
 =======
 
+0.2.2 ()
+------------------
+
 0.2.1 (31.03.2019)
 ------------------
 * Fixed references to correct redirections

@@ -6,6 +6,7 @@ Paralytics
     :target: http://badge.fury.io/py/Paralytics
 
 * Documentation: https://mrtovsky.github.io/Paralytics/.
+* Repository: https://github.com/mrtovsky/Paralytics/.
 
 What is it?
 -----------
@@ -63,7 +64,7 @@ For visualizations:
 
 The easiest way to install the package is using ``pip``: ::
 
-    pip install Paralytics
+    pip install paralytics
 
 or directly from the github `repository <https://github.com/mrtovsky/Paralytics.git>`_: ::
 
