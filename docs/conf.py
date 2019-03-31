@@ -52,7 +52,6 @@ automodsum_inherited_members = False
 class_members_toctree = False
 numpydoc_show_class_members = False
 
-
 # The master toctree document.
 master_doc = 'index'
 
