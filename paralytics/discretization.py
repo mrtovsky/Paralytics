@@ -19,33 +19,46 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    method: string {'sapling', 'spearman'}
-        sapling:
-            Submethod based on the DecisionTreeClassifier.
-        spearman:
-            Submethod based on the Spearman's rang correlation. Divides the
-            values into subsequent quartiles as long as it doesn't get full
-            monotonicity. If this doesn't happen, it divides values with use
-            of quantiles into the declared minimum number of buckets.
-            Using this method with parameter formula set to 'median' may throw
-            RuntimeWarning for fixed vector values in one of the input vectors
-            becuase there is no point in tracking mutual change of two vectors
-            when one vector doesn't change.
+    method: string: {'sapling', 'spearman'}, optional (default='sapling')
+        The discretization method:
 
-    formula: string {'mean', 'median'} (default: 'mean')
+        - `sapling`:
+
+          Submethod based on the DecisionTreeClassifier.
+
+        - `spearman`:
+
+          Submethod based on the Spearman's rang correlation. Divides the
+          values into subsequent quartiles as long as it doesn't get full
+          monotonicity. If this doesn't happen, it divides values with use
+          of quantiles into the declared minimum number of buckets.
+          Using this method with parameter formula set to 'median' may throw
+          RuntimeWarning for fixed vector values in one of the input vectors
+          becuase there is no point in tracking mutual change of two vectors
+          when one vector doesn't change.
+
+    formula: string: {'mean', 'median'}, optional (default='mean')
         Chooses the formula that representatives will be chosen to check the
-        Spearman's rank correlation.
+        Spearman's rank correlation:
 
-    max_bins: int (default: 20)
+        - `mean`:
+
+          Takes the mean in every group as a representative value.
+
+        - `median`:
+
+          Takes the median in every group as a representative value.
+
+    max_bins: int, optional (default=20)
         Maximum number of bins that will be created.
 
-    min_bins: int (default: 3)
+    min_bins: int, optional (default=3)
         Minimum number of bins that will be created.
 
-    max_tree_depth: int
+    max_tree_depth: int, optional (default=None)
         Specifies maximum tree depth.
 
-    min_samples_leaf: float (default: .05)
+    min_samples_leaf: float, optional (default=.05)
         Specifies the minimum part of the entire population that must be
         included in the leaf.
 
@@ -74,10 +87,10 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Training data of independent variable values.
 
-        y: array-like, shape (n_samples, )
+        y: array-like, shape = (n_samples, )
             Vector of target variable values corresponding to X data.
 
         Returns
@@ -114,12 +127,12 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             New data with n_samples as its number of samples.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples_new, n_features)
+        X_new: DataFrame, shape = (n_samples_new, n_features)
             X data with substituted values to their respective labels being
             string type.
 
@@ -158,17 +171,17 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: array-like, shape (n_samples, )
+        X: array-like, shape = (n_samples, )
             Vector passed as an one-dimensional array-like object where
             n_samples in the number of samples.
 
-        y: array-like, shape (n_samples, )
+        y: array-like, shape = (n_samples, )
             Vector of corresponding to X values passed as an one-dimensional
             array-like object where n_samples is the number of samples.
 
         Returns
         -------
-        bins: array, shape (n_bins, )
+        bins: array, shape = (n_bins, )
             Vector of successive cut-off points being upper limits of the
             corresponding intervals as well as containing a minimum value.
 
@@ -215,17 +228,17 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: array-like, shape (n_samples, )
+        X: array-like, shape = (n_samples, )
             Vector passed as an one-dimensional array-like object where
             n_samples is the number of samples.
 
-        y: array-like, shape (n_samples, )
+        y: array-like, shape = (n_samples, )
             Vector of corresponding to X values passed as an one-dimensional
             array-like object where n_samples is the number of samples.
 
         Returns
         -------
-        bins: array, shape (n_bins, )
+        bins: array, shape = (n_bins, )
             Vector of successive cut-off points being upper limits of the
             corresponding intervals as well as containing a minimum value.
 
@@ -275,13 +288,13 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: array-like, shape (n_samples, )
+        X: array-like, shape = (n_samples, )
             Vector passed as an one-dimensional array-like object where
             n_samples in the number of samples.
 
         y: Ignore
 
-        cut_points: array-like
+        cut_points: array-like, optional (default=None)
             Increasing monotonic sequence generating right-closed intervals.
             Values not allocated to any of the categories will be assigned to
             the empty set. For example given: cut_points=[1, 5, 9] will
@@ -289,27 +302,29 @@ class Discretizer(BaseEstimator, TransformerMixin):
             If you want to specify lower and upper limitations, set parameters:
             "min_val", "max_val" to a specific value.
 
-        n_quantiles: int (default: 4)
+        n_quantiles: int, optional (default=4)
             When cut_points are not declared it sets the number of quantiles
             to which the variable will be splitted. For example setting
             n_quantiles = 4 will return quartiles of X values between min_val
             and max_val.
 
-        labels: string {'auto'} or array-like
+        labels: string: {'auto'} or list, optional (default=None)
             Specifies returned bucket names, needs to be the same length as the
-            number of created buckets.
-            auto:
-                Assigns default values to group names by numbering them.
+            number of created buckets:
 
-        min_val: float
+            - `auto`:
+
+              Assigns default values to group names by numbering them.
+
+        min_val: float, optional (default=None)
             Determines lower limit value. If not specified takes -np.inf.
 
-        max_val: float
+        max_val: float, optional (default=None)
             Determines upper limit value. If not specified takes np.inf.
 
         Returns
         -------
-        X_new: array, shape (n_samples, )
+        X_new: array, shape = (n_samples, )
             Input data with its original values ​​being substituted with their
             respective labels.
 

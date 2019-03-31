@@ -82,7 +82,7 @@ class CategoricalBinarizer(BaseEstimator, TransformerMixin):
         -------
         X_new: DataFrame, shape (n_samples, n_features)
             X data with substituted binary-like category columns with its
-                corresponding binary values.
+            corresponding binary values.
         """
         try:
             getattr(self, 'columns_binarylike_')
@@ -277,14 +277,14 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
     manual_projection: dictionary
         Dictionary where keys are dtype names onto which specified columns
         will be projected and values are lists containing names of variables to
-        be projected onto given dtype.
-            Example:
-                manual_projection={
-                    float: ['foo', 'bar'],
-                    'category': ['baz'],
-                    int: ['qux'],
-                    bool: ['quux']
-                }
+        be projected onto given dtype. Example usage:
+
+        >>> manual_projection = {
+        >>>    float: ['foo', 'bar'],
+        >>>    'category': ['baz'],
+        >>>    int: ['qux'],
+        >>>    bool: ['quux']
+        >>> }
 
     num_to_float: boolean (default: True)
         Specifies whether numerical variables should be projected onto float

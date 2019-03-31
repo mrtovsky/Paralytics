@@ -69,7 +69,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         ----------
         X: DataFrame, shape (n_samples, n_features)
             Input data, where n_samples is the number of samples and n_features
-            is the number of features.
+            is the number of features.l
 
         Returns
         -------
@@ -173,17 +173,15 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    method: string {'pearson', 'kendall', 'spearman'} (default: 'pearson')
+    method: string, optional (default='pearson')
         Compute pairwise correlation of columns, excluding NA/null values
-        (basing on pandas.DataFrame.corr).
-            pearson:
-                standard correlation coefficient.
-            kendall:
-                Kendall Tau correlation coefficient.
-            spearman:
-                Spearman rank correlation.
+        (based on pandas.DataFrame.corr).
 
-    thresh: float (default: .8)
+        - `pearson`: Standard correlation coefficient.
+        - `kendall`: Kendall Tau correlation coefficient.
+        - `spearman`: Spearman rank correlation.
+
+    thresh: float (default=.8)
         Threshold value after which further rejection of variables is
         discontinued.
 
