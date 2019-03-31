@@ -1,0 +1,599 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>paralytics.discretization &mdash; Paralytics 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Paralytics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Paralytics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>paralytics.discretization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for paralytics.discretization</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pandas.core.algorithms</span> <span class="k">as</span> <span class="nn">algos</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
+
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.utils.validation</span> <span class="k">import</span> <span class="n">is_numeric</span>
+
+
+<div class="viewcode-block" id="Discretizer"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer">[docs]</a><span class="k">class</span> <span class="nc">Discretizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Discretizes variables in a given data set.</span>
+
+<span class="sd">    Reduces continuous variables to a finite number of intervals with use of</span>
+<span class="sd">    declared methods.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    method: string: {&#39;sapling&#39;, &#39;spearman&#39;}, optional (default=&#39;sapling&#39;)</span>
+<span class="sd">        The discretization method:</span>
+
+<span class="sd">        - `sapling`:</span>
+
+<span class="sd">          Submethod based on the DecisionTreeClassifier.</span>
+
+<span class="sd">        - `spearman`:</span>
+
+<span class="sd">          Submethod based on the Spearman&#39;s rang correlation. Divides the</span>
+<span class="sd">          values into subsequent quartiles as long as it doesn&#39;t get full</span>
+<span class="sd">          monotonicity. If this doesn&#39;t happen, it divides values with use</span>
+<span class="sd">          of quantiles into the declared minimum number of buckets.</span>
+<span class="sd">          Using this method with parameter formula set to &#39;median&#39; may throw</span>
+<span class="sd">          RuntimeWarning for fixed vector values in one of the input vectors</span>
+<span class="sd">          becuase there is no point in tracking mutual change of two vectors</span>
+<span class="sd">          when one vector doesn&#39;t change.</span>
+
+<span class="sd">    formula: string: {&#39;mean&#39;, &#39;median&#39;}, optional (default=&#39;mean&#39;)</span>
+<span class="sd">        Chooses the formula that representatives will be chosen to check the</span>
+<span class="sd">        Spearman&#39;s rank correlation:</span>
+
+<span class="sd">        - `mean`:</span>
+
+<span class="sd">          Takes the mean in every group as a representative value.</span>
+
+<span class="sd">        - `median`:</span>
+
+<span class="sd">          Takes the median in every group as a representative value.</span>
+
+<span class="sd">    max_bins: int, optional (default=20)</span>
+<span class="sd">        Maximum number of bins that will be created.</span>
+
+<span class="sd">    min_bins: int, optional (default=3)</span>
+<span class="sd">        Minimum number of bins that will be created.</span>
+
+<span class="sd">    max_tree_depth: int, optional (default=None)</span>
+<span class="sd">        Specifies maximum tree depth.</span>
+
+<span class="sd">    min_samples_leaf: float, optional (default=.05)</span>
+<span class="sd">        Specifies the minimum part of the entire population that must be</span>
+<span class="sd">        included in the leaf.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bins_: dictionary, length = n_features</span>
+<span class="sd">        Dictionary of upper limits of successive intervals excluding the</span>
+<span class="sd">        maximum value which length equals the number of features in the data</span>
+<span class="sd">        passed.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; import paralytics as prl</span>
+
+
+<span class="sd">    &gt;&gt;&gt; # Fix the seed for reproducibility.</span>
+<span class="sd">    &gt;&gt;&gt; SEED = 42</span>
+<span class="sd">    &gt;&gt;&gt; np.random.seed(SEED)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Create available categories for non-numeric variable.</span>
+<span class="sd">    &gt;&gt;&gt; sexes = [&#39;female&#39;, &#39;male&#39;, &#39;child&#39;]</span>
+
+<span class="sd">    &gt;&gt;&gt; # Generate example DataFrame.</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame({</span>
+<span class="sd">    &gt;&gt;&gt;     &#39;NormalVariable&#39;: np.random.normal(loc=0, scale=10, size=100),</span>
+<span class="sd">    &gt;&gt;&gt;     &#39;UniformVariable&#39;: np.random.uniform(low=0, high=100, size=100),</span>
+<span class="sd">    &gt;&gt;&gt;     &#39;IntVariable&#39;: np.random.randint(low=0, high=100, size=100),</span>
+<span class="sd">    &gt;&gt;&gt;     &#39;Sex&#39;: np.random.choice(sexes, 100, p=[.5, .3, .2])</span>
+<span class="sd">    &gt;&gt;&gt; })</span>
+
+<span class="sd">    &gt;&gt;&gt; # Generate response variable.</span>
+<span class="sd">    &gt;&gt;&gt; y = np.random.randint(low=0, high=2, size=100)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Do discretization.</span>
+<span class="sd">    &gt;&gt;&gt; discretizer = prl.Discretizer(max_bins=5)</span>
+<span class="sd">    &gt;&gt;&gt; X_discretized = discretizer.fit_transform(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; print(X_discretized.head())</span>
+<span class="sd">      NormalVariable UniformVariable   IntVariable     Sex</span>
+<span class="sd">    0  (-3.886, inf]   (33.151, inf]   (63.5, inf]   child</span>
+<span class="sd">    1  (-3.886, inf]  (-inf, 24.071]  (-inf, 28.0]  female</span>
+<span class="sd">    2  (-3.886, inf]  (-inf, 24.071]  (28.0, 63.5]  female</span>
+<span class="sd">    3  (-3.886, inf]   (33.151, inf]   (63.5, inf]    male</span>
+<span class="sd">    4  (-3.886, inf]   (33.151, inf]  (-inf, 28.0]    male</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;sapling&#39;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+                 <span class="n">max_bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">min_bins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_tree_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">min_samples_leaf</span><span class="o">=.</span><span class="mi">05</span><span class="p">):</span>
+        <span class="n">icf</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargvalues</span><span class="p">(</span><span class="n">icf</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Discretizer.fit"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit the binning with X by extracting upper limits of right-closed</span>
+<span class="sd">        intervals.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: pd.DataFrame, shape = (n_samples, n_features)</span>
+<span class="sd">            Training data of independent variable values.</span>
+
+<span class="sd">        y: array-like, shape = (n_samples, )</span>
+<span class="sd">            Vector of target variable values corresponding to X data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self: object</span>
+<span class="sd">            Returns the instance itself.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
+            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+
+        <span class="n">call_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bins_</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="c1"># Checking whether columns are non-binary numeric (excluding nans)</span>
+            <span class="k">if</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bins_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">call_method</span><span class="p">(</span>
+                        <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="o">**</span><span class="n">params</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">UniqueValuesError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">e</span><span class="o">.</span><span class="n">args</span> <span class="o">+=</span> <span class="p">(</span><span class="n">f</span><span class="s1">&#39;The problem occured for the column: </span><span class="si">{col}</span><span class="s1">.&#39;</span><span class="p">,)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bins_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bins_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="Discretizer.transform"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply discretization on X.</span>
+
+<span class="sd">        X is projected on the bins previously extracted from a training set.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: pd.DataFrame, shape = (n_samples, n_features)</span>
+<span class="sd">            New data with n_samples as its number of samples.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new: pd.DataFrame, shape = (n_samples_new, n_features)</span>
+<span class="sd">            X data with substituted values to their respective labels being</span>
+<span class="sd">            string type.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;bins_&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                               <span class="s1">&#39;Fitting is necessary before you do &#39;</span>
+                               <span class="s1">&#39;the transformation.&#39;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
+            <span class="s1">&#39;Input must be an instance of pd.DataFrame()&#39;</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
+                <span class="n">cut_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins_</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">cut_points</span> <span class="o">=</span> <span class="n">cut_points</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="n">cut_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cut_points</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">cut_points</span><span class="p">:</span>
+                    <span class="n">cut_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+
+                <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finger</span><span class="p">(</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+                    <span class="n">cut_points</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cut_points</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div>
+
+<div class="viewcode-block" id="Discretizer.sapling"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.sapling">[docs]</a>    <span class="k">def</span> <span class="nf">sapling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates finitely many intervals for a continuous vector using</span>
+<span class="sd">        DecisionTreeClassifier optimizing splits with respect to Gini impurity</span>
+<span class="sd">        criterium.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: array-like, shape = (n_samples, )</span>
+<span class="sd">            Vector passed as an one-dimensional array-like object where</span>
+<span class="sd">            n_samples in the number of samples.</span>
+
+<span class="sd">        y: array-like, shape = (n_samples, )</span>
+<span class="sd">            Vector of corresponding to X values passed as an one-dimensional</span>
+<span class="sd">            array-like object where n_samples is the number of samples.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bins: array, shape = (n_bins, )</span>
+<span class="sd">            Vector of successive cut-off points being upper limits of the</span>
+<span class="sd">            corresponding intervals as well as containing a minimum value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_bins</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UniqueValuesError</span><span class="p">(</span>
+                <span class="s1">&#39;Not enough unique values in the array. &#39;</span>
+                <span class="s1">&#39;Minimum </span><span class="si">{}</span><span class="s1"> unique values required.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_bins</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">clf</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span>
+            <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_tree_depth</span><span class="p">,</span>
+            <span class="n">min_samples_leaf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span><span class="p">,</span>
+            <span class="n">max_leaf_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_bins</span>
+        <span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="n">min_val</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">tree_</span><span class="o">.</span><span class="n">threshold</span><span class="p">[</span><span class="n">clf</span><span class="o">.</span><span class="n">tree_</span><span class="o">.</span><span class="n">feature</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="p">[</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">])</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+
+        <span class="n">cols_out_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bins</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">min_val</span> <span class="o">&lt;=</span> <span class="n">val</span> <span class="o">&lt;=</span> <span class="n">max_val</span><span class="p">):</span>
+                <span class="n">cols_out_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">cols_out_idx</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">bins</span></div>
+
+<div class="viewcode-block" id="Discretizer.spearman"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.spearman">[docs]</a>    <span class="k">def</span> <span class="nf">spearman</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates finitely many intervals for a continuous vector with use of</span>
+<span class="sd">        Spearman&#39;s rang correlation (supervised).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: array-like, shape = (n_samples, )</span>
+<span class="sd">            Vector passed as an one-dimensional array-like object where</span>
+<span class="sd">            n_samples is the number of samples.</span>
+
+<span class="sd">        y: array-like, shape = (n_samples, )</span>
+<span class="sd">            Vector of corresponding to X values passed as an one-dimensional</span>
+<span class="sd">            array-like object where n_samples is the number of samples.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bins: array, shape = (n_bins, )</span>
+<span class="sd">            Vector of successive cut-off points being upper limits of the</span>
+<span class="sd">            corresponding intervals as well as containing a minimum value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_bins</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UniqueValuesError</span><span class="p">(</span>
+                <span class="s1">&#39;Not enough unique values in the array. &#39;</span>
+                <span class="s1">&#39;Minimum </span><span class="si">{}</span><span class="s1"> unique values required.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_bins</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_bins</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">algos</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span>
+                <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+                <span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">include_lowest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">})</span>
+            <span class="n">df_gr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Bucket&#39;</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">df_gr</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">X</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">df_gr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">)()</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">df_gr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">)()</span><span class="o">.</span><span class="n">y</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_bins</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">bins</span></div>
+
+<div class="viewcode-block" id="Discretizer.finger"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.finger">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">finger</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cut_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">n_quantiles</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">min_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Manually bins continuous variable into the declared intervals.</span>
+
+<span class="sd">        If the cut-off points are not declared the split is made using</span>
+<span class="sd">        quantiles.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: array-like, shape = (n_samples, )</span>
+<span class="sd">            Vector passed as an one-dimensional array-like object where</span>
+<span class="sd">            n_samples in the number of samples.</span>
+
+<span class="sd">        y: Ignore</span>
+
+<span class="sd">        cut_points: array-like, optional (default=None)</span>
+<span class="sd">            Increasing monotonic sequence generating right-closed intervals.</span>
+<span class="sd">            Values not allocated to any of the categories will be assigned to</span>
+<span class="sd">            the empty set. For example given: cut_points=[1, 5, 9] will</span>
+<span class="sd">            generate intervals: [X.min(), 1], (1, 5], (5, 9], (9, X.max()].</span>
+<span class="sd">            If you want to specify lower and upper limitations, set parameters:</span>
+<span class="sd">            &quot;min_val&quot;, &quot;max_val&quot; to a specific value.</span>
+
+<span class="sd">        n_quantiles: int, optional (default=4)</span>
+<span class="sd">            When cut_points are not declared it sets the number of quantiles</span>
+<span class="sd">            to which the variable will be splitted. For example setting</span>
+<span class="sd">            n_quantiles = 4 will return quartiles of X values between min_val</span>
+<span class="sd">            and max_val.</span>
+
+<span class="sd">        labels: string: {&#39;auto&#39;} or list, optional (default=None)</span>
+<span class="sd">            Specifies returned bucket names, needs to be the same length as the</span>
+<span class="sd">            number of created buckets:</span>
+
+<span class="sd">            - `auto`:</span>
+
+<span class="sd">              Assigns default values to group names by numbering them.</span>
+
+<span class="sd">        min_val: float, optional (default=None)</span>
+<span class="sd">            Determines lower limit value. If not specified takes -np.inf.</span>
+
+<span class="sd">        max_val: float, optional (default=None)</span>
+<span class="sd">            Determines upper limit value. If not specified takes np.inf.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new: array, shape = (n_samples, )</span>
+<span class="sd">            Input data with its original values ​​being substituted with their</span>
+<span class="sd">            respective labels.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="n">min_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">min_val</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="k">if</span> <span class="n">max_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="c1"># Default break_points in case of no declaration of cut_points</span>
+        <span class="k">if</span> <span class="n">cut_points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">min_val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">max_val</span><span class="p">)]</span>
+            <span class="n">break_points</span> <span class="o">=</span> <span class="n">algos</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_quantiles</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">break_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+                <span class="n">cut_points</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cut_points</span><span class="p">)],</span>
+                <span class="p">[</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">break_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">break_points</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">labels</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">break_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">break_points</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">include_lowest</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Mateusz Zakrzewski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

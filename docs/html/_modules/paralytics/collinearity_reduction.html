@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>paralytics.collinearity_reduction &mdash; Paralytics 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Paralytics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Paralytics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>paralytics.collinearity_reduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for paralytics.collinearity_reduction</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">currentframe</span><span class="p">,</span> <span class="n">getargvalues</span>
+<span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="k">import</span> <span class="n">is_numeric_dtype</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.impute</span> <span class="k">import</span> <span class="n">SimpleImputer</span>
+<span class="kn">from</span> <span class="nn">statsmodels.stats.outliers_influence</span> <span class="k">import</span> <span class="n">variance_inflation_factor</span>
+
+
+<div class="viewcode-block" id="VIFSelector"><a class="viewcode-back" href="../../api/paralytics.VIFSelector.html#paralytics.VIFSelector">[docs]</a><span class="k">class</span> <span class="nc">VIFSelector</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Makes feature selection based on Variance Inflation Factor.</span>
+
+<span class="sd">    Calculates Variance Inflation Factor for a given dataset, in each iteration</span>
+<span class="sd">    discarding the variable with the highest VIF value and repeats this</span>
+<span class="sd">    process until it is not below the declared threshold.</span>
+
+<span class="sd">    Based on:</span>
+<span class="sd">    https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    thresh: float (default: 5.0)</span>
+<span class="sd">        Threshold value after which further rejection of variables is</span>
+<span class="sd">        discontinued.</span>
+
+<span class="sd">    impute: boolean (default: True)</span>
+<span class="sd">        Declares whether missing values imputation should be performed.</span>
+
+<span class="sd">    impute_strat: string {&#39;mean&#39;, &#39;median&#39;, &#39;most_frequent&#39;} (default: &#39;mean&#39;)</span>
+<span class="sd">        Declares imputation strategy for the scikit-learn SimpleImputer</span>
+<span class="sd">        transformation.</span>
+
+<span class="sd">    verbose: int, default = 0</span>
+<span class="sd">        Controls verbosity of output. If 0 there is no output, if 1 displays</span>
+<span class="sd">        which features were removed.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ---------</span>
+<span class="sd">    imputer_: estimator</span>
+<span class="sd">        The estimator by means of which missing values imputation is performed.</span>
+
+<span class="sd">    viffed_cols_: list</span>
+<span class="sd">        List of features from a given dataset that exceeded thresh.</span>
+
+<span class="sd">    kept_cols_: list</span>
+<span class="sd">        List of features that left after the vif procedure.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">impute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">impute_strat</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">icf</span> <span class="o">=</span> <span class="n">currentframe</span><span class="p">()</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">getargvalues</span><span class="p">(</span><span class="n">icf</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">impute</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imputer_</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="n">impute_strat</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VIFSelector.fit"><a class="viewcode-back" href="../../api/paralytics.VIFSelector.html#paralytics.VIFSelector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fits columns with a VIF value exceeding the threshold.</span>
+
+<span class="sd">        If specified, fits the imputer on X.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            Input data, where n_samples is the number of samples and n_features</span>
+<span class="sd">            is the number of features.l</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self: object</span>
+<span class="sd">            Returns the instance itself.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;imputer_&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imputer_</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">viffed_cols_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kept_cols_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viffing</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="VIFSelector.transform"><a class="viewcode-back" href="../../api/paralytics.VIFSelector.html#paralytics.VIFSelector.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply feature selection based on Variance Inflation Factor.</span>
+
+<span class="sd">        Until the maximum VIF in the given dataset does not exceed the declared</span>
+<span class="sd">        threshold, in every iteration independent variables&#39; VIF values are</span>
+<span class="sd">        calculated and the variable with the highest VIF value is removed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            Input data on which variables elimination will be applied.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new: DataFrame, shape (n_samples, n_features_new)</span>
+<span class="sd">            X data with variables remaining after applying feature elimination.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;viffed_cols_&#39;</span><span class="p">)</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;kept_cols_&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                               <span class="s1">&#39;Fitting is necessary before you do &#39;</span>
+                               <span class="s1">&#39;the transformation.&#39;</span><span class="p">)</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;imputer_&#39;</span><span class="p">):</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imputer_</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_new</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viffed_cols_</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_viffing</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;In every iteration removes variable with the highest VIF value.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
+            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+        <span class="k">assert</span> <span class="o">~</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="p">(</span>
+            <span class="s1">&#39;DataFrame cannot contain any missing values, consider changing &#39;</span>
+            <span class="s1">&#39;impute parameter to True.&#39;</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> \
+            <span class="s1">&#39;Only numeric dtypes are acceptable.&#39;</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">viffed_cols</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">keep_digging</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">keep_digging</span><span class="p">:</span>
+            <span class="n">keep_digging</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Last variable survived, I&#39;m stopping it right now!&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="n">vifs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">variance_inflation_factor</span><span class="p">(</span>
+                    <span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">]</span>
+
+            <span class="n">max_vif</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vifs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_vif</span> <span class="o">&gt;</span> <span class="n">thresh</span><span class="p">:</span>
+                <span class="n">max_loc</span> <span class="o">=</span> <span class="n">vifs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">max_vif</span><span class="p">)</span>
+                <span class="n">col_out</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">max_loc</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> with vif=</span><span class="si">{1:.2f}</span><span class="s1"> exceeds the threshold.&#39;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col_out</span><span class="p">,</span> <span class="n">max_vif</span><span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="n">X_new</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">col_out</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">viffed_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_out</span><span class="p">)</span>
+                <span class="n">keep_digging</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">kept_cols</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">viffed_cols</span><span class="p">,</span> <span class="n">kept_cols</span></div>
+
+
+<div class="viewcode-block" id="CorrelationReducer"><a class="viewcode-back" href="../../api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer">[docs]</a><span class="k">class</span> <span class="nc">CorrelationReducer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Removes correlated columns exceeding the thresh value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    method: string, optional (default=&#39;pearson&#39;)</span>
+<span class="sd">        Compute pairwise correlation of columns, excluding NA/null values</span>
+<span class="sd">        (based on pandas.DataFrame.corr).</span>
+
+<span class="sd">        - `pearson`: Standard correlation coefficient.</span>
+<span class="sd">        - `kendall`: Kendall Tau correlation coefficient.</span>
+<span class="sd">        - `spearman`: Spearman rank correlation.</span>
+
+<span class="sd">    thresh: float (default=.8)</span>
+<span class="sd">        Threshold value after which further rejection of variables is</span>
+<span class="sd">        discontinued.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    correlated_cols_: list</span>
+<span class="sd">        List of correlated features from a given dataset that exceeded thresh.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">8</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;pearson&#39;</span><span class="p">):</span>
+        <span class="n">icf</span> <span class="o">=</span> <span class="n">currentframe</span><span class="p">()</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">getargvalues</span><span class="p">(</span><span class="n">icf</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CorrelationReducer.fit"><a class="viewcode-back" href="../../api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fits columns with a correlation coefficients exceeding the threshold.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            Input data, where n_samples is the number of samples and n_features</span>
+<span class="sd">            is the number of features.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self: object</span>
+<span class="sd">            Returns the instance itself.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
+            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">correlated_cols_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce_corr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="CorrelationReducer.transform"><a class="viewcode-back" href="../../api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply feature selection based on correlation coefficients.</span>
+
+<span class="sd">        Removes correlated features with coefficient higher than the threshold</span>
+<span class="sd">        value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            Input data on which variables elimination will be applied.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new: DataFrame, shape (n_samples, n_features_new)</span>
+<span class="sd">            X data with variables remaining after applying feature elimination.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;correlated_cols_&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                               <span class="s1">&#39;Fitting is necessary before you do &#39;</span>
+                               <span class="s1">&#39;the transformation.&#39;</span><span class="p">)</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlated_cols_</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_new</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_reduce_corr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns correlated columns exceeding the thresh value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+        <span class="c1"># Create matrix of ones of the same size as the dataframe</span>
+        <span class="n">arr_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="c1"># Set the value above the main diagonal to zero creating L-matrix</span>
+        <span class="n">L_arr_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">arr_one</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">L_arr_one</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">corr_cols</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">thresh</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="n">cols_out</span> <span class="o">=</span> <span class="n">corr_cols</span><span class="p">[</span><span class="n">corr_cols</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">cols_out</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Mateusz Zakrzewski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

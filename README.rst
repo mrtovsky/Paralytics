@@ -5,7 +5,7 @@ Paralytics
 .. image:: https://img.shields.io/badge/python-3.7-blue.svg
     :target: http://badge.fury.io/py/Paralytics
 
-* Documentation: https://Paralytics.github.io/Paralytics.
+* Documentation: https://paralytics.github.io/Paralytics/.
 
 What is it?
 -----------

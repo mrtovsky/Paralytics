@@ -1,0 +1,468 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>paralytics.encoding &mdash; Paralytics 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Paralytics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Paralytics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>paralytics.encoding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for paralytics.encoding</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">currentframe</span><span class="p">,</span> <span class="n">getargvalues</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">KFold</span>
+
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="TargetEncoder"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder">[docs]</a><span class="k">class</span> <span class="nc">TargetEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Encodes categorical features with the corresponding target value.</span>
+
+<span class="sd">    If cv param is specified, performs determination of mean values on the way</span>
+<span class="sd">    of cross validation within inner cross validation. As a result for each of</span>
+<span class="sd">    the outside folds received target aggregated values will be less biased.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    columns: list</span>
+<span class="sd">        List of DataFrame columns&#39; names on which target encoding should be</span>
+<span class="sd">        performed. If not specified all categorical columns are taken.</span>
+
+<span class="sd">    nan_as_category: boolean (default: True)</span>
+<span class="sd">        If True includes NaNs as one of the categories and also applies</span>
+<span class="sd">        target encoding for this subgroup.</span>
+
+<span class="sd">    cv: int</span>
+<span class="sd">        Number of cross-validation folds.</span>
+
+<span class="sd">    inner_cv: int</span>
+<span class="sd">        Number of inner cross-validation folds.</span>
+
+<span class="sd">    shuffle: boolean (default: True)</span>
+<span class="sd">        Whether to shuffle the data before splitting into batches.</span>
+
+<span class="sd">    alpha: int (default: 5)</span>
+<span class="sd">        Regularization value (times of global mean added to the weighted mean</span>
+<span class="sd">        of each category). The larger, the more conservative the algorithm</span>
+<span class="sd">        will be. If you want to use the standard mean just set alpha to 0.</span>
+
+<span class="sd">    random_state: int</span>
+<span class="sd">        Random state for sklearn algorithms.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cat_aggval_: dict, length = n_cat_features</span>
+<span class="sd">        Dictionary of dictionaries of corresponding aggregated values to given</span>
+<span class="sd">        subgroups. The key is the column name and the value is the dictionary</span>
+<span class="sd">        in which the key is the subgroup name and the value is the fitted</span>
+<span class="sd">        target aggregated value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nan_as_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">cv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inner_cv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">icf</span> <span class="o">=</span> <span class="n">currentframe</span><span class="p">()</span>
+        <span class="n">args</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">getargvalues</span><span class="p">(</span><span class="n">icf</span><span class="p">)</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TargetEncoder.fit"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fits corresponding target aggregated values to categorical subgroups.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            Training data of independent categorical variables.</span>
+
+<span class="sd">        y: array-like, shape (n_samples, )</span>
+<span class="sd">            Vector of target variable values corresponding to X data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self: object</span>
+<span class="sd">            Returns the instance itself.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
+            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()!&#39;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="s1">&#39;X and y must be the same length!&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;No column selected. Make sure you have variables of &#39;</span>
+                    <span class="s1">&#39;&quot;category&quot; type in your dataframe or explicitly provide &#39;</span>
+                    <span class="s1">&#39;the column names you want to target encode.&#39;</span><span class="p">,</span>
+                    <span class="n">NothingSelectedWarning</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cat_aggval_</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">agg_dict</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_penalized_mean</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nan_as_category</span> <span class="ow">and</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">nan_val</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_penalized_mean</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+                <span class="p">)</span>
+                <span class="n">agg_dict</span><span class="p">[</span><span class="s1">&#39;NaNCategory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan_val</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cat_aggval_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">agg_dict</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="TargetEncoder.transform"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies target encoding on X.</span>
+
+<span class="sd">        X is target encoded with the aggregated values kept in the</span>
+<span class="sd">        `cat_aggval_` and for the training data encoding is made with</span>
+<span class="sd">        additional spread obtained in the cross-validation within</span>
+<span class="sd">        cross-validation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            New data with n_samples as its number of samples.</span>
+
+<span class="sd">        y: array-like, shape (n_samples, )</span>
+<span class="sd">            Vector of target variable values corresponding to X data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            X data with substituted values to their respective target</span>
+<span class="sd">            aggregated values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;cat_aggval_&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">Fitting is necessary before &#39;</span>
+                <span class="s1">&#39;you do the transformation!&#39;</span>
+            <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
+            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()!&#39;</span>
+
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nan_as_category</span><span class="p">:</span>
+            <span class="n">missing_col</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">X_new</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">col_to_fill</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">missing_col</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">col_to_fill</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span>
+                    <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">(</span><span class="s1">&#39;NaNCategory&#39;</span><span class="p">)</span>
+            <span class="n">X_new</span><span class="p">[</span><span class="n">col_to_fill</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col_to_fill</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">&#39;NaNCategory&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_aggval_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_cv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s1">&#39;When cv param is specified you must assign a value to the &#39;</span>
+                <span class="s1">&#39;inner_cv param as well!&#39;</span>
+            <span class="p">)</span>
+            <span class="n">X_new</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_train_cv</span><span class="p">(</span>
+                <span class="n">X_new</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">y</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">X_new</span></div>
+
+<div class="viewcode-block" id="TargetEncoder.fit_transform"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit to data then transform it.</span>
+
+<span class="sd">        Fits transformer to X and y and returns transformed version of X.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            Training data of independent categorical variables.</span>
+
+<span class="sd">        y: array-like, shape (n_samples, )</span>
+<span class="sd">            Vector of target variable values corresponding to X data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">            X data with substituted values to their respective target</span>
+<span class="sd">            aggregated values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_transform_train_cv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is only applied for a training set.</span>
+
+<span class="sd">        By using only the part of the data (k-1 folds) it estimates the</span>
+<span class="sd">        encoding value for the leftover fold. It performs those activities</span>
+<span class="sd">        independently for each category. As a result we get synthetic values</span>
+<span class="sd">        located more dense in a given space.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span>
+            <span class="n">n_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cv</span><span class="p">,</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">train_idx</span><span class="p">,</span> <span class="n">encode_idx</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+            <span class="n">inner_kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span>
+                <span class="n">n_splits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inner_cv</span><span class="p">,</span>
+                <span class="n">shuffle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">,</span>
+                <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Declaring list of DataFrames that will store inner mean values.</span>
+            <span class="n">mean_df_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{col}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()})</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">]</span>
+            <span class="n">inner_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">loop_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">inner_train_idx</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="nb">enumerate</span><span class="p">(</span><span class="n">inner_kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">inner_df</span><span class="p">))</span>
+            <span class="p">):</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                    <span class="n">agg_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                        <span class="n">inner_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">inner_train_idx</span><span class="p">]</span>
+                        <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">target</span>
+                        <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+                    <span class="n">mean_df_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_df_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                        <span class="n">agg_values</span><span class="p">,</span>
+                        <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span>
+                        <span class="n">on</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{col}</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;_{loop_idx-1}&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;_</span><span class="si">{loop_idx}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="n">mean_df_list</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_penalized_mean</span><span class="p">,</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">n_instances</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span>
+                    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">col_idx</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mean_df_list</span><span class="p">)</span>
+            <span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">loop_idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">encode_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="n">mean_df_list</span><span class="p">[</span><span class="n">loop_idx</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">X_new</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_penalized_mean</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">n_instances</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Further regularization.</span>
+
+<span class="sd">        Adds alpha value multiplied by the mean of the whole training</span>
+<span class="sd">        data to the weighted average.</span>
+
+<span class="sd">        Formula: (p_c * n_c + p_global * alpha) / (n_c + alpha), where:</span>
+<span class="sd">            p_c: mean for a category</span>
+<span class="sd">            n_c: number of instances in a category</span>
+<span class="sd">            p_global: global target mean</span>
+<span class="sd">            alpha: regularization parameter</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n_instances</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_instances</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">series</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_instances</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">alpha</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">n_instances</span> <span class="o">+</span> <span class="n">alpha</span>
+        <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Mateusz Zakrzewski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
