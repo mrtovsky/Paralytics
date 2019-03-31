@@ -69,6 +69,42 @@ class Discretizer(BaseEstimator, TransformerMixin):
         maximum value which length equals the number of features in the data
         passed.
 
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import pandas as pd
+    >>> import paralytics as prl
+
+
+    >>> # Fix the seed for reproducibility.
+    >>> SEED = 42
+    >>> np.random.seed(SEED)
+
+    >>> # Create available categories for non-numeric variable.
+    >>> sexes = ['female', 'male', 'child']
+
+    >>> # Generate example DataFrame.
+    >>> X = pd.DataFrame({
+    >>>     'NormalVariable': np.random.normal(loc=0, scale=10, size=100),
+    >>>     'UniformVariable': np.random.uniform(low=0, high=100, size=100),
+    >>>     'IntVariable': np.random.randint(low=0, high=100, size=100),
+    >>>     'Sex': np.random.choice(sexes, 100, p=[.5, .3, .2])
+    >>> })
+
+    >>> # Generate response variable.
+    >>> y = np.random.randint(low=0, high=2, size=100)
+
+    >>> # Do discretization.
+    >>> discretizer = prl.Discretizer(max_bins=5)
+    >>> X_discretized = discretizer.fit_transform(X, y)
+    >>> print(X_discretized.head())
+      NormalVariable UniformVariable   IntVariable     Sex
+    0  (-3.886, inf]   (33.151, inf]   (63.5, inf]   child
+    1  (-3.886, inf]  (-inf, 24.071]  (-inf, 28.0]  female
+    2  (-3.886, inf]  (-inf, 24.071]  (28.0, 63.5]  female
+    3  (-3.886, inf]   (33.151, inf]   (63.5, inf]    male
+    4  (-3.886, inf]   (33.151, inf]  (-inf, 28.0]    male
+
     """
 
     def __init__(self, method='sapling', formula='mean',
@@ -87,7 +123,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape = (n_samples, n_features)
+        X: pd.DataFrame, shape = (n_samples, n_features)
             Training data of independent variable values.
 
         y: array-like, shape = (n_samples, )
@@ -127,12 +163,12 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape = (n_samples, n_features)
+        X: pd.DataFrame, shape = (n_samples, n_features)
             New data with n_samples as its number of samples.
 
         Returns
         -------
-        X_new: DataFrame, shape = (n_samples_new, n_features)
+        X_new: pd.DataFrame, shape = (n_samples_new, n_features)
             X data with substituted values to their respective labels being
             string type.
 
@@ -145,19 +181,24 @@ class Discretizer(BaseEstimator, TransformerMixin):
                                'the transformation.')
 
         assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()'
+            'Input must be an instance of pd.DataFrame()'
 
         X_new = pd.DataFrame()
         for col in X.columns.values:
             if is_numeric(X[col]):
                 cut_points = self.bins_[col][1:-1]
 
+                try:
+                    cut_points = cut_points.tolist()
+                except AttributeError:
+                    cut_points = list(cut_points)
+
                 if not cut_points:
                     cut_points = self.bins_[col]
 
                 X_new[col] = self.finger(
                     X[col],
-                    cut_points=cut_points
+                    cut_points=np.array(cut_points)
                 ).astype(str)
             else:
                 X_new[col] = X[col].astype(str)

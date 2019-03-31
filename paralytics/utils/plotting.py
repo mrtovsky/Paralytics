@@ -1,12 +1,9 @@
 """Utilities for drawing plots"""
 
 
-import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-from sklearn.model_selection import learning_curve
 
 
 def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
