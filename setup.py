@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='paralytics',
-    version='0.2',
+    version='0.2.1',
     author='Mateusz Zakrzewski',
     description='Python Analytical Scripts.',
     long_description=open('README.rst').read(),

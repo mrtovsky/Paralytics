@@ -5,7 +5,7 @@ Paralytics
 .. image:: https://img.shields.io/badge/python-3.7-blue.svg
     :target: http://badge.fury.io/py/Paralytics
 
-* Documentation: https://paralytics.github.io/Paralytics/.
+* Documentation: https://mrtovsky.github.io/Paralytics/.
 
 What is it?
 -----------
@@ -65,7 +65,7 @@ The easiest way to install the package is using ``pip``: ::
 
     pip install Paralytics
 
-or directly from the github `repository <https://github.com/Paralytics/Paralytics.git>`_: ::
+or directly from the github `repository <https://github.com/mrtovsky/Paralytics.git>`_: ::
 
     pip install git+https://github.com/Paralytics/Paralytics.git
 
