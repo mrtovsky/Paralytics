@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -151,12 +152,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for paralytics.utils.importing</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utilities for importing files.&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">csv</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
 
-<div class="viewcode-block" id="get_csv"><a class="viewcode-back" href="../../../api/paralytics.utils.get_csv.html#paralytics.utils.get_csv">[docs]</a><span class="k">def</span> <span class="nf">get_csv</span><span class="p">(</span><span class="n">in_filename</span><span class="p">,</span> <span class="n">cols_to_keep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;get_csv&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_csv"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.get_csv.html#paralytics.utils.get_csv">[docs]</a><span class="k">def</span> <span class="nf">get_csv</span><span class="p">(</span><span class="n">in_filename</span><span class="p">,</span> <span class="n">cols_to_keep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get csv as a list of OrderedDicts.&quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">in_filename</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csv_file</span><span class="p">:</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>

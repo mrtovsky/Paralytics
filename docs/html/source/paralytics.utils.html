@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">History</a></li>
 </ul>
 
@@ -154,12 +155,9 @@
             
   <div class="section" id="paralytics-utils-package">
 <h1>paralytics.utils package<a class="headerlink" href="#paralytics-utils-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="id1">
-<h2>paralytics.utils Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-paralytics.utils"></span><div class="section" id="functions">
+<div class="section" id="module-paralytics.utils">
+<span id="submodules"></span><h2>Submodules<a class="headerlink" href="#module-paralytics.utils" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="functions">
 <h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-center">
 <colgroup>
@@ -167,28 +165,28 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../api/paralytics.utils.check_column_existance.html#paralytics.utils.check_column_existance" title="paralytics.utils.check_column_existance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_column_existance</span></code></a>(X, cols)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_column_existance</span></code>(X, cols)</p></td>
 <td><p>Checks whether all listed columns are in a given DataFrame.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../api/paralytics.utils.check_uniq.html#paralytics.utils.check_uniq" title="paralytics.utils.check_uniq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_uniq</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="reference/api/paralytics.utils.check_uniq.html#paralytics.utils.check_uniq" title="paralytics.utils.check_uniq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_uniq</span></code></a>(X)</p></td>
 <td><p>Checks whether all input data values are unique.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../api/paralytics.utils.find_sparsity.html#paralytics.utils.find_sparsity" title="paralytics.utils.find_sparsity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_sparsity</span></code></a>(X[, thresh])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/api/paralytics.utils.find_sparsity.html#paralytics.utils.find_sparsity" title="paralytics.utils.find_sparsity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_sparsity</span></code></a>(X[, thresh])</p></td>
 <td><p>Finds columns with highly sparse categories.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">force_context_manager</span></code>(cls)</p></td>
 <td><p>Prevents user from calling objects of decorated classes without using the <cite>with</cite> statement.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../api/paralytics.utils.get_csv.html#paralytics.utils.get_csv" title="paralytics.utils.get_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_csv</span></code></a>(in_filename[, cols_to_keep, dtype])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="reference/api/paralytics.utils.get_csv.html#paralytics.utils.get_csv" title="paralytics.utils.get_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_csv</span></code></a>(in_filename[, cols_to_keep, dtype])</p></td>
 <td><p>Get csv as a list of OrderedDicts.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../api/paralytics.utils.is_numeric.html#paralytics.utils.is_numeric" title="paralytics.utils.is_numeric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_numeric</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="reference/api/paralytics.utils.is_numeric.html#paralytics.utils.is_numeric" title="paralytics.utils.is_numeric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_numeric</span></code></a>(X)</p></td>
 <td><p>Checks whether given vector contains numeric-only values excluding boolean vectors.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_numeric_dtype</span></code>(arr_or_dtype)</p></td>
 <td><p>Check whether the provided array or dtype is of a numeric dtype.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../api/paralytics.utils.multipleplots.html#paralytics.utils.multipleplots" title="paralytics.utils.multipleplots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multipleplots</span></code></a>(data, x[, nrows, ncols, …])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="reference/api/paralytics.utils.multipleplots.html#paralytics.utils.multipleplots" title="paralytics.utils.multipleplots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multipleplots</span></code></a>(data, x[, nrows, ncols, …])</p></td>
 <td><p>Paints any specified plot from the seaborn library multiple times.</p></td>
 </tr>
 </tbody>

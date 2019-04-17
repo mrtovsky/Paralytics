@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
 </ul>
 
@@ -162,7 +163,12 @@
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="o">*</span>
 
 
-<div class="viewcode-block" id="TargetEncoder"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder">[docs]</a><span class="k">class</span> <span class="nc">TargetEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;TargetEncoder&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="TargetEncoder"><a class="viewcode-back" href="../../source/reference/api/paralytics.TargetEncoder.html#paralytics.TargetEncoder">[docs]</a><span class="k">class</span> <span class="nc">TargetEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Encodes categorical features with the corresponding target value.</span>
 
 <span class="sd">    If cv param is specified, performs determination of mean values on the way</span>
@@ -171,38 +177,52 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    columns: list</span>
+<span class="sd">    columns: list, optional (default=None)</span>
 <span class="sd">        List of DataFrame columns&#39; names on which target encoding should be</span>
 <span class="sd">        performed. If not specified all categorical columns are taken.</span>
 
-<span class="sd">    nan_as_category: boolean (default: True)</span>
+<span class="sd">    nan_as_category: boolean, optional (default=True)</span>
 <span class="sd">        If True includes NaNs as one of the categories and also applies</span>
 <span class="sd">        target encoding for this subgroup.</span>
 
-<span class="sd">    cv: int</span>
+<span class="sd">    cv: int, optional (default=None)</span>
 <span class="sd">        Number of cross-validation folds.</span>
 
-<span class="sd">    inner_cv: int</span>
+<span class="sd">    inner_cv: int, optional (default=None)</span>
 <span class="sd">        Number of inner cross-validation folds.</span>
 
-<span class="sd">    shuffle: boolean (default: True)</span>
+<span class="sd">    shuffle: boolean, optional (default=True)</span>
 <span class="sd">        Whether to shuffle the data before splitting into batches.</span>
 
-<span class="sd">    alpha: int (default: 5)</span>
+<span class="sd">    alpha: int, optional (default=5)</span>
 <span class="sd">        Regularization value (times of global mean added to the weighted mean</span>
 <span class="sd">        of each category). The larger, the more conservative the algorithm</span>
 <span class="sd">        will be. If you want to use the standard mean just set alpha to 0.</span>
 
-<span class="sd">    random_state: int</span>
+<span class="sd">    random_state: int, optional (default=None)</span>
 <span class="sd">        Random state for sklearn algorithms.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    cat_aggval_: dict, length = n_cat_features</span>
+<span class="sd">    cat_aggval_: dict</span>
 <span class="sd">        Dictionary of dictionaries of corresponding aggregated values to given</span>
 <span class="sd">        subgroups. The key is the column name and the value is the dictionary</span>
 <span class="sd">        in which the key is the subgroup name and the value is the fitted</span>
 <span class="sd">        target aggregated value.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When setting cross-validation parameters remember that all categories must</span>
+<span class="sd">    be sufficiently represented. If a category is sparse, because of the lack</span>
+<span class="sd">    of representation in one of the k-folds, NaNs in this fold will be</span>
+<span class="sd">    generated because there are no values ​​recorded from which the statistics</span>
+<span class="sd">    are calculated. A simple solution is to apply the transformator:</span>
+<span class="sd">    `preprocessing.CategoricalGrouper` that groups sparse categories into one</span>
+<span class="sd">    category, before using the target encoding.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    paralytics.preprocessing.CategoricalGrouper</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nan_as_category</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -216,15 +236,15 @@
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TargetEncoder.fit"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetEncoder.fit"><a class="viewcode-back" href="../../source/reference/api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits corresponding target aggregated values to categorical subgroups.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape=(n_samples, n_features)</span>
 <span class="sd">            Training data of independent categorical variables.</span>
 
-<span class="sd">        y: array-like, shape (n_samples, )</span>
+<span class="sd">        y: array-like, shape=(n_samples, )</span>
 <span class="sd">            Vector of target variable values corresponding to X data.</span>
 
 <span class="sd">        Returns</span>
@@ -263,7 +283,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="TargetEncoder.transform"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetEncoder.transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Applies target encoding on X.</span>
 
 <span class="sd">        X is target encoded with the aggregated values kept in the</span>
@@ -273,15 +293,15 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            New data with n_samples as its number of samples.</span>
 
-<span class="sd">        y: array-like, shape (n_samples, )</span>
+<span class="sd">        y: array-like, shape = (n_samples, )</span>
 <span class="sd">            Vector of target variable values corresponding to X data.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        X_new: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X_new: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            X data with substituted values to their respective target</span>
 <span class="sd">            aggregated values.</span>
 
@@ -308,7 +328,7 @@
 
         <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_aggval_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+                <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cat_aggval_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">inner_cv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
@@ -317,25 +337,25 @@
             <span class="p">)</span>
             <span class="n">X_new</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_train_cv</span><span class="p">(</span>
                 <span class="n">X_new</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">],</span> <span class="n">y</span>
-            <span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X_new</span></div>
 
-<div class="viewcode-block" id="TargetEncoder.fit_transform"><a class="viewcode-back" href="../../api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetEncoder.fit_transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.TargetEncoder.html#paralytics.TargetEncoder.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit to data then transform it.</span>
 
 <span class="sd">        Fits transformer to X and y and returns transformed version of X.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            Training data of independent categorical variables.</span>
 
-<span class="sd">        y: array-like, shape (n_samples, )</span>
+<span class="sd">        y: array-like, shape = (n_samples, )</span>
 <span class="sd">            Vector of target variable values corresponding to X data.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        X_new: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X_new: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            X data with substituted values to their respective target</span>
 <span class="sd">            aggregated values.</span>
 
@@ -371,13 +391,13 @@
             <span class="n">mean_df_list</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{col}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()})</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
             <span class="p">]</span>
-            <span class="n">inner_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">inner_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">train_idx</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">loop_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">inner_train_idx</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span>
                 <span class="nb">enumerate</span><span class="p">(</span><span class="n">inner_kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">inner_df</span><span class="p">))</span>
             <span class="p">):</span>
                 <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
                     <span class="n">agg_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-                        <span class="n">inner_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">inner_train_idx</span><span class="p">]</span>
+                        <span class="n">inner_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">inner_train_idx</span><span class="p">,</span> <span class="p">:]</span>
                         <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">target</span>
                         <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>

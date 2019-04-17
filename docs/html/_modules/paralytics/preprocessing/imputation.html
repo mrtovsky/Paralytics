@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -158,7 +159,12 @@
 <span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="k">import</span> <span class="n">is_numeric</span>
 
 
-<div class="viewcode-block" id="Imputer"><a class="viewcode-back" href="../../../api/paralytics.preprocessing.Imputer.html#paralytics.preprocessing.Imputer">[docs]</a><span class="k">class</span> <span class="nc">Imputer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Imputer&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="Imputer"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.Imputer.html#paralytics.preprocessing.Imputer">[docs]</a><span class="k">class</span> <span class="nc">Imputer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Imputes missing values of the dataframe.</span>
 
 <span class="sd">    Imputes missing values with the method adjusted based on the column type.</span>
@@ -168,15 +174,15 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">        columns: list</span>
+<span class="sd">        columns: list, optional (default=None)</span>
 <span class="sd">            Defines columns which missings will be imputed. If not specified</span>
 <span class="sd">            imputes all of the dataframe columns.</span>
 
-<span class="sd">        numerical_method: string {mean, median} (default: mean)</span>
+<span class="sd">        numerical_method: string {mean, median}, optional (default=&#39;mean&#39;)</span>
 <span class="sd">            Method that will be applied to impute numerical columns. Accepts</span>
 <span class="sd">            all of the pd.DataFrame methods returning some statistic.</span>
 
-<span class="sd">        categorical_method: string {mode} (default: mode)</span>
+<span class="sd">        categorical_method: string {mode}, optional (default=&#39;mode&#39;)</span>
 <span class="sd">            Method that will be applied to impute categorical columns. Accepts</span>
 <span class="sd">            all of the pd.DataFrame methods returning some statistic.</span>
 
@@ -194,12 +200,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">numerical_method</span> <span class="o">=</span> <span class="n">numerical_method</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">categorical_method</span> <span class="o">=</span> <span class="n">categorical_method</span>
 
-<div class="viewcode-block" id="Imputer.fit"><a class="viewcode-back" href="../../../api/paralytics.preprocessing.Imputer.html#paralytics.preprocessing.Imputer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Imputer.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.Imputer.html#paralytics.preprocessing.Imputer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits corresponding imputation values to the X columns.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            Training data with missing values.</span>
 
 <span class="sd">        y: ignore</span>
@@ -230,17 +236,17 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Imputer.transform"><a class="viewcode-back" href="../../../api/paralytics.preprocessing.Imputer.html#paralytics.preprocessing.Imputer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="Imputer.transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.Imputer.html#paralytics.preprocessing.Imputer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Applies missing values imputation to X.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            New data with n_samples as its number of samples.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        X_new: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X_new: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            X data with substituted missing values to their respective</span>
 <span class="sd">            imputation values from `imputing_dict_`.</span>
 

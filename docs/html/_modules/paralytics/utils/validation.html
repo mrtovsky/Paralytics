@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -151,33 +152,40 @@
            <div itemprop="articleBody">
             
   <h1>Source code for paralytics.utils.validation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utilities for input validation&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utilities for input validation.&quot;&quot;&quot;</span>
 
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-
 <span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="k">import</span> <span class="n">is_numeric_dtype</span>
 
 
-<div class="viewcode-block" id="check_uniq"><a class="viewcode-back" href="../../../api/paralytics.utils.check_uniq.html#paralytics.check_uniq">[docs]</a><span class="k">def</span> <span class="nf">check_uniq</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;check_uniq&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;check_column_existence&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;is_numeric&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;find_sparsity&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="check_uniq"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_uniq.html#paralytics.utils.check_uniq">[docs]</a><span class="k">def</span> <span class="nf">check_uniq</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether all input data values are unique.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X: array-like, shape (n_samples, )</span>
+<span class="sd">    X: array-like, shape = (n_samples, )</span>
 <span class="sd">        Vector to check whether it cointains unique values.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    bool</span>
+<span class="sd">    boolean: Whether or not all input data values are unique.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_column_existance"><a class="viewcode-back" href="../../../api/paralytics.utils.check_column_existance.html#paralytics.check_column_existance">[docs]</a><span class="k">def</span> <span class="nf">check_column_existance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+<div class="viewcode-block" id="check_column_existence"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_column_existence.html#paralytics.utils.check_column_existence">[docs]</a><span class="k">def</span> <span class="nf">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether all listed columns are in a given DataFrame.</span>
 
 <span class="sd">    Parameters</span>
@@ -208,13 +216,13 @@
     <span class="k">return</span> <span class="n">out</span></div>
 
 
-<div class="viewcode-block" id="is_numeric"><a class="viewcode-back" href="../../../api/paralytics.utils.is_numeric.html#paralytics.is_numeric">[docs]</a><span class="k">def</span> <span class="nf">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="is_numeric"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.is_numeric.html#paralytics.utils.is_numeric">[docs]</a><span class="k">def</span> <span class="nf">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether given vector contains numeric-only values excluding</span>
 <span class="sd">    boolean vectors.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X: array-like, shape (n_samples, )</span>
+<span class="sd">    X: array-like, shape = (n_samples, )</span>
 <span class="sd">        Vector where n_samples is the number of samples.</span>
 
 <span class="sd">    Returns</span>
@@ -225,7 +233,7 @@
     <span class="k">return</span> <span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="find_sparsity"><a class="viewcode-back" href="../../../api/paralytics.utils.find_sparsity.html#paralytics.find_sparsity">[docs]</a><span class="k">def</span> <span class="nf">find_sparsity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">01</span><span class="p">):</span>
+<div class="viewcode-block" id="find_sparsity"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.find_sparsity.html#paralytics.utils.find_sparsity">[docs]</a><span class="k">def</span> <span class="nf">find_sparsity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">01</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds columns with highly sparse categories.</span>
 
 <span class="sd">    For categorical and binary features finds columns where categories with</span>
@@ -239,7 +247,7 @@
 <span class="sd">    X: DataFrame</span>
 <span class="sd">        Data to be checked for sparsity.</span>
 
-<span class="sd">    thresh: float (default: .01)</span>
+<span class="sd">    thresh: float, optional (default=.01)</span>
 <span class="sd">        Fraction of one of the categories under which the sparseness will be</span>
 <span class="sd">        reported.</span>
 

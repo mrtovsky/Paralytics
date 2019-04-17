@@ -48,6 +48,7 @@ extensions = [
     'numpydoc'
 ]
 
+automodapi_toctreedirnm = 'source/reference/api'
 automodsum_inherited_members = False
 class_members_toctree = False
 numpydoc_show_class_members = False

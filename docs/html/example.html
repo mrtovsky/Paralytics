@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="History" href="changelog.html" />
+    <link rel="next" title="API Reference" href="source/reference/index.html" />
     <link rel="prev" title="Paralytics" href="readme.html" /> 
 </head>
 
@@ -90,8 +90,10 @@
 <li class="toctree-l1"><a class="reference internal" href="readme.html">Paralytics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#discretization">Discretization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#forcing-context-manager">Forcing Context Manager</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">History</a></li>
 </ul>
 
@@ -193,8 +195,8 @@ recognize which variables are of the continuous type.</p>
 <span class="n">X_discretized</span> <span class="o">=</span> <span class="n">discretizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <cite>X_discretized</cite> dataframe is already a fully discretized equivalent of the
-input dataframe <cite>X</cite>. First five rows will look like presented below.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">X_discretized</span></code> dataframe is already a fully discretized equivalent of the
+input dataframe <code class="docutils literal notranslate"><span class="pre">X</span></code>. First five rows will look like presented below.</p>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 7%" />
@@ -245,6 +247,62 @@ input dataframe <cite>X</cite>. First five rows will look like presented below.<
 </tbody>
 </table>
 </div>
+<div class="section" id="forcing-context-manager">
+<h2>Forcing Context Manager<a class="headerlink" href="#forcing-context-manager" title="Permalink to this headline">¶</a></h2>
+<p>Let’s suppose that we want to create a class which methods will only be available if
+the instance is created using the context manager. We will get this functionality in the following way.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">paralytics</span> <span class="kn">import</span> <span class="n">force_context_manager</span>
+
+
+<span class="nd">@force_context_manager</span>
+<span class="k">class</span> <span class="nc">ExamplePrinter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;You just initiated me.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;I am opened.&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;...and now I am closed.&#39;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">example</span> <span class="o">=</span> <span class="n">ExamplePrinter</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Access methods without prior instance creation using the context</span>
+        <span class="c1"># manager results in raising an exception.</span>
+        <span class="n">example</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span>
+            <span class="s1">&#39;Error message without using the context manager: </span><span class="se">\n\n</span><span class="s1">&quot;{}&quot;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;Now we will try to do the same but with use of the &#39;</span>
+            <span class="s1">&#39;`with` statement:</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># This time no exception occurs.</span>
+        <span class="k">with</span> <span class="n">ExamplePrinter</span><span class="p">()</span> <span class="k">as</span> <span class="n">example</span><span class="p">:</span>
+            <span class="n">example</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Assuming the Python code above is saved into a file called <code class="docutils literal notranslate"><span class="pre">example.py</span></code> it can be run at the
+command line with the result below:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python example.py
+
+<span class="go">Error message without using the context manager:</span>
+
+<span class="go">&quot;Object of the ExamplePrinter should only be initialized with the `with` statement.</span>
+<span class="go">Otherwise, the ExamplePrinter methods will not be available.&quot;</span>
+
+<span class="go">Now we will try to do the same but with use of the `with` statement:</span>
+
+<span class="go">You just initialized me.</span>
+<span class="go">I am opened.</span>
+<span class="go">...and now I am closed.</span>
+</pre></div>
+</div>
+<p>Main advantage of using the <code class="docutils literal notranslate"><span class="pre">force_context_manager</span></code> function as a decorator allows to enforce
+good practices and call the closing method <strong>__exit__</strong> without worrying about remembering it.</p>
+</div>
 </div>
 
 
@@ -255,7 +313,7 @@ input dataframe <cite>X</cite>. First five rows will look like presented below.<
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="changelog.html" class="btn btn-neutral float-right" title="History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="source/reference/index.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="readme.html" class="btn btn-neutral float-left" title="Paralytics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

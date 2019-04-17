@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
 </ul>
 
@@ -159,7 +160,7 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="force_context_manager"><a class="viewcode-back" href="../../api/paralytics.force_context_manager.html#paralytics.force_context_manager">[docs]</a><span class="k">def</span> <span class="nf">force_context_manager</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="force_context_manager"><a class="viewcode-back" href="../../source/reference/api/paralytics.force_context_manager.html#paralytics.force_context_manager">[docs]</a><span class="k">def</span> <span class="nf">force_context_manager</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Prevents user from calling objects of decorated classes without using</span>
 <span class="sd">    the `with` statement.&quot;&quot;&quot;</span>
     <span class="k">class</span> <span class="nc">Wrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -172,7 +173,6 @@
                     <span class="s1">&#39;Magic method: `__exit__` must be implemented in the &#39;</span>
                     <span class="s1">&#39;decorated class!&#39;</span>
                 <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cls_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
@@ -187,8 +187,11 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                 <span class="s1">&#39;Object of the </span><span class="si">{0}</span><span class="s1"> should only be initialized with the &#39;</span>
                 <span class="s1">&#39;`with` statement. Otherwise, the </span><span class="si">{0}</span><span class="s1"> methods will not &#39;</span>
-                <span class="s1">&#39;be available.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cls_name</span><span class="p">)</span>
+                <span class="s1">&#39;be available.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
             <span class="p">)</span>
+    <span class="n">Wrapper</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span>
+    <span class="n">Wrapper</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+
     <span class="k">return</span> <span class="n">Wrapper</span></div>
 </pre></div>
 

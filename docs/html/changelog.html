@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Examples" href="example.html" /> 
+    <link rel="prev" title="NothingSelectedWarning" href="source/reference/api/paralytics.NothingSelectedWarning.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,6 +88,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">History</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id1">0.2.2 ()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">0.2.1 (31.03.2019)</a></li>
@@ -163,6 +164,40 @@
 <h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
 <h2>0.2.2 ()<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Fixed <code class="docutils literal notranslate"><span class="pre">preprocessing.ColumnProjector</span></code> corner case handling</dt><dd><ul>
+<li><p>Checks whether the list of columns to be projected is non-empty, because
+when projecting an empty list of columns onto the <strong>category</strong> dtype,
+<strong>ValueError</strong> was raised.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Expanded <code class="docutils literal notranslate"><span class="pre">TargetEncoding</span></code> docstring and unified types</dt><dd><ul>
+<li><p>Adds notes on the use of the indicated encoder.</p></li>
+<li><p>Projects to make the transformed dataframe’s columns being outputted as floating
+point type.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Changed <code class="docutils literal notranslate"><span class="pre">utils.check_column_existance</span></code> name</dt><dd><ul>
+<li><p>Repairs the typo in the function name by changing it to: <code class="docutils literal notranslate"><span class="pre">utils.check_column_existence</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Expanded Sphinx documentation.</dt><dd><ul>
+<li><p>Adds example usage of <code class="docutils literal notranslate"><span class="pre">force_context_manager</span></code> function.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 <div class="section" id="id2">
 <h2>0.2.1 (31.03.2019)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
@@ -181,9 +216,9 @@
 <ul class="simple">
 <li><dl class="simple">
 <dt>Changed the topology of the repository</dt><dd><ul>
-<li><p>Transfers the <cite>column_parsing</cite> module to the preprocessing subpackage and
+<li><p>Transfers the <code class="docutils literal notranslate"><span class="pre">column_parsing</span></code> module to the preprocessing subpackage and
 changes the name to a more adequate in terms of actual functionality.</p></li>
-<li><p>Creates <cite>preprocessing.imputation</cite> module used for imputation of missings.</p></li>
+<li><p>Creates <code class="docutils literal notranslate"><span class="pre">preprocessing.imputation</span></code> module used for imputation of missings.</p></li>
 </ul>
 </dd>
 </dl>
@@ -192,14 +227,14 @@ changes the name to a more adequate in terms of actual functionality.</p></li>
 <dt>Added Sphinx documentation</dt><dd><ul>
 <li><p>Creates HTML documentation of the package with use of the Github Pages.</p></li>
 <li><p>Standardizes the docstrings across the whole package.</p></li>
-<li><p>Adds initial example of usage for the <cite>paralytics.Discretizer</cite> transformer.</p></li>
+<li><p>Adds initial example of usage for the <code class="docutils literal notranslate"><span class="pre">paralytics.Discretizer</span></code> transformer.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
 <dt>Created utilities for web scraping</dt><dd><ul>
-<li><p>New module <cite>preprocessing.scraping</cite> presenting the base class for scraping
+<li><p>New module <code class="docutils literal notranslate"><span class="pre">preprocessing.scraping</span></code> presenting the base class for scraping
 using the Selenium package.</p></li>
 </ul>
 </dd>
@@ -207,11 +242,11 @@ using the Selenium package.</p></li>
 </li>
 <li><dl class="simple">
 <dt>Fixed functionality of defective transformers</dt><dd><ul>
-<li><p>Transfers key operations of the <cite>preprocessing.ColumnProjector</cite> transformer
-to the <cite>fit</cite> method to avoid errors when applying to corner cases.</p></li>
-<li><p>Adapts the functionality of the <cite>TargetEncoder</cite> to be able to apply its
+<li><p>Transfers key operations of the <code class="docutils literal notranslate"><span class="pre">preprocessing.ColumnProjector</span></code> transformer
+to the <strong>fit</strong> method to avoid errors when applying to corner cases.</p></li>
+<li><p>Adapts the functionality of the <code class="docutils literal notranslate"><span class="pre">TargetEncoder</span></code> to be able to apply its
 transformations to entire DataFrame without first choosing only variables of
-the type: <cite>category</cite>.</p></li>
+the type: <strong>category</strong>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -249,7 +284,7 @@ which will be developed over the 0.2.X versions.</p></li>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="example.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="source/reference/api/paralytics.NothingSelectedWarning.html" class="btn btn-neutral float-left" title="NothingSelectedWarning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

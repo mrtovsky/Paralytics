@@ -76,7 +76,7 @@ instance/
 docs/_build/
 docs/_static/
 docs/_templates/
-docs/api/
+docs/source/reference/api/
 
 # PyBuilder
 target/

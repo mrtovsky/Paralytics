@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
 </ul>
 
@@ -154,7 +155,14 @@
 <span></span><span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">sqrt</span>
 
 
-<div class="viewcode-block" id="lcm"><a class="viewcode-back" href="../../api/paralytics.lcm.html#paralytics.lcm">[docs]</a><span class="k">def</span> <span class="nf">lcm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;lcm&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;custom_round&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;check_prime&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="lcm"><a class="viewcode-back" href="../../source/reference/api/paralytics.lcm.html#paralytics.lcm">[docs]</a><span class="k">def</span> <span class="nf">lcm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculates least common multiple of two integers x and y.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;Values must be integers!&#39;</span>
 
@@ -164,12 +172,12 @@
     <span class="k">return</span> <span class="n">lcm_value</span></div>
 
 
-<div class="viewcode-block" id="custom_round"><a class="viewcode-back" href="../../api/paralytics.custom_round.html#paralytics.custom_round">[docs]</a><span class="k">def</span> <span class="nf">custom_round</span><span class="p">(</span><span class="n">value_list</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="custom_round"><a class="viewcode-back" href="../../source/reference/api/paralytics.custom_round.html#paralytics.custom_round">[docs]</a><span class="k">def</span> <span class="nf">custom_round</span><span class="p">(</span><span class="n">value_list</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Rounds n to the closest value from the given value_list.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">value_list</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">n</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="check_prime"><a class="viewcode-back" href="../../api/paralytics.check_prime.html#paralytics.check_prime">[docs]</a><span class="k">def</span> <span class="nf">check_prime</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="check_prime"><a class="viewcode-back" href="../../source/reference/api/paralytics.check_prime.html#paralytics.check_prime">[docs]</a><span class="k">def</span> <span class="nf">check_prime</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether the given value is a prime number.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">),</span> \
         <span class="s1">&#39;Expected integer greater than or equal to 1 as parameter!&#39;</span>

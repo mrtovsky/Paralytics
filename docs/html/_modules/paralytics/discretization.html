@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
 </ul>
 
@@ -164,7 +165,12 @@
 <span class="kn">from</span> <span class="nn">.utils.validation</span> <span class="k">import</span> <span class="n">is_numeric</span>
 
 
-<div class="viewcode-block" id="Discretizer"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer">[docs]</a><span class="k">class</span> <span class="nc">Discretizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;Discretizer&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="Discretizer"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer">[docs]</a><span class="k">class</span> <span class="nc">Discretizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Discretizes variables in a given data set.</span>
 
 <span class="sd">    Reduces continuous variables to a finite number of intervals with use of</span>
@@ -270,7 +276,7 @@
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Discretizer.fit"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Discretizer.fit"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit the binning with X by extracting upper limits of right-closed</span>
 <span class="sd">        intervals.</span>
 
@@ -309,7 +315,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Discretizer.transform"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="Discretizer.transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply discretization on X.</span>
 
 <span class="sd">        X is projected on the bins previously extracted from a training set.</span>
@@ -358,7 +364,7 @@
 
         <span class="k">return</span> <span class="n">X_new</span></div>
 
-<div class="viewcode-block" id="Discretizer.sapling"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.sapling">[docs]</a>    <span class="k">def</span> <span class="nf">sapling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Discretizer.sapling"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer.sapling">[docs]</a>    <span class="k">def</span> <span class="nf">sapling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates finitely many intervals for a continuous vector using</span>
 <span class="sd">        DecisionTreeClassifier optimizing splits with respect to Gini impurity</span>
 <span class="sd">        criterium.</span>
@@ -416,7 +422,7 @@
 
         <span class="k">return</span> <span class="n">bins</span></div>
 
-<div class="viewcode-block" id="Discretizer.spearman"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.spearman">[docs]</a>    <span class="k">def</span> <span class="nf">spearman</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Discretizer.spearman"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer.spearman">[docs]</a>    <span class="k">def</span> <span class="nf">spearman</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates finitely many intervals for a continuous vector with use of</span>
 <span class="sd">        Spearman&#39;s rang correlation (supervised).</span>
 
@@ -471,7 +477,7 @@
 
         <span class="k">return</span> <span class="n">bins</span></div>
 
-<div class="viewcode-block" id="Discretizer.finger"><a class="viewcode-back" href="../../api/paralytics.Discretizer.html#paralytics.Discretizer.finger">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Discretizer.finger"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer.finger">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">finger</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cut_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">n_quantiles</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">min_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>

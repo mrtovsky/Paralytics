@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>VIFSelector &mdash; Paralytics 0.2.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../xai.html" />
+    <link rel="prev" title="TargetEncoder" href="paralytics.TargetEncoder.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Paralytics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../generals.html">Generals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="paralytics.CorrelationReducer.html">CorrelationReducer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.Discretizer.html">Discretizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.TargetEncoder.html">TargetEncoder</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">VIFSelector</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Paralytics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../generals.html">Generals</a> &raquo;</li>
+        
+      <li>VIFSelector</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/source/reference/api/paralytics.VIFSelector.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vifselector">
+<h1>VIFSelector<a class="headerlink" href="#vifselector" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paralytics.VIFSelector">
+<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">VIFSelector</code><span class="sig-paren">(</span><em>thresh=5.0</em>, <em>impute=True</em>, <em>impute_strat='mean'</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
+<p>Makes feature selection based on Variance Inflation Factor.</p>
+<p>Calculates Variance Inflation Factor for a given dataset, in each iteration
+discarding the variable with the highest VIF value and repeats this
+process until it is not below the declared threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>thresh: float, optional (default=5.0)</strong></dt><dd><p>Threshold value after which further rejection of variables is
+discontinued.</p>
+</dd>
+<dt><strong>impute: boolean, optional (default=True)</strong></dt><dd><p>Declares whether missing values imputation should be performed.</p>
+</dd>
+<dt><strong>impute_strat: string, optional (default=’mean’)</strong></dt><dd><p>Declares imputation strategy for the scikit-learn SimpleImputer
+transformation.</p>
+</dd>
+<dt><strong>verbose: int, optional (default=0)</strong></dt><dd><p>Controls verbosity of output. If 0 there is no output, if 1 displays
+which features were removed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>[1] Ffisegydd, <a class="reference external" href="https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class">sklearn multicollinearity class</a>, 2017</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>imputer_: estimator</strong></dt><dd><p>The estimator by means of which missing values imputation is performed.</p>
+</dd>
+<dt><strong>viffed_cols_: list</strong></dt><dd><p>List of features from a given dataset that exceeded thresh.</p>
+</dd>
+<dt><strong>kept_cols_: list</strong></dt><dd><p>List of features that left after the vif procedure.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.VIFSelector.fit" title="paralytics.VIFSelector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<td><p>Fits columns with a VIF value exceeding the threshold.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.VIFSelector.transform" title="paralytics.VIFSelector.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<td><p>Apply feature selection based on Variance Inflation Factor.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="paralytics.VIFSelector.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits columns with a VIF value exceeding the threshold.</p>
+<p>If specified, fits the imputer on X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>Input data, where n_samples is the number of samples and n_features
+is the number of features.l</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="paralytics.VIFSelector.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply feature selection based on Variance Inflation Factor.</p>
+<p>Until the maximum VIF in the given dataset does not exceed the declared
+threshold, in every iteration independent variables’ VIF values are
+calculated and the variable with the highest VIF value is removed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>Input data on which variables elimination will be applied.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>X_new: DataFrame, shape = (n_samples, n_features_new)</strong></dt><dd><p>X data with variables remaining after applying feature elimination.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../xai.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="paralytics.TargetEncoder.html" class="btn btn-neutral float-left" title="TargetEncoder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Mateusz Zakrzewski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

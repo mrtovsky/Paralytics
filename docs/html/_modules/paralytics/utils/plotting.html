@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -151,7 +152,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for paralytics.utils.plotting</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utilities for drawing plots&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utilities for drawing plots.&quot;&quot;&quot;</span>
 
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -159,7 +160,12 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
-<div class="viewcode-block" id="multipleplots"><a class="viewcode-back" href="../../../api/paralytics.utils.multipleplots.html#paralytics.utils.multipleplots">[docs]</a><span class="k">def</span> <span class="nf">multipleplots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;multipleplots&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="multipleplots"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.multipleplots.html#paralytics.utils.multipleplots">[docs]</a><span class="k">def</span> <span class="nf">multipleplots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
                   <span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;scatterplot&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Paints any specified plot from the seaborn library multiple times.</span>
 
@@ -168,16 +174,16 @@
 <span class="sd">    data: DataFrame</span>
 <span class="sd">        Data which columns will be plotted.</span>
 
-<span class="sd">    x: list</span>
+<span class="sd">    x: list, optional (default=1)</span>
 <span class="sd">        List of columns to plot one after another.</span>
 
-<span class="sd">    n{rows, cols}: int (default: 1)</span>
+<span class="sd">    n{rows, cols}: int, optional (default=1)</span>
 <span class="sd">        Number of {rows, cols} transferred to plt.subplots().</span>
 
-<span class="sd">    figsize: list-like</span>
+<span class="sd">    figsize: list-like, optional (default=(8, 6))</span>
 <span class="sd">        Size of every figure created on subsequent axes.</span>
 
-<span class="sd">    plot_type: string</span>
+<span class="sd">    plot_type: string, optional (default=&#39;scatterplot&#39;)</span>
 <span class="sd">        Specific plot from the seaborn library to be plotted multiple times</span>
 <span class="sd">        against every given element from x.</span>
 

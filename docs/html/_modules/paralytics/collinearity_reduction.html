@@ -87,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
 </ul>
 
@@ -161,35 +162,38 @@
 <span class="kn">from</span> <span class="nn">statsmodels.stats.outliers_influence</span> <span class="k">import</span> <span class="n">variance_inflation_factor</span>
 
 
-<div class="viewcode-block" id="VIFSelector"><a class="viewcode-back" href="../../api/paralytics.VIFSelector.html#paralytics.VIFSelector">[docs]</a><span class="k">class</span> <span class="nc">VIFSelector</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;VIFSelector&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CorrelationReducer&#39;</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="VIFSelector"><a class="viewcode-back" href="../../source/reference/api/paralytics.VIFSelector.html#paralytics.VIFSelector">[docs]</a><span class="k">class</span> <span class="nc">VIFSelector</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Makes feature selection based on Variance Inflation Factor.</span>
 
 <span class="sd">    Calculates Variance Inflation Factor for a given dataset, in each iteration</span>
 <span class="sd">    discarding the variable with the highest VIF value and repeats this</span>
 <span class="sd">    process until it is not below the declared threshold.</span>
 
-<span class="sd">    Based on:</span>
-<span class="sd">    https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class</span>
-
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    thresh: float (default: 5.0)</span>
+<span class="sd">    thresh: float, optional (default=5.0)</span>
 <span class="sd">        Threshold value after which further rejection of variables is</span>
 <span class="sd">        discontinued.</span>
 
-<span class="sd">    impute: boolean (default: True)</span>
+<span class="sd">    impute: boolean, optional (default=True)</span>
 <span class="sd">        Declares whether missing values imputation should be performed.</span>
 
-<span class="sd">    impute_strat: string {&#39;mean&#39;, &#39;median&#39;, &#39;most_frequent&#39;} (default: &#39;mean&#39;)</span>
+<span class="sd">    impute_strat: string, optional (default=&#39;mean&#39;)</span>
 <span class="sd">        Declares imputation strategy for the scikit-learn SimpleImputer</span>
 <span class="sd">        transformation.</span>
 
-<span class="sd">    verbose: int, default = 0</span>
+<span class="sd">    verbose: int, optional (default=0)</span>
 <span class="sd">        Controls verbosity of output. If 0 there is no output, if 1 displays</span>
 <span class="sd">        which features were removed.</span>
 
 <span class="sd">    Attributes</span>
-<span class="sd">    ---------</span>
+<span class="sd">    ----------</span>
 <span class="sd">    imputer_: estimator</span>
 <span class="sd">        The estimator by means of which missing values imputation is performed.</span>
 
@@ -198,6 +202,11 @@
 
 <span class="sd">    kept_cols_: list</span>
 <span class="sd">        List of features that left after the vif procedure.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] Ffisegydd, `sklearn multicollinearity class</span>
+<span class="sd">    &lt;https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class&gt;`_, 2017</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -213,14 +222,14 @@
         <span class="k">if</span> <span class="n">impute</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">imputer_</span> <span class="o">=</span> <span class="n">SimpleImputer</span><span class="p">(</span><span class="n">strategy</span><span class="o">=</span><span class="n">impute_strat</span><span class="p">)</span>
 
-<div class="viewcode-block" id="VIFSelector.fit"><a class="viewcode-back" href="../../api/paralytics.VIFSelector.html#paralytics.VIFSelector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="VIFSelector.fit"><a class="viewcode-back" href="../../source/reference/api/paralytics.VIFSelector.html#paralytics.VIFSelector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits columns with a VIF value exceeding the threshold.</span>
 
 <span class="sd">        If specified, fits the imputer on X.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            Input data, where n_samples is the number of samples and n_features</span>
 <span class="sd">            is the number of features.l</span>
 
@@ -239,7 +248,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="VIFSelector.transform"><a class="viewcode-back" href="../../api/paralytics.VIFSelector.html#paralytics.VIFSelector.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="VIFSelector.transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.VIFSelector.html#paralytics.VIFSelector.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply feature selection based on Variance Inflation Factor.</span>
 
 <span class="sd">        Until the maximum VIF in the given dataset does not exceed the declared</span>
@@ -248,12 +257,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            Input data on which variables elimination will be applied.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        X_new: DataFrame, shape (n_samples, n_features_new)</span>
+<span class="sd">        X_new: DataFrame, shape = (n_samples, n_features_new)</span>
 <span class="sd">            X data with variables remaining after applying feature elimination.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -321,7 +330,7 @@
         <span class="k">return</span> <span class="n">viffed_cols</span><span class="p">,</span> <span class="n">kept_cols</span></div>
 
 
-<div class="viewcode-block" id="CorrelationReducer"><a class="viewcode-back" href="../../api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer">[docs]</a><span class="k">class</span> <span class="nc">CorrelationReducer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="CorrelationReducer"><a class="viewcode-back" href="../../source/reference/api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer">[docs]</a><span class="k">class</span> <span class="nc">CorrelationReducer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Removes correlated columns exceeding the thresh value.</span>
 
 <span class="sd">    Parameters</span>
@@ -334,7 +343,7 @@
 <span class="sd">        - `kendall`: Kendall Tau correlation coefficient.</span>
 <span class="sd">        - `spearman`: Spearman rank correlation.</span>
 
-<span class="sd">    thresh: float (default=.8)</span>
+<span class="sd">    thresh: float, optional (default=.8)</span>
 <span class="sd">        Threshold value after which further rejection of variables is</span>
 <span class="sd">        discontinued.</span>
 
@@ -352,12 +361,12 @@
         <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CorrelationReducer.fit"><a class="viewcode-back" href="../../api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="CorrelationReducer.fit"><a class="viewcode-back" href="../../source/reference/api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits columns with a correlation coefficients exceeding the threshold.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            Input data, where n_samples is the number of samples and n_features</span>
 <span class="sd">            is the number of features.</span>
 
@@ -374,7 +383,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="CorrelationReducer.transform"><a class="viewcode-back" href="../../api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="CorrelationReducer.transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.CorrelationReducer.html#paralytics.CorrelationReducer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply feature selection based on correlation coefficients.</span>
 
 <span class="sd">        Removes correlated features with coefficient higher than the threshold</span>
@@ -382,12 +391,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X: DataFrame, shape (n_samples, n_features)</span>
+<span class="sd">        X: DataFrame, shape = (n_samples, n_features)</span>
 <span class="sd">            Input data on which variables elimination will be applied.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        X_new: DataFrame, shape (n_samples, n_features_new)</span>
+<span class="sd">        X_new: DataFrame, shape = (n_samples, n_features_new)</span>
 <span class="sd">            X data with variables remaining after applying feature elimination.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -404,8 +413,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_reduce_corr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns correlated columns exceeding the thresh value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns correlated columns exceeding the thresh value.&quot;&quot;&quot;</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
 
         <span class="c1"># Create matrix of ones of the same size as the dataframe</span>

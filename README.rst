@@ -25,12 +25,12 @@ Main Features
 -------------
 Highlighting the main functionalities of the **Paralytics**:
 
-* Expanded target encoding of categorical variables using double cross-validation
+* Expanded **target encoding** of categorical variables using double cross-validation
   technique with additional regularisation preventing favoritism of sparse categories
   with reduction of excessive adjustment to the training set, effectively reducing
-  overfilling.
+  overfitting.
 
-* Discretization of continuous variables to ordinal using shallow decision tree or
+* **Discretization** of continuous variables to ordinal using shallow decision tree or
   method based on Spearman's rank-order correlation.
 
 * Processing data read into the
@@ -43,7 +43,7 @@ Highlighting the main functionalities of the **Paralytics**:
     binary variables,
   * imputation of missing data.
 
-* Collinearity reduction using such factors as: variance inflation factor (VIF) or correlation.
+* Collinearity reduction using such factors as: **variance inflation factor** (VIF) or correlation.
 
 Installation
 ------------
