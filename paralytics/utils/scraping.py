@@ -1,19 +1,20 @@
-"""Utilities for web scraping"""
+"""Utilities for web scraping."""
 
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
-from ..decorators import force_context_manager
+
+__all__ = [
+    'BaseSeleniumBrowser'
+]
 
 
-@force_context_manager
 class BaseSeleniumBrowser(object):
-    """Based on the Selenium package, it automates the use of the browser of
-    user's choice.
+    """Base class for all scrapers built on top of the Selenium package.
 
-    Base class for Selenium scrapers that implements universal methods for
-    web scraping with the Selenium package.
+    Automates the use of the browser of user's choice by implementing universal
+    methods for web scraping with the Selenium package.
 
     Parameters
     ----------
@@ -21,10 +22,20 @@ class BaseSeleniumBrowser(object):
         Name of the browser that will be used to the web scraping with the
         Selenium package.
 
-    executable_path: str
+    executable_path: str, optional (default=None)
         Path to the executable file adequate for the browser of your choice.
         If not specified then the only attempt to find an executable is made in
         the PATH.
+
+    Notes
+    -----
+    Tt is recommended to decorate all classes inheriting from
+    BaseSeleniumBrowser with `paralytics.force_context_manager` function.
+
+    See also
+    --------
+    paralytics.force_context_manager
+
     """
     def __init__(self, browser_name, executable_path=None):
         try:

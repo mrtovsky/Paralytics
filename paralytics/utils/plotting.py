@@ -1,9 +1,14 @@
-"""Utilities for drawing plots"""
+"""Utilities for drawing plots."""
 
 
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+
+__all__ = [
+    'multipleplots'
+]
 
 
 def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
@@ -15,16 +20,16 @@ def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
     data: DataFrame
         Data which columns will be plotted.
 
-    x: list
+    x: list, optional (default=1)
         List of columns to plot one after another.
 
-    n{rows, cols}: int (default: 1)
+    n{rows, cols}: int, optional (default=1)
         Number of {rows, cols} transferred to plt.subplots().
 
-    figsize: list-like
+    figsize: list-like, optional (default=(8, 6))
         Size of every figure created on subsequent axes.
 
-    plot_type: string
+    plot_type: string, optional (default='scatterplot')
         Specific plot from the seaborn library to be plotted multiple times
         against every given element from x.
 

@@ -1,6 +1,13 @@
 from math import ceil, sqrt
 
 
+__all__ = [
+    'lcm',
+    'custom_round',
+    'check_prime'
+]
+
+
 def lcm(x, y):
     """Calculates least common multiple of two integers x and y."""
     assert isinstance(x + y, int), 'Values must be integers!'

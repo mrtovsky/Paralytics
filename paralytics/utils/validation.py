@@ -1,10 +1,17 @@
-"""Utilities for input validation"""
+"""Utilities for input validation."""
 
 
 import pandas as pd
 
-
 from pandas.api.types import is_numeric_dtype
+
+
+__all__ = [
+    'check_uniq',
+    'check_column_existence',
+    'is_numeric',
+    'find_sparsity'
+]
 
 
 def check_uniq(X):
@@ -12,19 +19,19 @@ def check_uniq(X):
 
     Parameters
     ----------
-    X: array-like, shape (n_samples, )
+    X: array-like, shape = (n_samples, )
         Vector to check whether it cointains unique values.
 
     Returns
     -------
-    bool
+    boolean: Whether or not all input data values are unique.
 
     """
     s = set()
     return not any(x in s or s.add(x) for x in X)
 
 
-def check_column_existance(X, cols):
+def check_column_existence(X, cols):
     """Checks whether all listed columns are in a given DataFrame.
 
     Parameters
@@ -61,7 +68,7 @@ def is_numeric(X):
 
     Parameters
     ----------
-    X: array-like, shape (n_samples, )
+    X: array-like, shape = (n_samples, )
         Vector where n_samples is the number of samples.
 
     Returns
@@ -86,7 +93,7 @@ def find_sparsity(X, thresh=.01):
     X: DataFrame
         Data to be checked for sparsity.
 
-    thresh: float (default: .01)
+    thresh: float, optional (default=.01)
         Fraction of one of the categories under which the sparseness will be
         reported.
 

@@ -6,6 +6,15 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from pandas.api.types import is_numeric_dtype
 
 
+__all__ = [
+    'CategoricalBinarizer',
+    'CategoricalGrouper',
+    'ColumnProjector',
+    'ColumnSelector',
+    'TypeSelector'
+]
+
+
 class CategoricalBinarizer(BaseEstimator, TransformerMixin):
     """Finds categorical columns with binary-like response and converts them.
 
@@ -15,7 +24,7 @@ class CategoricalBinarizer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    keywords_{true, false}: list
+    keywords_{true, false}: list, optional (default=None)
         List of categories' names corresponding to {True, False} logical
         values.
 
@@ -297,7 +306,7 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
     automatic_projection_: dict
         Dictionary where key is the dtype name onto which specified columns
         will be projected chosen automatically (when manual_projection is
-        specified then this manunal assignment is decisive).
+        specified then this manual assignment is decisive).
     """
     def __init__(self, manual_projection=None, num_to_float=True):
         self.manual_projection = manual_projection
@@ -389,17 +398,18 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
                 cols_to_project = [
                     col for col in col_names if col not in skip_columns
                 ]
-                try:
-                    X_new[cols_to_project] = (
-                        X_new[cols_to_project].astype(col_type)
-                    )
-                except KeyError:
-                    cols_error = list(
-                        set(cols_to_project) - set(X_new.columns)
-                    )
-                    raise KeyError("C'mon, those columns ain't in "
-                                   "the DataFrame: %s" % cols_error)
-                columns_projected.extend(cols_to_project)
+                if cols_to_project:
+                    try:
+                        X_new[cols_to_project] = (
+                            X_new[cols_to_project].astype(col_type)
+                        )
+                    except KeyError:
+                        cols_error = list(
+                            set(cols_to_project) - set(X_new.columns)
+                        )
+                        raise KeyError("C'mon, those columns ain't in "
+                                       "the DataFrame: %s" % cols_error)
+                    columns_projected.extend(cols_to_project)
 
         return X_new, columns_projected
 

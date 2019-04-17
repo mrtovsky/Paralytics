@@ -1,6 +1,14 @@
+"""Utilities for importing files."""
+
+
 import csv
 
 from collections import OrderedDict
+
+
+__all__ = [
+    'get_csv'
+]
 
 
 def get_csv(in_filename, cols_to_keep=None, dtype=float):

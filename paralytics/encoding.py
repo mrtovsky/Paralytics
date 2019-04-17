@@ -9,6 +9,11 @@ from sklearn.model_selection import KFold
 from .exceptions import *
 
 
+__all__ = [
+    'TargetEncoder'
+]
+
+
 class TargetEncoder(BaseEstimator, TransformerMixin):
     """Encodes categorical features with the corresponding target value.
 
@@ -18,38 +23,52 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    columns: list
+    columns: list, optional (default=None)
         List of DataFrame columns' names on which target encoding should be
         performed. If not specified all categorical columns are taken.
 
-    nan_as_category: boolean (default: True)
+    nan_as_category: boolean, optional (default=True)
         If True includes NaNs as one of the categories and also applies
         target encoding for this subgroup.
 
-    cv: int
+    cv: int, optional (default=None)
         Number of cross-validation folds.
 
-    inner_cv: int
+    inner_cv: int, optional (default=None)
         Number of inner cross-validation folds.
 
-    shuffle: boolean (default: True)
+    shuffle: boolean, optional (default=True)
         Whether to shuffle the data before splitting into batches.
 
-    alpha: int (default: 5)
+    alpha: int, optional (default=5)
         Regularization value (times of global mean added to the weighted mean
         of each category). The larger, the more conservative the algorithm
         will be. If you want to use the standard mean just set alpha to 0.
 
-    random_state: int
+    random_state: int, optional (default=None)
         Random state for sklearn algorithms.
 
     Attributes
     ----------
-    cat_aggval_: dict, length = n_cat_features
+    cat_aggval_: dict
         Dictionary of dictionaries of corresponding aggregated values to given
         subgroups. The key is the column name and the value is the dictionary
         in which the key is the subgroup name and the value is the fitted
         target aggregated value.
+
+    Notes
+    -----
+    When setting cross-validation parameters remember that all categories must
+    be sufficiently represented. If a category is sparse, because of the lack
+    of representation in one of the k-folds, NaNs in this fold will be
+    generated because there are no values ​​recorded from which the statistics
+    are calculated. A simple solution is to apply the transformator:
+    `preprocessing.CategoricalGrouper` that groups sparse categories into one
+    category, before using the target encoding.
+
+    See also
+    --------
+    paralytics.preprocessing.CategoricalGrouper
 
     """
     def __init__(self, columns=None, nan_as_category=True,
@@ -68,10 +87,10 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape=(n_samples, n_features)
             Training data of independent categorical variables.
 
-        y: array-like, shape (n_samples, )
+        y: array-like, shape=(n_samples, )
             Vector of target variable values corresponding to X data.
 
         Returns
@@ -120,15 +139,15 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             New data with n_samples as its number of samples.
 
-        y: array-like, shape (n_samples, )
+        y: array-like, shape = (n_samples, )
             Vector of target variable values corresponding to X data.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features)
+        X_new: DataFrame, shape = (n_samples, n_features)
             X data with substituted values to their respective target
             aggregated values.
 
@@ -155,7 +174,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         if y is None or self.cv is None:
             for col in self.columns:
-                X_new[col] = X[col].map(self.cat_aggval_[col])
+                X_new[col] = X[col].map(self.cat_aggval_[col]).astype(float)
 
         else:
             assert self.inner_cv is not None, (
@@ -164,7 +183,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             )
             X_new[self.columns] = self._transform_train_cv(
                 X_new[self.columns], y
-            )
+            ).astype(float)
         return X_new
 
     def fit_transform(self, X, y=None):
@@ -174,15 +193,15 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Training data of independent categorical variables.
 
-        y: array-like, shape (n_samples, )
+        y: array-like, shape = (n_samples, )
             Vector of target variable values corresponding to X data.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features)
+        X_new: DataFrame, shape = (n_samples, n_features)
             X data with substituted values to their respective target
             aggregated values.
 
@@ -218,13 +237,13 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             mean_df_list = [
                 pd.DataFrame({f'{col}': X[col].unique()}) for col in X.columns
             ]
-            inner_df = df.iloc[train_idx].copy()
+            inner_df = df.iloc[train_idx, :].copy()
             for loop_idx, (inner_train_idx, _) in (
                 enumerate(inner_kf.split(inner_df))
             ):
                 for idx, col in enumerate(X.columns):
                     agg_values = pd.DataFrame(
-                        inner_df.iloc[inner_train_idx]
+                        inner_df.iloc[inner_train_idx, :]
                         .groupby(col).target
                         .agg('mean')
                     ).reset_index()

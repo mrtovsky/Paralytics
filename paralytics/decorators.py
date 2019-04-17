@@ -19,7 +19,6 @@ def force_context_manager(cls):
                     'Magic method: `__exit__` must be implemented in the '
                     'decorated class!'
                 )
-            self.cls_name = cls.__name__
             self.args = args
             self.kwargs = kwargs
 
@@ -34,6 +33,9 @@ def force_context_manager(cls):
             raise RuntimeError(
                 'Object of the {0} should only be initialized with the '
                 '`with` statement. Otherwise, the {0} methods will not '
-                'be available.'.format(self.cls_name)
+                'be available.'.format(self.original.__name__)
             )
+    Wrapper.__doc__ = cls.__doc__
+    Wrapper.__name__ = cls.__name__
+
     return Wrapper

@@ -11,6 +11,11 @@ from .exceptions import *
 from .utils.validation import is_numeric
 
 
+__all__ = [
+    'Discretizer'
+]
+
+
 class Discretizer(BaseEstimator, TransformerMixin):
     """Discretizes variables in a given data set.
 

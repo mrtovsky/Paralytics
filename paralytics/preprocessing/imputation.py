@@ -5,6 +5,11 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from ..utils.validation import is_numeric
 
 
+__all__ = [
+    'Imputer'
+]
+
+
 class Imputer(BaseEstimator, TransformerMixin):
     """Imputes missing values of the dataframe.
 
@@ -15,15 +20,15 @@ class Imputer(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-        columns: list
+        columns: list, optional (default=None)
             Defines columns which missings will be imputed. If not specified
             imputes all of the dataframe columns.
 
-        numerical_method: string {mean, median} (default: mean)
+        numerical_method: string {mean, median}, optional (default='mean')
             Method that will be applied to impute numerical columns. Accepts
             all of the pd.DataFrame methods returning some statistic.
 
-        categorical_method: string {mode} (default: mode)
+        categorical_method: string {mode}, optional (default='mode')
             Method that will be applied to impute categorical columns. Accepts
             all of the pd.DataFrame methods returning some statistic.
 
@@ -46,7 +51,7 @@ class Imputer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Training data with missing values.
 
         y: ignore
@@ -82,12 +87,12 @@ class Imputer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             New data with n_samples as its number of samples.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features)
+        X_new: DataFrame, shape = (n_samples, n_features)
             X data with substituted missing values to their respective
             imputation values from `imputing_dict_`.
 

@@ -8,6 +8,12 @@ from sklearn.impute import SimpleImputer
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
+__all__ = [
+    'VIFSelector',
+    'CorrelationReducer'
+]
+
+
 class VIFSelector(BaseEstimator, TransformerMixin):
     """Makes feature selection based on Variance Inflation Factor.
 
@@ -15,28 +21,25 @@ class VIFSelector(BaseEstimator, TransformerMixin):
     discarding the variable with the highest VIF value and repeats this
     process until it is not below the declared threshold.
 
-    Based on:
-    https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class
-
     Parameters
     ----------
-    thresh: float (default: 5.0)
+    thresh: float, optional (default=5.0)
         Threshold value after which further rejection of variables is
         discontinued.
 
-    impute: boolean (default: True)
+    impute: boolean, optional (default=True)
         Declares whether missing values imputation should be performed.
 
-    impute_strat: string {'mean', 'median', 'most_frequent'} (default: 'mean')
+    impute_strat: string, optional (default='mean')
         Declares imputation strategy for the scikit-learn SimpleImputer
         transformation.
 
-    verbose: int, default = 0
+    verbose: int, optional (default=0)
         Controls verbosity of output. If 0 there is no output, if 1 displays
         which features were removed.
 
     Attributes
-    ---------
+    ----------
     imputer_: estimator
         The estimator by means of which missing values imputation is performed.
 
@@ -45,6 +48,11 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
     kept_cols_: list
         List of features that left after the vif procedure.
+
+    References
+    ----------
+    [1] Ffisegydd, `sklearn multicollinearity class
+    <https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class>`_, 2017
 
     """
 
@@ -67,7 +75,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Input data, where n_samples is the number of samples and n_features
             is the number of features.l
 
@@ -95,12 +103,12 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Input data on which variables elimination will be applied.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features_new)
+        X_new: DataFrame, shape = (n_samples, n_features_new)
             X data with variables remaining after applying feature elimination.
 
         """
@@ -181,7 +189,7 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
         - `kendall`: Kendall Tau correlation coefficient.
         - `spearman`: Spearman rank correlation.
 
-    thresh: float (default=.8)
+    thresh: float, optional (default=.8)
         Threshold value after which further rejection of variables is
         discontinued.
 
@@ -204,7 +212,7 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Input data, where n_samples is the number of samples and n_features
             is the number of features.
 
@@ -229,12 +237,12 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Input data on which variables elimination will be applied.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features_new)
+        X_new: DataFrame, shape = (n_samples, n_features_new)
             X data with variables remaining after applying feature elimination.
 
         """
@@ -251,8 +259,7 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
 
     @staticmethod
     def _reduce_corr(X, thresh, method):
-        """Returns correlated columns exceeding the thresh value.
-        """
+        """Returns correlated columns exceeding the thresh value."""
         df = X.corr()
 
         # Create matrix of ones of the same size as the dataframe
