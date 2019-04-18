@@ -27,6 +27,8 @@ def find_version(*files):
 with codecs.open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
+DESCRIPTION = 'Python analytical scripts that will overcome ' \
+              'paralysis in your data analysis.'
 long_description = read('README.rst')
 
 setup(
@@ -34,7 +36,7 @@ setup(
     version=find_version('paralytics', '__init__.py'),
     author='Mateusz Zakrzewski',
     author_email="paralytics@gmail.com",
-    description='Python Analytical Scripts.',
+    description=DESCRIPTION,
     long_description=long_description,
     url='https://mrtovsky.github.io/Paralytics/',
     install_requires=requirements,
