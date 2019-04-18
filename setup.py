@@ -5,11 +5,11 @@ import re
 from setuptools import find_packages, setup
 
 
-parent_path = pathlib.Path(__file__).parent
+package_path = pathlib.Path(__file__).parent
 
 
 def read(*files):
-    file_path = str(parent_path.joinpath(*files).resolve())
+    file_path = str(package_path.joinpath(*files).resolve())
     with codecs.open(file_path) as f:
         return f.read()
 
