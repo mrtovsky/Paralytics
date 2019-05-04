@@ -28,13 +28,13 @@ class PandasFeatureUnion(FeatureUnion):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
            Data with n_samples as its number of samples and n_features as its
            number of features.
 
         Returns
         -------
-        X_new: DataFrame, shape (k_samples, k_features)
+        X_new: DataFrame, shape = (k_samples, k_features)
             X data with substituted binary-like category columns with its
             corresponding binary values.
 
@@ -70,13 +70,13 @@ class PandasFeatureUnion(FeatureUnion):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Data with n_samples as its number of samples and n_features as its
             number of features.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features)
+        X_new: DataFrame, shape = (n_samples, n_features)
             X data with substituted binary-like category columns with its
             corresponding binary values.
 
@@ -89,13 +89,13 @@ class PandasFeatureUnion(FeatureUnion):
 
         Parameters
         ----------
-        X: DataFrame, shape (n_samples, n_features)
+        X: DataFrame, shape = (n_samples, n_features)
             Data with n_samples as its number of samples and n_features as its
             number of features.
 
         Returns
         -------
-        X_new: DataFrame, shape (n_samples, n_features)
+        X_new: DataFrame, shape = (n_samples, n_features)
             X data with substituted binary-like category columns with its
             corresponding binary values.
 
