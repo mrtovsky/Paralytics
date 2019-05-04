@@ -6,6 +6,11 @@ from sklearn.externals.joblib import Parallel, delayed
 from sklearn.pipeline import FeatureUnion, _fit_transform_one, _transform_one
 
 
+__all__ = [
+    'PandasFeatureUnion'
+]
+
+
 class PandasFeatureUnion(FeatureUnion):
     """Concatenates results of multiple pandas.DataFrame transformers.
 
