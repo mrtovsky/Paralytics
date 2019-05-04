@@ -5,17 +5,17 @@ import re
 from setuptools import find_packages, setup
 
 
-package_path = pathlib.Path(__file__).parent
+PACKAGE_PATH = pathlib.Path(__file__).parent
 
 
-def read(*files):
-    file_path = str(package_path.joinpath(*files).resolve())
-    with codecs.open(file_path) as f:
+def read(*paths):
+    file = str(PACKAGE_PATH.joinpath(*paths).resolve())
+    with codecs.open(file) as f:
         return f.read()
 
 
-def find_version(*files):
-    version_file = read(*files)
+def find_version(*paths):
+    version_file = read(*paths)
     version_pattern = re.compile(r"^__version__ = ['\"]([^'\"]*)['\"]", re.M)
     version_match = version_pattern.search(version_file)
     if version_match:

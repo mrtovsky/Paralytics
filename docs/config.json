@@ -1,0 +1,51 @@
+{
+  "DIRECTORY": "source/reference/",
+  "INDEX": {
+    "HEADER": "API REFERENCE",
+    "DESCRIPTION": "This page gives an overview of all Paralytics objects and functions."
+  },
+  "TITLES": {
+    "DECORATORS": {
+      "NAME": "Decorators",
+      "DESCRIPTION": "",
+      "MODULES": ["decorators"]
+    },
+    "EXCEPTIONS": {
+      "NAME": "Exceptions & Warnings",
+      "DESCRIPTION": "",
+      "MODULES": ["exceptions"]
+    },
+    "GENERALS": {
+      "NAME": "Generals",
+      "DESCRIPTION": "",
+      "MODULES": [
+        "collinearity_reduction",
+        "discretization",
+        "encoding"
+      ]
+    },
+    "MATHY": {
+      "NAME": "Math",
+      "DESCRIPTION": "",
+      "MODULES": ["mathy"]
+    },
+    "PREPROCESSING": {
+      "NAME": "Preprocessing",
+      "DESCRIPTION": "",
+      "MODULES": [
+        "preprocessing.imputation",
+        "preprocessing.transformation"
+      ]
+    },
+    "UTILS": {
+      "NAME": "Utilities",
+      "DESCRIPTION": "",
+      "MODULES": {
+        "Importing": ["utils.importing"],
+        "Plotting": ["utils.plotting"],
+        "Scraping": ["utils.scraping"],
+        "Validation": ["utils.validation"]
+      }
+    }
+  }
+}
