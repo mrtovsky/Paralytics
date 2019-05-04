@@ -3,6 +3,9 @@ History
 
 0.2.2 ()
 ------------------
+* Added ``PandasFeatureUnion`` transformer
+    * Creates ``feature_union`` module with ``PandasFeatureUnion`` transformer implemented
+      that concatenates multiple transformers returning pandas.DataFrame.
 * Fixed ``preprocessing.ColumnProjector`` corner case handling
     * Checks whether the list of columns to be projected is non-empty, because
       when projecting an empty list of columns onto the **category** dtype,

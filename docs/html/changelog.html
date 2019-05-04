@@ -166,6 +166,14 @@
 <h2>0.2.2 ()<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
+<dt>Added <code class="docutils literal notranslate"><span class="pre">PandasFeatureUnion</span></code> transformer</dt><dd><ul>
+<li><p>Creates <code class="docutils literal notranslate"><span class="pre">feature_union</span></code> module with <code class="docutils literal notranslate"><span class="pre">PandasFeatureUnion</span></code> transformer implemented
+that concatenates multiple transformers returning pandas.DataFrame.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
 <dt>Fixed <code class="docutils literal notranslate"><span class="pre">preprocessing.ColumnProjector</span></code> corner case handling</dt><dd><ul>
 <li><p>Checks whether the list of columns to be projected is non-empty, because
 when projecting an empty list of columns onto the <strong>category</strong> dtype,

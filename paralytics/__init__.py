@@ -4,6 +4,7 @@ from .decorators import *
 from .discretization import *
 from .encoding import *
 from .exceptions import *
+from .feature_union import *
 from .mathy import *
 
 

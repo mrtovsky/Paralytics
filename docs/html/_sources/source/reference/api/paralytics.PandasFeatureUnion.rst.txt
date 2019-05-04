@@ -1,7 +1,7 @@
 PandasFeatureUnion
 ==================
 
-.. currentmodule:: paralytics.preprocessing
+.. currentmodule:: paralytics
 
 .. autoclass:: PandasFeatureUnion
    :show-inheritance:

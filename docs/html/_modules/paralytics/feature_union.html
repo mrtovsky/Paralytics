@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>paralytics.preprocessing.feature_union &mdash; Paralytics 0.2.2 documentation</title>
+  <title>paralytics.feature_union &mdash; Paralytics 0.2.2 documentation</title>
   
 
   
@@ -17,25 +17,25 @@
   
 
   
-  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
     
-    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
 
   
-  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
-    <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +49,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> Paralytics
+            <a href="../../index.html" class="icon icon-home"> Paralytics
           
 
           
@@ -66,7 +66,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -85,10 +85,10 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../source/reference/index.html">API Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Paralytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">History</a></li>
 </ul>
 
             
@@ -103,7 +103,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">Paralytics</a>
+          <a href="../../index.html">Paralytics</a>
         
       </nav>
 
@@ -132,11 +132,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>paralytics.preprocessing.feature_union</li>
+      <li>paralytics.feature_union</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,7 +151,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for paralytics.preprocessing.feature_union</h1><div class="highlight"><pre>
+  <h1>Source code for paralytics.feature_union</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -165,7 +165,7 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="PandasFeatureUnion"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.PandasFeatureUnion.html#paralytics.preprocessing.PandasFeatureUnion">[docs]</a><span class="k">class</span> <span class="nc">PandasFeatureUnion</span><span class="p">(</span><span class="n">FeatureUnion</span><span class="p">):</span>
+<div class="viewcode-block" id="PandasFeatureUnion"><a class="viewcode-back" href="../../source/reference/api/paralytics.PandasFeatureUnion.html#paralytics.PandasFeatureUnion">[docs]</a><span class="k">class</span> <span class="nc">PandasFeatureUnion</span><span class="p">(</span><span class="n">FeatureUnion</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Concatenates results of multiple pandas.DataFrame transformers.</span>
 
 <span class="sd">    Using FeatureUnion capabilities from scikit-learn applies multiple</span>
@@ -177,7 +177,7 @@
 <span class="sd">    &lt;https://github.com/marrrcin/pandas-feature-union&gt;`_, 2018</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="PandasFeatureUnion.fit_transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.PandasFeatureUnion.html#paralytics.preprocessing.PandasFeatureUnion.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<div class="viewcode-block" id="PandasFeatureUnion.fit_transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.PandasFeatureUnion.html#paralytics.PandasFeatureUnion.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits and transforms data based on transformers inside pipeline.</span>
 
 <span class="sd">        Parameters</span>
@@ -219,7 +219,7 @@
             <span class="n">X_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_dataframes_by_column</span><span class="p">(</span><span class="n">X_new</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X_new</span></div>
 
-<div class="viewcode-block" id="PandasFeatureUnion.merge_dataframes_by_column"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.PandasFeatureUnion.html#paralytics.preprocessing.PandasFeatureUnion.merge_dataframes_by_column">[docs]</a>    <span class="k">def</span> <span class="nf">merge_dataframes_by_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="PandasFeatureUnion.merge_dataframes_by_column"><a class="viewcode-back" href="../../source/reference/api/paralytics.PandasFeatureUnion.html#paralytics.PandasFeatureUnion.merge_dataframes_by_column">[docs]</a>    <span class="k">def</span> <span class="nf">merge_dataframes_by_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Concatenates dataframes which resulted from different operations.</span>
 
 <span class="sd">        Parameters</span>
@@ -238,7 +238,7 @@
         <span class="n">X_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X_new</span></div>
 
-<div class="viewcode-block" id="PandasFeatureUnion.transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.PandasFeatureUnion.html#paralytics.preprocessing.PandasFeatureUnion.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="PandasFeatureUnion.transform"><a class="viewcode-back" href="../../source/reference/api/paralytics.PandasFeatureUnion.html#paralytics.PandasFeatureUnion.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Applies conversions which are found in transformer_list.</span>
 
 <span class="sd">        Parameters</span>

@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="TypeSelector" href="paralytics.preprocessing.TypeSelector.html" />
-    <link rel="prev" title="Imputer" href="paralytics.preprocessing.Imputer.html" /> 
+    <link rel="next" title="TargetEncoder" href="paralytics.TargetEncoder.html" />
+    <link rel="prev" title="Discretizer" href="paralytics.Discretizer.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,17 +90,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../preprocessing.html">Preprocessing</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.CategoricalBinarizer.html">CategoricalBinarizer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.CategoricalGrouper.html">CategoricalGrouper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ColumnProjector.html">ColumnProjector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ColumnSelector.html">ColumnSelector</a></li>
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.Imputer.html">Imputer</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../generals.html">Generals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="paralytics.CorrelationReducer.html">CorrelationReducer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.Discretizer.html">Discretizer</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">PandasFeatureUnion</a></li>
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.TypeSelector.html">TypeSelector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.TargetEncoder.html">TargetEncoder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.VIFSelector.html">VIFSelector</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
@@ -155,7 +153,7 @@
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
-          <li><a href="../preprocessing.html">Preprocessing</a> &raquo;</li>
+          <li><a href="../generals.html">Generals</a> &raquo;</li>
         
       <li>PandasFeatureUnion</li>
     
@@ -163,7 +161,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../../_sources/source/reference/api/paralytics.preprocessing.PandasFeatureUnion.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/source/reference/api/paralytics.PandasFeatureUnion.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -179,8 +177,8 @@
   <div class="section" id="pandasfeatureunion">
 <h1>PandasFeatureUnion<a class="headerlink" href="#pandasfeatureunion" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="paralytics.preprocessing.PandasFeatureUnion">
-<em class="property">class </em><code class="descclassname">paralytics.preprocessing.</code><code class="descname">PandasFeatureUnion</code><span class="sig-paren">(</span><em>transformer_list</em>, <em>n_jobs=None</em>, <em>transformer_weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/feature_union.html#PandasFeatureUnion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.PandasFeatureUnion" title="Permalink to this definition">¶</a></dt>
+<dt id="paralytics.PandasFeatureUnion">
+<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">PandasFeatureUnion</code><span class="sig-paren">(</span><em>transformer_list</em>, <em>n_jobs=None</em>, <em>transformer_weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.pipeline.FeatureUnion</span></code></p>
 <p>Concatenates results of multiple pandas.DataFrame transformers.</p>
 <p>Using FeatureUnion capabilities from scikit-learn applies multiple
@@ -194,33 +192,33 @@ transformers always returning pandas.DataFrame object.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.PandasFeatureUnion.fit_transform" title="paralytics.preprocessing.PandasFeatureUnion.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.fit_transform" title="paralytics.PandasFeatureUnion.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
 <td><p>Fits and transforms data based on transformers inside pipeline.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.PandasFeatureUnion.merge_dataframes_by_column" title="paralytics.preprocessing.PandasFeatureUnion.merge_dataframes_by_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_dataframes_by_column</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.merge_dataframes_by_column" title="paralytics.PandasFeatureUnion.merge_dataframes_by_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_dataframes_by_column</span></code></a>(X)</p></td>
 <td><p>Concatenates dataframes which resulted from different operations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.PandasFeatureUnion.transform" title="paralytics.preprocessing.PandasFeatureUnion.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.transform" title="paralytics.PandasFeatureUnion.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
 <td><p>Applies conversions which are found in transformer_list.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
-<dt id="paralytics.preprocessing.PandasFeatureUnion.fit_transform">
-<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/feature_union.html#PandasFeatureUnion.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.PandasFeatureUnion.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dt id="paralytics.PandasFeatureUnion.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.fit_transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits and transforms data based on transformers inside pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X: DataFrame, shape (n_samples, n_features)</strong></dt><dd><p>Data with n_samples as its number of samples and n_features as its
+<dt><strong>X: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>Data with n_samples as its number of samples and n_features as its
 number of features.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape (k_samples, k_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt><strong>X_new: DataFrame, shape = (k_samples, k_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>
@@ -231,20 +229,20 @@ corresponding binary values.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="paralytics.preprocessing.PandasFeatureUnion.merge_dataframes_by_column">
-<code class="descname">merge_dataframes_by_column</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/feature_union.html#PandasFeatureUnion.merge_dataframes_by_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.PandasFeatureUnion.merge_dataframes_by_column" title="Permalink to this definition">¶</a></dt>
+<dt id="paralytics.PandasFeatureUnion.merge_dataframes_by_column">
+<code class="descname">merge_dataframes_by_column</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.merge_dataframes_by_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.merge_dataframes_by_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates dataframes which resulted from different operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X: DataFrame, shape (n_samples, n_features)</strong></dt><dd><p>Data with n_samples as its number of samples and n_features as its
+<dt><strong>X: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>Data with n_samples as its number of samples and n_features as its
 number of features.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt><strong>X_new: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>
@@ -253,20 +251,20 @@ corresponding binary values.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="paralytics.preprocessing.PandasFeatureUnion.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/feature_union.html#PandasFeatureUnion.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.PandasFeatureUnion.transform" title="Permalink to this definition">¶</a></dt>
+<dt id="paralytics.PandasFeatureUnion.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies conversions which are found in transformer_list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X: DataFrame, shape (n_samples, n_features)</strong></dt><dd><p>Data with n_samples as its number of samples and n_features as its
+<dt><strong>X: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>Data with n_samples as its number of samples and n_features as its
 number of features.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt><strong>X_new: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>
@@ -288,10 +286,10 @@ corresponding binary values.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="paralytics.preprocessing.TypeSelector.html" class="btn btn-neutral float-right" title="TypeSelector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="paralytics.TargetEncoder.html" class="btn btn-neutral float-right" title="TargetEncoder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="paralytics.preprocessing.Imputer.html" class="btn btn-neutral float-left" title="Imputer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="paralytics.Discretizer.html" class="btn btn-neutral float-left" title="Discretizer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

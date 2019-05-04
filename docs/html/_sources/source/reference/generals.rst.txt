@@ -7,5 +7,6 @@ Generals
 
    api/*CorrelationReducer
    api/*Discretizer
+   api/*PandasFeatureUnion
    api/*TargetEncoder
    api/*VIFSelector
