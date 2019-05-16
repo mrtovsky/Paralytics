@@ -18,6 +18,9 @@ History
     * Repairs the typo in the function name by changing it to: ``utils.check_column_existence``.
 * Expanded Sphinx documentation.
     * Adds example usage of ``force_context_manager`` function.
+* Added ``utils.check_continuity`` function
+    * Creates function that asserts whether the variable is truly continuous at a given
+      repetition threshold.
 
 0.2.1 (31.03.2019)
 ------------------
