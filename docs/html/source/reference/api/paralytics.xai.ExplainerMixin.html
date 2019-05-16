@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>force_context_manager &mdash; Paralytics 0.2.2 documentation</title>
+  <title>ExplainerMixin &mdash; Paralytics 0.2.2 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Exceptions &amp; Warnings" href="../exceptions.html" />
-    <link rel="prev" title="Decorators" href="../decorators.html" /> 
+    <link rel="next" title="FeatureEffectExplainer" href="paralytics.xai.FeatureEffectExplainer.html" />
+    <link rel="prev" title="Explainable AI" href="../xai.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,14 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../xai.html">Explainable AI</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ExplainerMixin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.xai.FeatureEffectExplainer.html">FeatureEffectExplainer</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../decorators.html">Decorators</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">force_context_manager</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
 </ul>
 </li>
@@ -150,15 +151,15 @@
         
           <li><a href="../index.html">API Reference</a> &raquo;</li>
         
-          <li><a href="../decorators.html">Decorators</a> &raquo;</li>
+          <li><a href="../xai.html">Explainable AI</a> &raquo;</li>
         
-      <li>force_context_manager</li>
+      <li>ExplainerMixin</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../../_sources/source/reference/api/paralytics.force_context_manager.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/source/reference/api/paralytics.xai.ExplainerMixin.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -171,13 +172,55 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="force-context-manager">
-<h1>force_context_manager<a class="headerlink" href="#force-context-manager" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="paralytics.force_context_manager">
-<code class="descclassname">paralytics.</code><code class="descname">force_context_manager</code><span class="sig-paren">(</span><em>cls</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/decorators.html#force_context_manager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.force_context_manager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prevents user from calling objects of decorated classes without using
-the <cite>with</cite> statement.</p>
+  <div class="section" id="explainermixin">
+<h1>ExplainerMixin<a class="headerlink" href="#explainermixin" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paralytics.xai.ExplainerMixin">
+<em class="property">class </em><code class="descclassname">paralytics.xai.</code><code class="descname">ExplainerMixin</code><a class="reference internal" href="../../../_modules/paralytics/xai/base.html#ExplainerMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.ExplainerMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin class for all AI explainers in paralytics.xai subpackage.</p>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.xai.ExplainerMixin.explain" title="paralytics.xai.ExplainerMixin.explain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explain</span></code></a>()</p></td>
+<td><p>Explain the black box returning object that visualizes properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.xai.ExplainerMixin.fit" title="paralytics.xai.ExplainerMixin.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y)</p></td>
+<td><p>Fit to data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.xai.ExplainerMixin.fit_explain" title="paralytics.xai.ExplainerMixin.fit_explain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_explain</span></code></a>(X[, y])</p></td>
+<td><p>Fit to data, then explain properties.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="paralytics.xai.ExplainerMixin.explain">
+<code class="descname">explain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/base.html#ExplainerMixin.explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.ExplainerMixin.explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explain the black box returning object that visualizes properties.</p>
+<p class="rubric">Notes</p>
+<p>It should ultimately return the plot showing previously obtained
+properties in the fitting phase. Sometimes it is insufficient or
+impossible, hence it is acceptable to return a concise value or the
+description itself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paralytics.xai.ExplainerMixin.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/base.html#ExplainerMixin.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.ExplainerMixin.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paralytics.xai.ExplainerMixin.fit_explain">
+<code class="descname">fit_explain</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/base.html#ExplainerMixin.fit_explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.ExplainerMixin.fit_explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to data, then explain properties.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -190,10 +233,10 @@ the <cite>with</cite> statement.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../exceptions.html" class="btn btn-neutral float-right" title="Exceptions &amp; Warnings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="paralytics.xai.FeatureEffectExplainer.html" class="btn btn-neutral float-right" title="FeatureEffectExplainer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../decorators.html" class="btn btn-neutral float-left" title="Decorators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../xai.html" class="btn btn-neutral float-left" title="Explainable AI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

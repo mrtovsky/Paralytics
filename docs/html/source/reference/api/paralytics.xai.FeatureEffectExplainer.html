@@ -1,0 +1,335 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FeatureEffectExplainer &mdash; Paralytics 0.2.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Preprocessing" href="../preprocessing.html" />
+    <link rel="prev" title="ExplainerMixin" href="paralytics.xai.ExplainerMixin.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Paralytics
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../xai.html">Explainable AI</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="paralytics.xai.ExplainerMixin.html">ExplainerMixin</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">FeatureEffectExplainer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Paralytics</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../xai.html">Explainable AI</a> &raquo;</li>
+        
+      <li>FeatureEffectExplainer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/source/reference/api/paralytics.xai.FeatureEffectExplainer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="featureeffectexplainer">
+<h1>FeatureEffectExplainer<a class="headerlink" href="#featureeffectexplainer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="paralytics.xai.FeatureEffectExplainer">
+<em class="property">class </em><code class="descclassname">paralytics.xai.</code><code class="descname">FeatureEffectExplainer</code><span class="sig-paren">(</span><em>estimator</em>, <em>features</em>, <em>sample_size=None</em>, <em>estimation_method='auto'</em>, <em>n_span_values=1000</em>, <em>pdplot=True</em>, <em>mplot=False</em>, <em>neighborhoods=0.1</em>, <em>ice=False</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <a class="reference internal" href="paralytics.xai.ExplainerMixin.html#paralytics.xai.ExplainerMixin" title="paralytics.xai.base.ExplainerMixin"><code class="docutils literal notranslate"><span class="pre">paralytics.xai.ExplainerMixin</span></code></a></p>
+<p>Visualizes the effect of one or two features on the prediction.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>estimator:</strong></dt><dd></dd>
+<dt><strong>features: str or list of length at most 2</strong></dt><dd></dd>
+<dt><strong>sample_size: int or float, optional (default=None)</strong></dt><dd></dd>
+<dt><strong>estimation_method: string: {‘auto’, ‘span’, ‘observed’},</strong></dt><dd></dd>
+<dt><strong>optional (default=’auto’)</strong></dt><dd><p>Estimation method to determine the set of values of the explained
+variable to generate the synthetic data set containing all of the
+unique values of the obtained explained variable crossed with the
+rest of the observed values of independent variables excluding the
+grid features.</p>
+<ul>
+<li><p><cite>auto</cite>:</p>
+<p>Checks whether passed variable is truly continuous and based on the
+result of this test, selects the appropriate method from remaining.</p>
+</li>
+<li><p><cite>span</cite>:</p>
+<p>Calculates the lower and the upper bound of the passed variable and
+spans the obtained range. Recommended for numeric features, because
+it also covers the values not included in the given data set.</p>
+</li>
+<li><p><cite>observed</cite>:</p>
+<p>Takes all of the unique values of the explained features observed in
+the given data set and imputes into grid features. Performed by
+default for categorical variables.</p>
+</li>
+</ul>
+</dd>
+<dt><strong>n_span_values: int, optional (default=1000)</strong></dt><dd><p>Declares number of unique values generated for grid feature when <cite>span</cite>
+estimation method is selected.</p>
+</dd>
+<dt><strong>pdplot: bool, optional (default=True)</strong></dt><dd><p>Defines if Partial Dependence Plot should be displayed. It visualizes
+marginal effect that grid features have on predictions with use of the
+Monte Carlo method.</p>
+</dd>
+<dt><strong>mplot: bool, optional (default=False)</strong></dt><dd><p>Defines if Marginal Plot should be displayed. It visualizes conditional
+effect that grid features have on predictions. Only possible for
+numeric features.</p>
+</dd>
+<dt><strong>neighborhoods: int or float or list, optional (default=.1)</strong></dt><dd><p>Neighborhood of the value to determine the interval
+<cite>[current_value - neighborhood, current_value + neighborhood]</cite>
+for which predictions will be averaged. Taken under consideration
+only when <cite>mplot == True</cite>. If:</p>
+<ul>
+<li><p><cite>int</cite>:</p>
+<p>Absolute value that will be deducted and added from the current
+value to determine the interval for synthetic data generation.</p>
+</li>
+<li><p><cite>float</cite>:</p>
+<p>Fraction of the difference between biggest and smallest value in the
+variable to calculate the interval boundaries.</p>
+</li>
+</ul>
+<p>Should be passed as the list of values mentioned above if two features
+are passed to explanation, in the same order in which the features are
+given.</p>
+</dd>
+<dt><strong>ice: bool, optional (default=True)</strong></dt><dd><p>Defines whether Individual Conditional Expectation plots should be
+displayed. Only possible if a single feature is explained.</p>
+</dd>
+<dt><strong>random_state: int, optional (default=None)</strong></dt><dd><p>Seed for the sample generator. Used when <cite>sample_size</cite> is not None.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>[1] C. Molnar, <a class="reference external" href="https://christophm.github.io/interpretable-ml-book/pdp.html">Interpretable Machine Learning</a>, 2019</p>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.explain" title="paralytics.xai.FeatureEffectExplainer.explain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">explain</span></code></a>()</p></td>
+<td><p>Explain the black box returning object that visualizes properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.fit" title="paralytics.xai.FeatureEffectExplainer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="paralytics.xai.FeatureEffectExplainer.explain">
+<code class="descname">explain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer.explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.explain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explain the black box returning object that visualizes properties.</p>
+<p class="rubric">Notes</p>
+<p>It should ultimately return the plot showing previously obtained
+properties in the fitting phase. Sometimes it is insufficient or
+impossible, hence it is acceptable to return a concise value or the
+description itself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paralytics.xai.FeatureEffectExplainer.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../preprocessing.html" class="btn btn-neutral float-right" title="Preprocessing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="paralytics.xai.ExplainerMixin.html" class="btn btn-neutral float-left" title="ExplainerMixin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Mateusz Zakrzewski
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>is_numeric &mdash; Paralytics 0.2.2 documentation</title>
+  <title>check_continuity &mdash; Paralytics 0.2.2 documentation</title>
   
 
   
@@ -35,9 +35,7 @@
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="find_sparsity" href="paralytics.utils.find_sparsity.html" />
-    <link rel="prev" title="check_column_existence" href="paralytics.utils.check_column_existence.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,31 +84,10 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../utils.html">Utilities</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#importing">Importing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#plotting">Plotting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#scraping">Scraping</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#validation">Validation</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_uniq.html">check_uniq</a></li>
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_column_existence.html">check_column_existence</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">is_numeric</a></li>
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.find_sparsity.html">find_sparsity</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -157,17 +134,13 @@
     
       <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="../utils.html">Utilities</a> &raquo;</li>
-        
-      <li>is_numeric</li>
+      <li>check_continuity</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../../_sources/source/reference/api/paralytics.utils.is_numeric.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/source/reference/api/paralytics.utils.check_continuity.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -180,23 +153,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="is-numeric">
-<h1>is_numeric<a class="headerlink" href="#is-numeric" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="check-continuity">
+<h1>check_continuity<a class="headerlink" href="#check-continuity" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="paralytics.utils.is_numeric">
-<code class="descclassname">paralytics.utils.</code><code class="descname">is_numeric</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#is_numeric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.is_numeric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks whether given vector contains numeric-only values excluding
-boolean vectors.</p>
+<dt id="paralytics.utils.check_continuity">
+<code class="descclassname">paralytics.utils.</code><code class="descname">check_continuity</code><span class="sig-paren">(</span><em>X</em>, <em>thresh=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#check_continuity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.check_continuity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether input variable is continuous.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X: array-like, shape = (n_samples, )</strong></dt><dd><p>Vector where n_samples is the number of samples.</p>
+<dt><strong>X: array-like, shape = (n_samples, )</strong></dt><dd><p>Vector to check for continuity.</p>
+</dd>
+<dt><strong>thresh: float, optional (default=.05)</strong></dt><dd><p>Fraction of non-unique values under which lack of continuity will be
+reported.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>bool</strong></dt><dd></dd>
+<dt><strong>boolean: Whether variable is continuous.</strong></dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -209,15 +184,6 @@ boolean vectors.</p>
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="paralytics.utils.find_sparsity.html" class="btn btn-neutral float-right" title="find_sparsity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="paralytics.utils.check_column_existence.html" class="btn btn-neutral float-left" title="check_column_existence" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

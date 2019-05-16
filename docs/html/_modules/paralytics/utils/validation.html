@@ -155,6 +155,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Utilities for input validation.&quot;&quot;&quot;</span>
 
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="k">import</span> <span class="n">is_numeric_dtype</span>
@@ -164,7 +165,8 @@
     <span class="s1">&#39;check_uniq&#39;</span><span class="p">,</span>
     <span class="s1">&#39;check_column_existence&#39;</span><span class="p">,</span>
     <span class="s1">&#39;is_numeric&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;find_sparsity&#39;</span>
+    <span class="s1">&#39;find_sparsity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;check_continuity&#39;</span>
 <span class="p">]</span>
 
 
@@ -178,7 +180,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    boolean: Whether or not all input data values are unique.</span>
+<span class="sd">    boolean: Whether all input data values are unique.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -230,7 +232,7 @@
 <span class="sd">    bool</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span></div>
+    <span class="k">return</span> <span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="find_sparsity"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.find_sparsity.html#paralytics.utils.find_sparsity">[docs]</a><span class="k">def</span> <span class="nf">find_sparsity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">01</span><span class="p">):</span>
@@ -279,6 +281,26 @@
                     <span class="n">sparse_cat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sparse_num</span><span class="p">,</span> <span class="n">sparse_bin</span><span class="p">,</span> <span class="n">sparse_cat</span></div>
+
+
+<div class="viewcode-block" id="check_continuity"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_continuity.html#paralytics.utils.check_continuity">[docs]</a><span class="k">def</span> <span class="nf">check_continuity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">05</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether input variable is continuous.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X: array-like, shape = (n_samples, )</span>
+<span class="sd">        Vector to check for continuity.</span>
+
+<span class="sd">    thresh: float, optional (default=.05)</span>
+<span class="sd">        Fraction of non-unique values under which lack of continuity will be</span>
+<span class="sd">        reported.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boolean: Whether variable is continuous.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">thresh</span></div>
 </pre></div>
 
            </div>

@@ -39,3 +39,4 @@ Validation
    api/*utils.check_column_existence
    api/*utils.is_numeric
    api/*utils.find_sparsity
+   api/*utils.check_continuity
