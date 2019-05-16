@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import warnings
 
-from inspect import currentframe, getargvalues
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import KFold
 
@@ -74,13 +73,13 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, columns=None, nan_as_category=True,
                  cv=None, inner_cv=None, shuffle=True,
                  alpha=5, random_state=None):
-
-        icf = currentframe()
-        args, _, _, values = getargvalues(icf)
-        values.pop('self')
-
-        for param, value in values.items():
-            setattr(self, param, value)
+        self.columns = columns
+        self.nan_as_category = nan_as_category
+        self.cv = cv
+        self.inner_cv = inner_cv
+        self.shuffle = shuffle
+        self.alpha = alpha
+        self.random_state = random_state
 
     def fit(self, X, y):
         """Fits corresponding target aggregated values to categorical subgroups.

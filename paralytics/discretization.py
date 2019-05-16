@@ -1,4 +1,3 @@
-import inspect
 import numpy as np
 import pandas as pd
 import pandas.core.algorithms as algos
@@ -115,12 +114,12 @@ class Discretizer(BaseEstimator, TransformerMixin):
     def __init__(self, method='sapling', formula='mean',
                  max_bins=20, min_bins=3, max_tree_depth=None,
                  min_samples_leaf=.05):
-        icf = inspect.currentframe()
-        args, _, _, values = inspect.getargvalues(icf)
-        values.pop('self')
-
-        for param, value in values.items():
-            setattr(self, param, value)
+        self.method = method
+        self.formula = formula
+        self.max_bins = max_bins
+        self.min_bins = min_bins
+        self.max_tree_depth = max_tree_depth
+        self.min_samples_leaf = min_samples_leaf
 
     def fit(self, X, y=None, **params):
         """Fit the binning with X by extracting upper limits of right-closed

@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from inspect import currentframe, getargvalues
 from pandas.api.types import is_numeric_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.impute import SimpleImputer
@@ -58,12 +57,9 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
     def __init__(self, thresh=5.0, impute=True,
                  impute_strat='mean', verbose=0):
-        icf = currentframe()
-        args, _, _, values = getargvalues(icf)
-        values.pop('self')
-
-        for param, value in values.items():
-            setattr(self, param, value)
+        self.thresh = thresh
+        self.impute_strat = impute_strat
+        self.verbose = verbose
 
         if impute:
             self.imputer_ = SimpleImputer(strategy=impute_strat)
@@ -200,12 +196,8 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
 
     """
     def __init__(self, thresh=.8, method='pearson'):
-        icf = currentframe()
-        args, _, _, values = getargvalues(icf)
-        values.pop('self')
-
-        for param, value in values.items():
-            setattr(self, param, value)
+        self.thresh = thresh
+        self.method = method
 
     def fit(self, X, y=None):
         """Fits columns with a correlation coefficients exceeding the threshold.
@@ -215,6 +207,8 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
         X: DataFrame, shape = (n_samples, n_features)
             Input data, where n_samples is the number of samples and n_features
             is the number of features.
+
+        y: Ignore
 
         Returns
         -------

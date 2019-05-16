@@ -1,6 +1,6 @@
-"""
-This module includes all custom decorators used across paralytics.
-"""
+"""This module includes all custom decorators used across paralytics."""
+
+
 __all__ = [
     'force_context_manager'
 ]

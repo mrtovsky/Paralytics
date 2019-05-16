@@ -1,7 +1,5 @@
-import numpy as np
 import pandas as pd
 
-from inspect import currentframe, getargvalues
 from sklearn.base import BaseEstimator, TransformerMixin
 from pandas.api.types import is_numeric_dtype
 
@@ -160,12 +158,11 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
     """
     def __init__(self, method='freq', percentile_thresh=.05, new_cat='Other',
                  include_cols=None, exclude_cols=None):
-        icf = currentframe()
-        args, _, _, values = getargvalues(icf)
-        values.pop('self')
-
-        for param, value in values.items():
-            setattr(self, param, value)
+        self.method = method
+        self.percentile_thresh = percentile_thresh
+        self.new_cat = new_cat
+        self.include_cols = include_cols
+        self.exclude_cols = exclude_cols
 
     def fit(self, X, y=None):
         """Fits grouping with X by using given method.
