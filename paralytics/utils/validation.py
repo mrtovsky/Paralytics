@@ -1,6 +1,7 @@
 """Utilities for input validation."""
 
 
+import numpy as np
 import pandas as pd
 
 from pandas.api.types import is_numeric_dtype
@@ -10,7 +11,8 @@ __all__ = [
     'check_uniq',
     'check_column_existence',
     'is_numeric',
-    'find_sparsity'
+    'find_sparsity',
+    'check_continuity'
 ]
 
 
@@ -24,7 +26,7 @@ def check_uniq(X):
 
     Returns
     -------
-    boolean: Whether or not all input data values are unique.
+    boolean: Whether all input data values are unique.
 
     """
     s = set()
@@ -76,7 +78,7 @@ def is_numeric(X):
     bool
 
     """
-    return is_numeric_dtype(X) and not set(X) <= {0, 1}
+    return is_numeric_dtype(np.array(X)) and not set(X) <= {0, 1}
 
 
 def find_sparsity(X, thresh=.01):
@@ -125,3 +127,23 @@ def find_sparsity(X, thresh=.01):
                     sparse_cat.append(col)
 
     return sparse_num, sparse_bin, sparse_cat
+
+
+def check_continuity(X, thresh=.05):
+    """Checks whether input variable is continuous.
+
+    Parameters
+    ----------
+    X: array-like, shape = (n_samples, )
+        Vector to check for continuity.
+
+    thresh: float, optional (default=.05)
+        Fraction of non-unique values under which lack of continuity will be
+        reported.
+
+    Returns
+    -------
+    boolean: Whether variable is continuous.
+
+    """
+    return is_numeric(X) and len(np.unique(X)) / len(X) > 1 - thresh
