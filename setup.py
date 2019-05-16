@@ -29,7 +29,7 @@ with codecs.open('requirements.txt') as f:
 
 DESCRIPTION = 'Python analytical scripts that will overcome ' \
               'paralysis in your data analysis.'
-long_description = read('README.rst')
+LONG_DESCRIPTION = read('README.rst')
 
 setup(
     name='paralytics',
@@ -37,7 +37,7 @@ setup(
     author='Mateusz Zakrzewski',
     author_email="paralytics@gmail.com",
     description=DESCRIPTION,
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     url='https://mrtovsky.github.io/Paralytics/',
     install_requires=requirements,
     license='MIT',
