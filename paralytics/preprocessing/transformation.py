@@ -1,8 +1,8 @@
 import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
-from pandas.api.types import is_numeric_dtype
 
+from ..utils import is_numeric
 
 __all__ = [
     'CategoricalBinarizer',
@@ -333,12 +333,12 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
             self.automatic_projection_[int] = []
 
         for col in X.columns:
-            if set(X[col]) <= {0, 1}:
-                self.automatic_projection_[bool].append(col)
-            elif self.num_to_float and is_numeric_dtype(X[col]):
+            if self.num_to_float and is_numeric(X[col]):
                 self.automatic_projection_[float].append(col)
-            elif is_numeric_dtype(X[col]):
+            elif is_numeric(X[col]):
                 self.automatic_projection_[int].append(col)
+            elif set(X[col]) <= {0, 1}:
+                self.automatic_projection_[bool].append(col)
             else:
                 self.automatic_projection_['category'].append(col)
 
