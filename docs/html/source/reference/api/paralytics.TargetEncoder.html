@@ -98,7 +98,6 @@
 <li class="toctree-l3"><a class="reference internal" href="paralytics.VIFSelector.html">VIFSelector</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
@@ -179,7 +178,7 @@
 <h1>TargetEncoder<a class="headerlink" href="#targetencoder" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.TargetEncoder">
-<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">TargetEncoder</code><span class="sig-paren">(</span><em>columns=None</em>, <em>nan_as_category=True</em>, <em>cv=None</em>, <em>inner_cv=None</em>, <em>shuffle=True</em>, <em>alpha=5</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">TargetEncoder</code><span class="sig-paren">(</span><em class="sig-param">columns=None</em>, <em class="sig-param">nan_as_category=True</em>, <em class="sig-param">cv=None</em>, <em class="sig-param">inner_cv=None</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">alpha=5</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Encodes categorical features with the corresponding target value.</p>
 <p>If cv param is specified, performs determination of mean values on the way
@@ -211,7 +210,9 @@ will be. If you want to use the standard mean just set alpha to 0.</p>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="paralytics.preprocessing.CategoricalGrouper.html#paralytics.preprocessing.CategoricalGrouper" title="paralytics.preprocessing.CategoricalGrouper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paralytics.preprocessing.CategoricalGrouper</span></code></a></p>
+<dl class="simple">
+<dt><a class="reference internal" href="paralytics.preprocessing.CategoricalGrouper.html#paralytics.preprocessing.CategoricalGrouper" title="paralytics.preprocessing.CategoricalGrouper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paralytics.preprocessing.CategoricalGrouper</span></code></a></dt><dd></dd>
+</dl>
 </div>
 <p class="rubric">Notes</p>
 <p>When setting cross-validation parameters remember that all categories must
@@ -233,19 +234,19 @@ target aggregated value.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.TargetEncoder.fit" title="paralytics.TargetEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.TargetEncoder.fit" title="paralytics.TargetEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y)</p></td>
 <td><p>Fits corresponding target aggregated values to categorical subgroups.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.TargetEncoder.fit_transform" title="paralytics.TargetEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.TargetEncoder.fit_transform" title="paralytics.TargetEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(self, X[, y])</p></td>
 <td><p>Fit to data then transform it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.TargetEncoder.transform" title="paralytics.TargetEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.TargetEncoder.transform" title="paralytics.TargetEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X[, y])</p></td>
 <td><p>Applies target encoding on X.</p></td>
 </tr>
 </tbody>
@@ -253,7 +254,7 @@ target aggregated value.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.TargetEncoder.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits corresponding target aggregated values to categorical subgroups.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -266,7 +267,7 @@ target aggregated value.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+<dt>self: object</dt><dd><p>Returns the instance itself.</p>
 </dd>
 </dl>
 </dd>
@@ -275,7 +276,7 @@ target aggregated value.</p>
 
 <dl class="method">
 <dt id="paralytics.TargetEncoder.fit_transform">
-<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit_transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit to data then transform it.</p>
 <p>Fits transformer to X and y and returns transformed version of X.</p>
 <dl class="field-list simple">
@@ -289,7 +290,7 @@ target aggregated value.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted values to their respective target
+<dt>X_new: DataFrame, shape = (n_samples, n_features)</dt><dd><p>X data with substituted values to their respective target
 aggregated values.</p>
 </dd>
 </dl>
@@ -299,7 +300,7 @@ aggregated values.</p>
 
 <dl class="method">
 <dt id="paralytics.TargetEncoder.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/encoding.html#TargetEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.TargetEncoder.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies target encoding on X.</p>
 <p>X is target encoded with the aggregated values kept in the
 <cite>cat_aggval_</cite> and for the training data encoding is made with
@@ -316,7 +317,7 @@ cross-validation.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted values to their respective target
+<dt>X_new: DataFrame, shape = (n_samples, n_features)</dt><dd><p>X data with substituted values to their respective target
 aggregated values.</p>
 </dd>
 </dl>

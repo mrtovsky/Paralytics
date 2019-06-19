@@ -98,7 +98,6 @@
 <li class="toctree-l3"><a class="reference internal" href="paralytics.VIFSelector.html">VIFSelector</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
@@ -179,7 +178,7 @@
 <h1>Discretizer<a class="headerlink" href="#discretizer" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.Discretizer">
-<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">Discretizer</code><span class="sig-paren">(</span><em>method='sapling'</em>, <em>formula='mean'</em>, <em>max_bins=20</em>, <em>min_bins=3</em>, <em>max_tree_depth=None</em>, <em>min_samples_leaf=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">Discretizer</code><span class="sig-paren">(</span><em class="sig-param">method='sapling'</em>, <em class="sig-param">formula='mean'</em>, <em class="sig-param">max_bins=20</em>, <em class="sig-param">min_bins=3</em>, <em class="sig-param">max_tree_depth=None</em>, <em class="sig-param">min_samples_leaf=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Discretizes variables in a given data set.</p>
 <p>Reduces continuous variables to a finite number of intervals with use of
@@ -278,7 +277,7 @@ passed.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -287,24 +286,24 @@ passed.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.finger" title="paralytics.Discretizer.finger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">finger</span></code></a>(X[, y, cut_points, n_quantiles, …])</p></td>
 <td><p>Manually bins continuous variable into the declared intervals.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.fit" title="paralytics.Discretizer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.fit" title="paralytics.Discretizer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fit the binning with X by extracting upper limits of right-closed intervals.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.sapling" title="paralytics.Discretizer.sapling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sapling</span></code></a>(X, y, **params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.sapling" title="paralytics.Discretizer.sapling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sapling</span></code></a>(self, X, y, \*\*params)</p></td>
 <td><p>Creates finitely many intervals for a continuous vector using DecisionTreeClassifier optimizing splits with respect to Gini impurity criterium.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.spearman" title="paralytics.Discretizer.spearman"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spearman</span></code></a>(X, y, **params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.spearman" title="paralytics.Discretizer.spearman"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spearman</span></code></a>(self, X, y, \*\*params)</p></td>
 <td><p>Creates finitely many intervals for a continuous vector with use of Spearman’s rang correlation (supervised).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.transform" title="paralytics.Discretizer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.transform" title="paralytics.Discretizer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
 <td><p>Apply discretization on X.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="staticmethod">
+<dl class="method">
 <dt id="paralytics.Discretizer.finger">
-<em class="property">static </em><code class="descname">finger</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>cut_points=None</em>, <em>n_quantiles=4</em>, <em>labels=None</em>, <em>min_val=None</em>, <em>max_val=None</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.finger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.finger" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">finger</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">cut_points=None</em>, <em class="sig-param">n_quantiles=4</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">min_val=None</em>, <em class="sig-param">max_val=None</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.finger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.finger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manually bins continuous variable into the declared intervals.</p>
 <p>If the cut-off points are not declared the split is made using
 quantiles.</p>
@@ -343,7 +342,7 @@ number of created buckets:</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: array, shape = (n_samples, )</strong></dt><dd><p>Input data with its original values ​​being substituted with their
+<dt>X_new: array, shape = (n_samples, )</dt><dd><p>Input data with its original values ​​being substituted with their
 respective labels.</p>
 </dd>
 </dl>
@@ -353,7 +352,7 @@ respective labels.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the binning with X by extracting upper limits of right-closed
 intervals.</p>
 <dl class="field-list simple">
@@ -367,7 +366,7 @@ intervals.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+<dt>self: object</dt><dd><p>Returns the instance itself.</p>
 </dd>
 </dl>
 </dd>
@@ -376,7 +375,7 @@ intervals.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.sapling">
-<code class="descname">sapling</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.sapling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.sapling" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sapling</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.sapling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.sapling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates finitely many intervals for a continuous vector using
 DecisionTreeClassifier optimizing splits with respect to Gini impurity
 criterium.</p>
@@ -393,7 +392,7 @@ array-like object where n_samples is the number of samples.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>bins: array, shape = (n_bins, )</strong></dt><dd><p>Vector of successive cut-off points being upper limits of the
+<dt>bins: array, shape = (n_bins, )</dt><dd><p>Vector of successive cut-off points being upper limits of the
 corresponding intervals as well as containing a minimum value.</p>
 </dd>
 </dl>
@@ -403,7 +402,7 @@ corresponding intervals as well as containing a minimum value.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.spearman">
-<code class="descname">spearman</code><span class="sig-paren">(</span><em>X</em>, <em>y</em>, <em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.spearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.spearman" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">spearman</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.spearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.spearman" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates finitely many intervals for a continuous vector with use of
 Spearman’s rang correlation (supervised).</p>
 <dl class="field-list simple">
@@ -419,7 +418,7 @@ array-like object where n_samples is the number of samples.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>bins: array, shape = (n_bins, )</strong></dt><dd><p>Vector of successive cut-off points being upper limits of the
+<dt>bins: array, shape = (n_bins, )</dt><dd><p>Vector of successive cut-off points being upper limits of the
 corresponding intervals as well as containing a minimum value.</p>
 </dd>
 </dl>
@@ -429,7 +428,7 @@ corresponding intervals as well as containing a minimum value.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply discretization on X.</p>
 <p>X is projected on the bins previously extracted from a training set.</p>
 <dl class="field-list simple">
@@ -441,7 +440,7 @@ corresponding intervals as well as containing a minimum value.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: pd.DataFrame, shape = (n_samples_new, n_features)</strong></dt><dd><p>X data with substituted values to their respective labels being
+<dt>X_new: pd.DataFrame, shape = (n_samples_new, n_features)</dt><dd><p>X data with substituted values to their respective labels being
 string type.</p>
 </dd>
 </dl>

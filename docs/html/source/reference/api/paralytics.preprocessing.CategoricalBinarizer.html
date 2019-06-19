@@ -91,7 +91,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../preprocessing.html">Preprocessing</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">CategoricalBinarizer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.CategoricalGrouper.html">CategoricalGrouper</a></li>
@@ -180,7 +179,7 @@
 <h1>CategoricalBinarizer<a class="headerlink" href="#categoricalbinarizer" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.preprocessing.CategoricalBinarizer">
-<em class="property">class </em><code class="descclassname">paralytics.preprocessing.</code><code class="descname">CategoricalBinarizer</code><span class="sig-paren">(</span><em>keywords_true=None</em>, <em>keywords_false=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalBinarizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalBinarizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.preprocessing.</code><code class="sig-name descname">CategoricalBinarizer</code><span class="sig-paren">(</span><em class="sig-param">keywords_true=None</em>, <em class="sig-param">keywords_false=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalBinarizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalBinarizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Finds categorical columns with binary-like response and converts them.</p>
 <p>Searches throughout the categorical columns in the DataFrame and finds
@@ -202,16 +201,16 @@ values.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalBinarizer.fit" title="paralytics.preprocessing.CategoricalBinarizer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalBinarizer.fit" title="paralytics.preprocessing.CategoricalBinarizer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fits selection of binary-like columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalBinarizer.transform" title="paralytics.preprocessing.CategoricalBinarizer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalBinarizer.transform" title="paralytics.preprocessing.CategoricalBinarizer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
 <td><p>Applies boolean convertion to binary-like category columns.</p></td>
 </tr>
 </tbody>
@@ -219,7 +218,7 @@ values.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.preprocessing.CategoricalBinarizer.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalBinarizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalBinarizer.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalBinarizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalBinarizer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits selection of binary-like columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -232,7 +231,7 @@ number of features.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+<dt>self: object</dt><dd><p>Returns the instance itself.</p>
 </dd>
 </dl>
 </dd>
@@ -241,7 +240,7 @@ number of features.</p>
 
 <dl class="method">
 <dt id="paralytics.preprocessing.CategoricalBinarizer.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalBinarizer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalBinarizer.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalBinarizer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalBinarizer.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies boolean convertion to binary-like category columns.</p>
 <p>X columns that match the condition of containing only binary-like
 string values are mapped to boolean values corresponding to the
@@ -256,7 +255,7 @@ number of features.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: pd.DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt>X_new: pd.DataFrame, shape = (n_samples, n_features)</dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>

@@ -180,7 +180,7 @@
 <h1>BaseSeleniumBrowser<a class="headerlink" href="#baseseleniumbrowser" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.utils.BaseSeleniumBrowser">
-<em class="property">class </em><code class="descclassname">paralytics.utils.</code><code class="descname">BaseSeleniumBrowser</code><span class="sig-paren">(</span><em>browser_name</em>, <em>executable_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/scraping.html#BaseSeleniumBrowser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.BaseSeleniumBrowser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">BaseSeleniumBrowser</code><span class="sig-paren">(</span><em class="sig-param">browser_name</em>, <em class="sig-param">executable_path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/scraping.html#BaseSeleniumBrowser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.BaseSeleniumBrowser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for all scrapers built on top of the Selenium package.</p>
 <p>Automates the use of the browser of user’s choice by implementing universal
@@ -200,19 +200,21 @@ the PATH.</p>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="paralytics.force_context_manager.html#paralytics.force_context_manager" title="paralytics.force_context_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paralytics.force_context_manager</span></code></a></p>
+<dl class="simple">
+<dt><a class="reference internal" href="paralytics.force_context_manager.html#paralytics.force_context_manager" title="paralytics.force_context_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paralytics.force_context_manager</span></code></a></dt><dd></dd>
+</dl>
 </div>
 <p class="rubric">Notes</p>
 <p>Tt is recommended to decorate all classes inheriting from
 BaseSeleniumBrowser with <cite>paralytics.force_context_manager</cite> function.</p>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.utils.BaseSeleniumBrowser.open_page" title="paralytics.utils.BaseSeleniumBrowser.open_page"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_page</span></code></a>(url, title)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.utils.BaseSeleniumBrowser.open_page" title="paralytics.utils.BaseSeleniumBrowser.open_page"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_page</span></code></a>(self, url, title)</p></td>
 <td><p>Opens page with use of the passed url.</p></td>
 </tr>
 </tbody>
@@ -220,7 +222,7 @@ BaseSeleniumBrowser with <cite>paralytics.force_context_manager</cite> function.
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.utils.BaseSeleniumBrowser.open_page">
-<code class="descname">open_page</code><span class="sig-paren">(</span><em>url</em>, <em>title</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/scraping.html#BaseSeleniumBrowser.open_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.BaseSeleniumBrowser.open_page" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">open_page</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">url</em>, <em class="sig-param">title</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/scraping.html#BaseSeleniumBrowser.open_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.BaseSeleniumBrowser.open_page" title="Permalink to this definition">¶</a></dt>
 <dd><p>Opens page with use of the passed url.</p>
 </dd></dl>
 

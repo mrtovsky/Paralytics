@@ -169,8 +169,7 @@
 
 <div class="viewcode-block" id="ExplainerMixin.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.xai.ExplainerMixin.html#paralytics.xai.ExplainerMixin.fit">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fit to data.&quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="sd">&quot;&quot;&quot;Fit to data.&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="ExplainerMixin.explain"><a class="viewcode-back" href="../../../source/reference/api/paralytics.xai.ExplainerMixin.html#paralytics.xai.ExplainerMixin.explain">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">explain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -183,8 +182,7 @@
 <span class="sd">        impossible, hence it is acceptable to return a concise value or the</span>
 <span class="sd">        description itself.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+<span class="sd">        &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="ExplainerMixin.fit_explain"><a class="viewcode-back" href="../../../source/reference/api/paralytics.xai.ExplainerMixin.html#paralytics.xai.ExplainerMixin.fit_explain">[docs]</a>    <span class="k">def</span> <span class="nf">fit_explain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit to data, then explain properties.&quot;&quot;&quot;</span>
@@ -192,7 +190,6 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div></div>
-
 </pre></div>
 
            </div>

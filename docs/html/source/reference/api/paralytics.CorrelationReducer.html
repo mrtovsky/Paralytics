@@ -98,7 +98,6 @@
 <li class="toctree-l3"><a class="reference internal" href="paralytics.VIFSelector.html">VIFSelector</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
@@ -179,7 +178,7 @@
 <h1>CorrelationReducer<a class="headerlink" href="#correlationreducer" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.CorrelationReducer">
-<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">CorrelationReducer</code><span class="sig-paren">(</span><em>thresh=0.8</em>, <em>method='pearson'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">CorrelationReducer</code><span class="sig-paren">(</span><em class="sig-param">thresh=0.8</em>, <em class="sig-param">method='pearson'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Removes correlated columns exceeding the thresh value.</p>
 <dl class="field-list simple">
@@ -206,16 +205,16 @@ discontinued.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.CorrelationReducer.fit" title="paralytics.CorrelationReducer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.CorrelationReducer.fit" title="paralytics.CorrelationReducer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fits columns with a correlation coefficients exceeding the threshold.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.CorrelationReducer.transform" title="paralytics.CorrelationReducer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.CorrelationReducer.transform" title="paralytics.CorrelationReducer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
 <td><p>Apply feature selection based on correlation coefficients.</p></td>
 </tr>
 </tbody>
@@ -223,7 +222,7 @@ discontinued.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.CorrelationReducer.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits columns with a correlation coefficients exceeding the threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -236,7 +235,7 @@ is the number of features.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+<dt>self: object</dt><dd><p>Returns the instance itself.</p>
 </dd>
 </dl>
 </dd>
@@ -245,7 +244,7 @@ is the number of features.</p>
 
 <dl class="method">
 <dt id="paralytics.CorrelationReducer.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply feature selection based on correlation coefficients.</p>
 <p>Removes correlated features with coefficient higher than the threshold
 value.</p>
@@ -258,7 +257,7 @@ value.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (n_samples, n_features_new)</strong></dt><dd><p>X data with variables remaining after applying feature elimination.</p>
+<dt>X_new: DataFrame, shape = (n_samples, n_features_new)</dt><dd><p>X data with variables remaining after applying feature elimination.</p>
 </dd>
 </dl>
 </dd>

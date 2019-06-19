@@ -192,7 +192,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X: DataFrame</span>
+<span class="sd">    X: pandas.DataFrame</span>
 <span class="sd">        Data with columns to be checked for occurrence.</span>
 
 <span class="sd">    cols: single label or list-like</span>
@@ -232,7 +232,12 @@
 <span class="sd">    bool</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="find_sparsity"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.find_sparsity.html#paralytics.utils.find_sparsity">[docs]</a><span class="k">def</span> <span class="nf">find_sparsity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">01</span><span class="p">):</span>
@@ -246,7 +251,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    X: DataFrame</span>
+<span class="sd">    X: pandas.DataFrame</span>
 <span class="sd">        Data to be checked for sparsity.</span>
 
 <span class="sd">    thresh: float, optional (default=.01)</span>
@@ -283,7 +288,7 @@
     <span class="k">return</span> <span class="n">sparse_num</span><span class="p">,</span> <span class="n">sparse_bin</span><span class="p">,</span> <span class="n">sparse_cat</span></div>
 
 
-<div class="viewcode-block" id="check_continuity"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_continuity.html#paralytics.utils.check_continuity">[docs]</a><span class="k">def</span> <span class="nf">check_continuity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">05</span><span class="p">):</span>
+<div class="viewcode-block" id="check_continuity"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_continuity.html#paralytics.utils.check_continuity">[docs]</a><span class="k">def</span> <span class="nf">check_continuity</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=.</span><span class="mi">5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether input variable is continuous.</span>
 
 <span class="sd">    Parameters</span>
@@ -291,7 +296,7 @@
 <span class="sd">    X: array-like, shape = (n_samples, )</span>
 <span class="sd">        Vector to check for continuity.</span>
 
-<span class="sd">    thresh: float, optional (default=.05)</span>
+<span class="sd">    thresh: float, optional (default=.5)</span>
 <span class="sd">        Fraction of non-unique values under which lack of continuity will be</span>
 <span class="sd">        reported.</span>
 
@@ -300,7 +305,7 @@
 <span class="sd">    boolean: Whether variable is continuous.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">thresh</span></div>
+    <span class="k">return</span> <span class="n">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">thresh</span></div>
 </pre></div>
 
            </div>

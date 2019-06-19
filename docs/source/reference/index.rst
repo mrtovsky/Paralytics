@@ -8,7 +8,6 @@ This page gives an overview of all Paralytics objects and functions.
    :maxdepth: 2
 
    generals
-   xai
    preprocessing
    mathy
    utils

@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Explainable AI" href="../xai.html" />
+    <link rel="next" title="Preprocessing" href="../preprocessing.html" />
     <link rel="prev" title="TargetEncoder" href="paralytics.TargetEncoder.html" /> 
 </head>
 
@@ -98,7 +98,6 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">VIFSelector</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
@@ -179,7 +178,7 @@
 <h1>VIFSelector<a class="headerlink" href="#vifselector" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.VIFSelector">
-<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">VIFSelector</code><span class="sig-paren">(</span><em>thresh=5.0</em>, <em>impute=True</em>, <em>impute_strat='mean'</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">VIFSelector</code><span class="sig-paren">(</span><em class="sig-param">thresh=5.0</em>, <em class="sig-param">impute=True</em>, <em class="sig-param">impute_strat='mean'</em>, <em class="sig-param">verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Makes feature selection based on Variance Inflation Factor.</p>
 <p>Calculates Variance Inflation Factor for a given dataset, in each iteration
@@ -217,16 +216,16 @@ which features were removed.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.VIFSelector.fit" title="paralytics.VIFSelector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.VIFSelector.fit" title="paralytics.VIFSelector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fits columns with a VIF value exceeding the threshold.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.VIFSelector.transform" title="paralytics.VIFSelector.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.VIFSelector.transform" title="paralytics.VIFSelector.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
 <td><p>Apply feature selection based on Variance Inflation Factor.</p></td>
 </tr>
 </tbody>
@@ -234,7 +233,7 @@ which features were removed.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.VIFSelector.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits columns with a VIF value exceeding the threshold.</p>
 <p>If specified, fits the imputer on X.</p>
 <dl class="field-list simple">
@@ -247,7 +246,7 @@ is the number of features.l</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+<dt>self: object</dt><dd><p>Returns the instance itself.</p>
 </dd>
 </dl>
 </dd>
@@ -256,7 +255,7 @@ is the number of features.l</p>
 
 <dl class="method">
 <dt id="paralytics.VIFSelector.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#VIFSelector.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply feature selection based on Variance Inflation Factor.</p>
 <p>Until the maximum VIF in the given dataset does not exceed the declared
 threshold, in every iteration independent variables’ VIF values are
@@ -270,7 +269,7 @@ calculated and the variable with the highest VIF value is removed.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (n_samples, n_features_new)</strong></dt><dd><p>X data with variables remaining after applying feature elimination.</p>
+<dt>X_new: DataFrame, shape = (n_samples, n_features_new)</dt><dd><p>X data with variables remaining after applying feature elimination.</p>
 </dd>
 </dl>
 </dd>
@@ -289,7 +288,7 @@ calculated and the variable with the highest VIF value is removed.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../xai.html" class="btn btn-neutral float-right" title="Explainable AI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../preprocessing.html" class="btn btn-neutral float-right" title="Preprocessing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="paralytics.TargetEncoder.html" class="btn btn-neutral float-left" title="TargetEncoder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

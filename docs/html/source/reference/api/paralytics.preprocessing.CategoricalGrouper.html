@@ -91,7 +91,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../preprocessing.html">Preprocessing</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.CategoricalBinarizer.html">CategoricalBinarizer</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">CategoricalGrouper</a></li>
@@ -180,7 +179,7 @@
 <h1>CategoricalGrouper<a class="headerlink" href="#categoricalgrouper" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.preprocessing.CategoricalGrouper">
-<em class="property">class </em><code class="descclassname">paralytics.preprocessing.</code><code class="descname">CategoricalGrouper</code><span class="sig-paren">(</span><em>method='freq'</em>, <em>percentile_thresh=0.05</em>, <em>new_cat='Other'</em>, <em>include_cols=None</em>, <em>exclude_cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalGrouper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalGrouper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.preprocessing.</code><code class="sig-name descname">CategoricalGrouper</code><span class="sig-paren">(</span><em class="sig-param">method='freq'</em>, <em class="sig-param">percentile_thresh=0.05</em>, <em class="sig-param">new_cat='Other'</em>, <em class="sig-param">include_cols=None</em>, <em class="sig-param">exclude_cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalGrouper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalGrouper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Groups sparse observations in a categorical columns into one category.</p>
 <dl class="field-list">
@@ -221,16 +220,16 @@ category for every feature in the dataset.</p>
 </dd>
 </dl>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalGrouper.fit" title="paralytics.preprocessing.CategoricalGrouper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalGrouper.fit" title="paralytics.preprocessing.CategoricalGrouper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fits grouping with X by using given method.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalGrouper.transform" title="paralytics.preprocessing.CategoricalGrouper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.CategoricalGrouper.transform" title="paralytics.preprocessing.CategoricalGrouper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
 <td><p>Apply grouping of sparse categories on X.</p></td>
 </tr>
 </tbody>
@@ -238,7 +237,7 @@ category for every feature in the dataset.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.preprocessing.CategoricalGrouper.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalGrouper.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalGrouper.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalGrouper.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalGrouper.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits grouping with X by using given method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -250,7 +249,7 @@ category for every feature in the dataset.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>self: object</strong></dt><dd><p>Returns the instance itself.</p>
+<dt>self: object</dt><dd><p>Returns the instance itself.</p>
 </dd>
 </dl>
 </dd>
@@ -259,7 +258,7 @@ category for every feature in the dataset.</p>
 
 <dl class="method">
 <dt id="paralytics.preprocessing.CategoricalGrouper.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalGrouper.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalGrouper.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#CategoricalGrouper.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.CategoricalGrouper.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply grouping of sparse categories on X.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -270,7 +269,7 @@ category for every feature in the dataset.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: pd.DataFrame, shape = (n_samples_new, n_features)</strong></dt><dd><p>X data with substituted sparse categories to new_cat.</p>
+<dt>X_new: pd.DataFrame, shape = (n_samples_new, n_features)</dt><dd><p>X data with substituted sparse categories to new_cat.</p>
 </dd>
 </dl>
 </dd>

@@ -35,7 +35,9 @@
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Decorators" href="../decorators.html" />
+    <link rel="prev" title="find_sparsity" href="paralytics.utils.find_sparsity.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,10 +86,31 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../index.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../utils.html">Utilities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../utils.html#importing">Importing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils.html#plotting">Plotting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils.html#scraping">Scraping</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#validation">Validation</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_uniq.html">check_uniq</a></li>
+<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_column_existence.html">check_column_existence</a></li>
+<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.is_numeric.html">is_numeric</a></li>
+<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.find_sparsity.html">find_sparsity</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">check_continuity</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -134,6 +157,10 @@
     
       <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="../utils.html">Utilities</a> &raquo;</li>
+        
       <li>check_continuity</li>
     
     
@@ -157,21 +184,21 @@
 <h1>check_continuity<a class="headerlink" href="#check-continuity" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paralytics.utils.check_continuity">
-<code class="descclassname">paralytics.utils.</code><code class="descname">check_continuity</code><span class="sig-paren">(</span><em>X</em>, <em>thresh=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#check_continuity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.check_continuity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">check_continuity</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">thresh=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#check_continuity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.check_continuity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether input variable is continuous.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X: array-like, shape = (n_samples, )</strong></dt><dd><p>Vector to check for continuity.</p>
 </dd>
-<dt><strong>thresh: float, optional (default=.05)</strong></dt><dd><p>Fraction of non-unique values under which lack of continuity will be
+<dt><strong>thresh: float, optional (default=.5)</strong></dt><dd><p>Fraction of non-unique values under which lack of continuity will be
 reported.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>boolean: Whether variable is continuous.</strong></dt><dd></dd>
+<dt>boolean: Whether variable is continuous.</dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -184,6 +211,15 @@ reported.</p>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../decorators.html" class="btn btn-neutral float-right" title="Decorators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="paralytics.utils.find_sparsity.html" class="btn btn-neutral float-left" title="find_sparsity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

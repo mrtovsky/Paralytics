@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Decorators" href="../decorators.html" />
+    <link rel="next" title="check_continuity" href="paralytics.utils.check_continuity.html" />
     <link rel="prev" title="is_numeric" href="paralytics.utils.is_numeric.html" /> 
 </head>
 
@@ -91,7 +91,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../utils.html">Utilities</a><ul class="current">
@@ -103,6 +102,7 @@
 <li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_column_existence.html">check_column_existence</a></li>
 <li class="toctree-l4"><a class="reference internal" href="paralytics.utils.is_numeric.html">is_numeric</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">find_sparsity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_continuity.html">check_continuity</a></li>
 </ul>
 </li>
 </ul>
@@ -184,7 +184,7 @@
 <h1>find_sparsity<a class="headerlink" href="#find-sparsity" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="paralytics.utils.find_sparsity">
-<code class="descclassname">paralytics.utils.</code><code class="descname">find_sparsity</code><span class="sig-paren">(</span><em>X</em>, <em>thresh=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#find_sparsity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.find_sparsity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">find_sparsity</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">thresh=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#find_sparsity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.find_sparsity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds columns with highly sparse categories.</p>
 <p>For categorical and binary features finds columns where categories with
 relative frequencies under the threshold are present.</p>
@@ -193,7 +193,7 @@ where NaNs or 0 are dominating in the given dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X: DataFrame</strong></dt><dd><p>Data to be checked for sparsity.</p>
+<dt><strong>X: pandas.DataFrame</strong></dt><dd><p>Data to be checked for sparsity.</p>
 </dd>
 <dt><strong>thresh: float, optional (default=.01)</strong></dt><dd><p>Fraction of one of the categories under which the sparseness will be
 reported.</p>
@@ -202,7 +202,7 @@ reported.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>sparse_{num, bin, cat}: list</strong></dt><dd><p>List of {numerical, binary, categorical} X column names where high
+<dt>sparse_{num, bin, cat}: list</dt><dd><p>List of {numerical, binary, categorical} X column names where high
 sparsity was detected.</p>
 </dd>
 </dl>
@@ -220,7 +220,7 @@ sparsity was detected.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../decorators.html" class="btn btn-neutral float-right" title="Decorators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="paralytics.utils.check_continuity.html" class="btn btn-neutral float-right" title="check_continuity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="paralytics.utils.is_numeric.html" class="btn btn-neutral float-left" title="is_numeric" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

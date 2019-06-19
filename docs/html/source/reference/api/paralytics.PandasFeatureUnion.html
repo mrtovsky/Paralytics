@@ -178,7 +178,7 @@
 <h1>PandasFeatureUnion<a class="headerlink" href="#pandasfeatureunion" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.PandasFeatureUnion">
-<em class="property">class </em><code class="descclassname">paralytics.</code><code class="descname">PandasFeatureUnion</code><span class="sig-paren">(</span><em>transformer_list</em>, <em>n_jobs=None</em>, <em>transformer_weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">PandasFeatureUnion</code><span class="sig-paren">(</span><em class="sig-param">transformer_list</em>, <em class="sig-param">n_jobs=None</em>, <em class="sig-param">transformer_weights=None</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.pipeline.FeatureUnion</span></code></p>
 <p>Concatenates results of multiple pandas.DataFrame transformers.</p>
 <p>Using FeatureUnion capabilities from scikit-learn applies multiple
@@ -186,19 +186,19 @@ transformers always returning pandas.DataFrame object.</p>
 <p class="rubric">References</p>
 <p>[1] marrrcin, <a class="reference external" href="https://github.com/marrrcin/pandas-feature-union">pandas-feature-union</a>, 2018</p>
 <p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.fit_transform" title="paralytics.PandasFeatureUnion.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.fit_transform" title="paralytics.PandasFeatureUnion.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(self, X[, y])</p></td>
 <td><p>Fits and transforms data based on transformers inside pipeline.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.merge_dataframes_by_column" title="paralytics.PandasFeatureUnion.merge_dataframes_by_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_dataframes_by_column</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.merge_dataframes_by_column" title="paralytics.PandasFeatureUnion.merge_dataframes_by_column"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_dataframes_by_column</span></code></a>(self, X)</p></td>
 <td><p>Concatenates dataframes which resulted from different operations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.transform" title="paralytics.PandasFeatureUnion.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.PandasFeatureUnion.transform" title="paralytics.PandasFeatureUnion.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
 <td><p>Applies conversions which are found in transformer_list.</p></td>
 </tr>
 </tbody>
@@ -206,7 +206,7 @@ transformers always returning pandas.DataFrame object.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.PandasFeatureUnion.fit_transform">
-<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.fit_transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit_transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">**fit_params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.fit_transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits and transforms data based on transformers inside pipeline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -218,7 +218,7 @@ number of features.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (k_samples, k_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt>X_new: DataFrame, shape = (k_samples, k_features)</dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>
@@ -230,7 +230,7 @@ corresponding binary values.</p>
 
 <dl class="method">
 <dt id="paralytics.PandasFeatureUnion.merge_dataframes_by_column">
-<code class="descname">merge_dataframes_by_column</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.merge_dataframes_by_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.merge_dataframes_by_column" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">merge_dataframes_by_column</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.merge_dataframes_by_column"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.merge_dataframes_by_column" title="Permalink to this definition">¶</a></dt>
 <dd><p>Concatenates dataframes which resulted from different operations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -242,7 +242,7 @@ number of features.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt>X_new: DataFrame, shape = (n_samples, n_features)</dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>
@@ -252,7 +252,7 @@ corresponding binary values.</p>
 
 <dl class="method">
 <dt id="paralytics.PandasFeatureUnion.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_union.html#PandasFeatureUnion.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.PandasFeatureUnion.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies conversions which are found in transformer_list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -264,7 +264,7 @@ number of features.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new: DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>X data with substituted binary-like category columns with its
+<dt>X_new: DataFrame, shape = (n_samples, n_features)</dt><dd><p>X data with substituted binary-like category columns with its
 corresponding binary values.</p>
 </dd>
 </dl>
