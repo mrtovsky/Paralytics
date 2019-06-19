@@ -1,7 +1,7 @@
 History
 =======
 
-0.2.2 ()
+0.2.2 (19.06.2019)
 ------------------
 * Added ``PandasFeatureUnion`` transformer
     * Creates ``feature_union`` module with ``PandasFeatureUnion`` transformer implemented
