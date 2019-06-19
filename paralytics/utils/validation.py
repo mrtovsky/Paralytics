@@ -38,7 +38,7 @@ def check_column_existence(X, cols):
 
     Parameters
     ----------
-    X: DataFrame
+    X: pandas.DataFrame
         Data with columns to be checked for occurrence.
 
     cols: single label or list-like
@@ -78,7 +78,12 @@ def is_numeric(X):
     bool
 
     """
-    return is_numeric_dtype(np.array(X)) and not set(X) <= {0, 1}
+    try:
+        X = np.array(X).astype(np.number)
+    except ValueError:
+        return False
+
+    return is_numeric_dtype(X) and not set(X) <= {0, 1}
 
 
 def find_sparsity(X, thresh=.01):
@@ -92,7 +97,7 @@ def find_sparsity(X, thresh=.01):
 
     Parameters
     ----------
-    X: DataFrame
+    X: pandas.DataFrame
         Data to be checked for sparsity.
 
     thresh: float, optional (default=.01)
@@ -129,7 +134,7 @@ def find_sparsity(X, thresh=.01):
     return sparse_num, sparse_bin, sparse_cat
 
 
-def check_continuity(X, thresh=.05):
+def check_continuity(X, thresh=.5):
     """Checks whether input variable is continuous.
 
     Parameters
@@ -137,7 +142,7 @@ def check_continuity(X, thresh=.05):
     X: array-like, shape = (n_samples, )
         Vector to check for continuity.
 
-    thresh: float, optional (default=.05)
+    thresh: float, optional (default=.5)
         Fraction of non-unique values under which lack of continuity will be
         reported.
 
@@ -146,4 +151,4 @@ def check_continuity(X, thresh=.05):
     boolean: Whether variable is continuous.
 
     """
-    return is_numeric(X) and len(np.unique(X)) / len(X) > 1 - thresh
+    return is_numeric(X) and len(np.unique(X)) / len(X) >= 1 - thresh
