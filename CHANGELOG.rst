@@ -1,6 +1,9 @@
 History
 =======
 
+0.3 ()
+----------------
+
 0.2.2 (19.06.2019)
 ------------------
 * Added ``PandasFeatureUnion`` transformer
