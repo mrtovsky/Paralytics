@@ -29,7 +29,7 @@ class BaseSeleniumBrowser(object):
 
     Notes
     -----
-    Tt is recommended to decorate all classes inheriting from
+    It is recommended to decorate all classes inheriting from
     BaseSeleniumBrowser with `paralytics.force_context_manager` function.
 
     See also
