@@ -34,7 +34,7 @@ LONG_DESCRIPTION = read('README.rst')
 setup(
     name='paralytics',
     version=find_version('paralytics', '__init__.py'),
-    author='Mateusz Zakrzewski',
+    author='Mateusz Zakrzewski, Łukasz Bala',
     author_email="paralytics@gmail.com",
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
