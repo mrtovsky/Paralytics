@@ -114,3 +114,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Working destination
+paralytics/_sandpit/
+
+# In-progress
+paralytics/tests/
