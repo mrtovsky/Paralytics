@@ -638,7 +638,11 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             predictions_mean = np.nanmean(predictions, axis=0)
-            if verbose and issubclass(w[-1].category, RuntimeWarning):
+            try:
+                warn_encountered = issubclass(w[-1].category, RuntimeWarning)
+            except IndexError:
+                warn_encountered = False
+            if verbose and warn_encountered:
                 print(
                     "With a given `neighborhoods` and `estimation_values`, "
                     "some values were not considered realistic for any "
@@ -844,7 +848,7 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
         they were generated is higher than defined by `neighborhoods`.
 
         """
-        grid_values_num = grid_values[:, features_are_numeric]
+        grid_values_num = grid_values[:, features_are_numeric].astype(np.number)
 
         for idx in range(len(self.base_values_)):
             base_values_num = self.base_values_[idx, features_are_numeric]
