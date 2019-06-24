@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import numpy as np
+import warnings
 
 from functools import reduce
 from itertools import product
@@ -9,7 +9,19 @@ from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 
 from .base import ExplainerMixin
+from ..exceptions import *
 from ..utils.validation import check_column_existence, is_numeric
+
+# try:
+#     import numba as nb
+# except ImportError as e:
+#     warnings.warn(
+#         "Numba package is not required but installing it can speed up your"
+#         "calculations when plotting `mplot` is selected.\n"
+#         "For more check: https://numba.pydata.org/.",
+#         OptionalPackageWarning
+#     )
+#     nb = e
 
 
 __all__ = [
@@ -149,7 +161,7 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
     def dtypes(self, dtypes):
         if dtypes is not None:
             assert isinstance(dtypes, dict), (
-                "when manually specifying the data types of grid features the "
+                "When manually specifying the data types of grid features the "
                 "dictionary is required where the key is the feature's name."
             )
             assert set(dtypes.keys()) == set(self.features), (
@@ -190,7 +202,6 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
 
         self._estimation_values = values
 
-
     def fit(self, X, y=None):
         """Fits creation of synthetic data to X.
 
@@ -218,7 +229,7 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
         else:
             self.dtypes_ = [self.dtypes[feature] for feature in self.features]
 
-        self.estimation_values_ = self.determine_estimation_values(X)
+        self.estimation_values_ = self._determine_estimation_values(X)
 
         X_sample = self.select_sample(X)
         self.base_values_ = X_sample[self.features].values
@@ -233,7 +244,7 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
                 neighborhoods=.1, pdline_params=None, iceline_params=None,
                 mline_params=None, aleline_params=None, contour_params=None,
                 contourf_params=None, bar_params=None, imshow_params=None,
-                text_params=None, ax=None):
+                text_params=None, verbose=True, ax=None):
         """Explains the features effect with use of the selected methods.
 
         Parameters
@@ -302,7 +313,13 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
         {pd, ice, m, ale}plot_params: dicts, optional (default=None)
             Keyword arguments for underlying plotting functions.
 
+        verbose: TODO
+
         ax: TODO
+
+        Returns
+        -------
+        TODO
 
         """
         assert hasattr(self, 'y_grid_predictions_'), (
@@ -317,6 +334,22 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
             )
 
         features_are_numeric = [dtype == 'numeric' for dtype in self.dtypes_]
+
+        if isinstance(neighborhoods, int):
+            neighborhoods = [
+                neighborhoods for feature_is_numeric in features_are_numeric
+                if feature_is_numeric
+            ]
+        elif isinstance(neighborhoods, float):
+            # TODO: Think of method of turning fraction to absolute value.
+            pass
+        else:
+            neighborhoods = list(neighborhoods)
+            assert len(neighborhoods) == sum(features_are_numeric), (
+                "Neighborhoods can be declared for numeric features only "
+                "and its length must be the same size as the number of "
+                "specified grid features."
+            )
 
         if centers is not None:
             assert all(features_are_numeric), (
@@ -336,23 +369,16 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
                     'number of features specified to explanation.'
                 )
 
-            centers = [
-                self.base_values_[:, idx].min()
-                if center == 'min' else center
-                for idx, center in enumerate(centers)
-            ]
-
-            above_central_values = np.all(self.grid_values_ >= centers, axis=1)
-            grid_values = self.grid_values_[above_central_values]
-            y_grid = self.y_grid_predictions_[:, above_central_values]
-            y_grid = y_grid - y_grid[:, 0].reshape(-1, 1)
+            grid_values, y_grid = self._center_grid(centers)
         else:
             grid_values = self.grid_values_
             y_grid = self.y_grid_predictions_
 
+        # Get current axis if none has been specified.
         if ax is None:
             ax = plt.gca()
 
+        # Set default plots parameters.
         if contour_params is None:
             contour_params = {'linewidths': .5, 'colors': 'white'}
 
@@ -414,44 +440,30 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
             if mline_params is None:
                 mline_params = {'linewidth': 2, 'color': '#FF45F9'}
 
-
-
-            ax = self._plot_mplot(
-                centers=centers,
-                neighborhoods=neighborhoods,
-                ax=ax,
-                **mline_params
+            assert any(features_are_numeric), (
+                "When plotting M-Plot at least one feature needs to be of "
+                "numeric type. Otherwise, there is no point in calculating "
+                "the unrealistic observations in the sense of the Euclidean "
+                "distance for categorical features. If you want to visualize "
+                "the effect of two features, ceteris paribus, just plot PDPlot "
+                "instead."
             )
 
-
+            ax = self._plot_mplot(
+                grid_values=grid_values,
+                predictions=y_grid,
+                features_are_numeric=features_are_numeric,
+                neighborhoods=neighborhoods,
+                automatic_layout=automatic_layout,
+                line_params=mline_params,
+                contour_params=contour_params,
+                contourf_params=contourf_params,
+                imshow_params=imshow_params,
+                verbose=verbose,
+                ax=ax
+            )
 
         return ax
-
-    def determine_estimation_values(self, X):
-        """Determines estimation values for grid features."""
-        assert hasattr(self, "dtypes_"), (
-            "Could not find the attribute.\n"
-            "Dtypes evaluation is necessary before the values estimation."
-        )
-
-        estimation_values = []
-        for feature, dtype in zip(self.features, self.dtypes_):
-            values = self.estimation_values[feature]
-
-            if isinstance(values, int) and dtype == "numeric":
-                est_values = np.linspace(
-                    start=X[feature].astype(np.number).min(),
-                    stop=X[feature].astype(np.number).max(),
-                    num=values
-                )
-            elif isinstance(values, int):
-                est_values = np.unique(X[feature])
-            else:
-                est_values = np.sort(values)
-
-            estimation_values.append(est_values)
-
-        return estimation_values
 
     def select_sample(self, X):
         """Selects sample data with `sample_size` number of samples."""
@@ -498,6 +510,32 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
 
         return grid_values, y_grid_predictions
 
+    def _determine_estimation_values(self, X):
+        """Determines estimation values for grid features."""
+        assert hasattr(self, "dtypes_"), (
+            "Could not find the attribute.\n"
+            "Dtypes evaluation is necessary before the values estimation."
+        )
+
+        estimation_values = []
+        for feature, dtype in zip(self.features, self.dtypes_):
+            values = self.estimation_values[feature]
+
+            if isinstance(values, int) and dtype == "numeric":
+                est_values = np.linspace(
+                    start=X[feature].astype(np.number).min(),
+                    stop=X[feature].astype(np.number).max(),
+                    num=values
+                )
+            elif isinstance(values, int):
+                est_values = np.unique(X[feature])
+            else:
+                est_values = np.sort(values)
+
+            estimation_values.append(est_values)
+
+        return estimation_values
+
     def _predict_single_grid_features(self, X, grid_values):
         """Makes prediction for single combination of grid features' values."""
         X_grid = X.assign(**dict(zip(self.features, grid_values)))
@@ -508,18 +546,30 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
 
         return grid_values, y_grid_preds
 
-    def _plot_iceplot(self, grid_values, predictions, thresh, line_params, ax):
-        """Plots Individual Conditional Expectation.
+    def _center_grid(self, centers):
+        """Centers the grid values and predictions to the given list of values.
 
-        Parameters
-        ----------
-        grid_values: array-like, shape = (n_grid_values, )
-            TODO
-
-        predictions: array-like, shape = (n_samples, n_grid_values)
-            TODO
+        Every set of values that is lower than the specified center values
+        is removed from the grid and for the other values the central values
+        are subtracted from grid values and prediction value for centers is
+        subtracted from the grid predictions.
 
         """
+        centers = [
+            self.base_values_[:, idx].min()
+            if center == 'min' else center
+            for idx, center in enumerate(centers)
+        ]
+
+        above_central_values = np.all(self.grid_values_ >= centers, axis=1)
+        grid_values = self.grid_values_[above_central_values, :]
+        y_grid = self.y_grid_predictions_[:, above_central_values]
+        y_grid = y_grid - y_grid[:, 0].reshape(-1, 1)
+
+        return grid_values, y_grid
+
+    def _plot_iceplot(self, grid_values, predictions, thresh, line_params, ax):
+        """Plots Individual Conditional Expectation."""
         grid_values = np.array(grid_values)
         predictions = np.array(predictions)
 
@@ -529,19 +579,17 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
 
         # Select observations to plot Ceteris Paribus profiles for.
         if thresh is not None and more_indexes_than_thresh:
-            y_grid = predictions[random_state.choice(
+            predictions = predictions[random_state.choice(
                 len(predictions),
                 size=thresh,
                 replace=False
             )]
-        else:
-            y_grid = predictions.copy()
 
         grid_values = grid_values.flatten()
-        for y_obs in y_grid:
+        for prediction in predictions:
             ax.plot(
                 grid_values,
-                y_obs,
+                prediction,
                 **line_params
             )
 
@@ -551,72 +599,204 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
                      automatic_layout, line_params, contour_params,
                      contourf_params, bar_params, imshow_params, text_params,
                      ax):
-        """Plots Partial Dependence Plot.
-
-        Parameters
-        ----------
-        grid_values: array-like, shape = (n_grid_values, n_grid_features)
-            TODO
-
-        predictions: array-like, shape = (n_samples, n_grid_values)
-            TODO
-
-        features_are_numeric: array-like, shape = (n_grid_features, )
-            List of boolean values determining whether grid feature is numeric.
-            Tt must be given in the same order as the grid features.
-
-        """
+        """Plots Partial Dependence Plot."""
         grid_values = np.array(grid_values)
         predictions = np.array(predictions)
 
-        y_grid_mean = np.mean(predictions, axis=0)
+        predictions_mean = np.mean(predictions, axis=0)
 
         if all(features_are_numeric):
-            if len(self.features) == 1:
-                ax.plot(
-                    grid_values.flatten(),
-                    y_grid_mean,
-                    **line_params
-                )
-            else:
-                x_shape = len(np.unique(grid_values[:, 0]))
-
-                feature_x = grid_values[:, 0].reshape(x_shape, -1)
-                feature_y = grid_values[:, 1].reshape(x_shape, -1)
-                values = y_grid_mean.reshape(x_shape, -1)
-
-                contourf = ax.contourf(
-                    feature_x,
-                    feature_y,
-                    values,
-                    **contourf_params
-                )
-                ax.contour(
-                    feature_x,
-                    feature_y,
-                    values,
-                    **contour_params
-                )
-
-                ax.figure.colorbar(contourf, ax=ax)
-
-                ax.set_xlabel('{}'.format(self.features[0]))
-                ax.set_ylabel('{}'.format(self.features[1]))
-
+            ax = self._plot_numerics(
+                grid_values, predictions_mean, line_params,
+                contour_params, contourf_params, ax
+            )
         elif any(features_are_numeric):
-            idx_num, idx_cat = (0, 1) if features_are_numeric[0] else (1, 0)
-            feature_num = grid_values[:, idx_num].astype(np.number)
-            feature_cat = grid_values[:, idx_cat]
+            ax = self._plot_category_numeric(
+                grid_values, predictions_mean, features_are_numeric,
+                automatic_layout, imshow_params, ax
+            )
+        else:
+            ax = self._plot_categories(
+                grid_values, predictions_mean, automatic_layout,
+                bar_params, imshow_params, text_params, ax
+            )
 
-            feature_num_unique = np.unique(feature_num)
-            feature_cat_unique = np.unique(feature_cat)
+        return ax
 
-            if idx_cat:
-                y_shape = len(feature_num_unique)
-            else:
-                y_shape = len(feature_cat_unique)
+    def _plot_mplot(self, grid_values, predictions, features_are_numeric,
+                    neighborhoods, automatic_layout, line_params,
+                    contour_params, contourf_params, imshow_params, verbose,
+                    ax):
+        """Plots Marginal Plot."""
+        grid_values = np.array(grid_values)
+        predictions = np.array(predictions)
 
-            values = y_grid_mean.reshape((-1, y_shape), order='F')
+        predictions = self._replace_unreal_obs_with_nan(
+            grid_values, predictions, features_are_numeric, neighborhoods
+        )
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            predictions_mean = np.nanmean(predictions, axis=0)
+            if verbose and issubclass(w[-1].category, RuntimeWarning):
+                print(
+                    "With a given `neighborhoods` and `estimation_values`, "
+                    "some values were not considered realistic for any "
+                    "observation in the data set and therefore these places "
+                    "will be presented as blank in the final plot.\n"
+                    "In order to eliminate them, it is worth considering "
+                    "changing the parameters mentioned above or getting rid of "
+                    "outliers from the data set.\n"
+                    "It is worth remembering that often empty spaces in the "
+                    "plot will indicate truly unrealistic values, which will "
+                    "make them desirable to keep illustrating.\n"
+                    "To silence this message set `verbose` to False."
+                )
+
+        if all(features_are_numeric):
+            ax = self._plot_numerics(
+                grid_values, predictions_mean, line_params,
+                contour_params, contourf_params, ax
+            )
+        else:
+            ax = self._plot_category_numeric(
+                grid_values, predictions_mean, features_are_numeric,
+                automatic_layout, imshow_params, ax
+            )
+
+        return ax
+
+    def _plot_numerics(self, grid_values, predictions_mean, line_params,
+                       contour_params, contourf_params, ax):
+        """Plots Partial Dependence Plot for numeric grid features only."""
+        if len(self.features) == 1:
+            ax.plot(
+                grid_values.flatten(),
+                predictions_mean,
+                **line_params
+            )
+        else:
+            x_shape = len(np.unique(grid_values[:, 0]))
+
+            feature_x = grid_values[:, 0].reshape(x_shape, -1)
+            feature_y = grid_values[:, 1].reshape(x_shape, -1)
+            values = predictions_mean.reshape(x_shape, -1)
+
+            contourf = ax.contourf(
+                feature_x,
+                feature_y,
+                values,
+                **contourf_params
+            )
+            ax.contour(
+                feature_x,
+                feature_y,
+                values,
+                **contour_params
+            )
+
+            ax.figure.colorbar(contourf, ax=ax)
+
+            ax.set_xlabel('{}'.format(self.features[0]))
+            ax.set_ylabel('{}'.format(self.features[1]))
+
+        return ax
+
+    def _plot_category_numeric(self, grid_values, predictions_mean,
+                               features_are_numeric, automatic_layout,
+                               imshow_params, ax):
+        """Plots Partial Dependence Plot for category vs. numeric features."""
+        idx_num, idx_cat = (0, 1) if features_are_numeric[0] else (1, 0)
+
+        feature_num = grid_values[:, idx_num].astype(np.number)
+        feature_cat = grid_values[:, idx_cat]
+
+        feature_num_unique = np.unique(feature_num)
+        feature_cat_unique = np.unique(feature_cat)
+
+        if idx_cat:
+            y_shape = len(feature_num_unique)
+        else:
+            y_shape = len(feature_cat_unique)
+
+        values = predictions_mean.reshape((-1, y_shape), order='F')
+
+        imshow = ax.imshow(
+            values,
+            **imshow_params
+        )
+        ax.figure.colorbar(imshow, ax=ax)
+
+        if automatic_layout:
+            span_range = abs(feature_num_unique[-1] - feature_num_unique[0])
+            num_format = "{0:.0f}" if span_range > 10 else "{0:.2f}"
+            num_labels = [
+                num_format.format(value) for value in feature_num_unique
+            ]
+        else:
+            num_labels = feature_num_unique
+
+        # FIXME: More wet than DRY. Rewrite for less spaghetti code.
+        if idx_cat:
+            ax.set_xticks(np.arange(len(feature_num_unique)))
+            ax.set_yticks(np.arange(len(feature_cat_unique)))
+
+            ax.set_xticklabels(num_labels)
+            ax.set_yticklabels(feature_cat_unique)
+
+            if automatic_layout:
+                tick_spacing = int(len(feature_num_unique) / 5)
+                for idx, tick in enumerate(ax.get_xticklabels()):
+                    if idx % tick_spacing:
+                        tick.set_visible(False)
+
+                ax.set_xlabel('{}'.format(self.features[idx_num]))
+                ax.set_ylabel('{}'.format(self.features[idx_cat]))
+        else:
+            ax.set_xticks(np.arange(len(feature_cat_unique)))
+            ax.set_yticks(np.arange(len(feature_num_unique)))
+
+            ax.set_xticklabels(feature_cat_unique)
+            ax.set_yticklabels(num_labels)
+
+            if automatic_layout:
+                tick_spacing = int(len(feature_num_unique) / 5)
+                for idx, tick in enumerate(ax.get_yticklabels()):
+                    if idx % tick_spacing:
+                        tick.set_visible(False)
+
+                ax.set_xlabel('{}'.format(self.features[idx_cat]))
+                ax.set_ylabel('{}'.format(self.features[idx_num]))
+
+        return ax
+
+    def _plot_categories(self, grid_values, predictions_mean,
+                         automatic_layout, bar_params, imshow_params,
+                         text_params, ax):
+        """Plots Partial Dependence Plot for categorical features only."""
+        if len(self.features) == 1:
+            ax.bar(
+                x=grid_values.flatten(),
+                height=predictions_mean,
+                **bar_params
+            )
+
+            if automatic_layout:
+                ax.set_xlabel("{}".format(self.features[0]))
+                ax.set_ylabel("Average Prediction")
+        else:
+            # Preserves the order of occurrence.
+            feature_x_unique = reduce(
+                lambda l, x: l.append(x) or l if x not in l else l,
+                grid_values[:, 0],
+                []
+            )
+            n_feature_x_unique = len(feature_x_unique)
+            n_feature_y_unique = len(np.unique(grid_values[:, 1]))
+            feature_y_unique = grid_values[:n_feature_y_unique, 1].tolist()
+            values = predictions_mean.reshape(
+                (len(feature_y_unique), -1), order='F'
+            )
 
             imshow = ax.imshow(
                 values,
@@ -624,142 +804,55 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
             )
             ax.figure.colorbar(imshow, ax=ax)
 
+            ax.set_xticks(np.arange(n_feature_x_unique))
+            ax.set_yticks(np.arange(n_feature_y_unique))
+
+            ax.set_xticklabels(feature_x_unique)
+            ax.set_yticklabels(feature_y_unique)
+
+            ax.set_xlabel('{}'.format(self.features[0]))
+            ax.set_ylabel('{}'.format(self.features[1]))
+
             if automatic_layout:
-                span_range = abs(feature_num_unique[-1] - feature_num_unique[0])
-                num_format = "{0:.0f}" if span_range > 10 else "{0:.2f}"
-                num_labels = [
-                    num_format.format(value) for value in feature_num_unique
-                ]
+                plt.setp(
+                    ax.get_xticklabels(), rotation=45,
+                    ha="right", rotation_mode="anchor"
+                )
+
+                span_range = abs(np.max(values) - np.min(values))
+                text_format = "{0:.0f}" if span_range > 10 else "{0:.2f}"
             else:
-                num_labels = feature_num_unique
+                text_format = "{0}"
 
-            if idx_cat:
-                ax.set_xticks(np.arange(len(feature_num_unique)))
-                ax.set_yticks(np.arange(len(feature_cat_unique)))
+            indexes_product = product(
+                range(n_feature_x_unique), range(n_feature_y_unique)
+            )
 
-                ax.set_xticklabels(num_labels)
-                ax.set_yticklabels(feature_cat_unique)
-
-                if automatic_layout:
-                    tick_spacing = int(len(feature_num_unique) / 5)
-                    for idx, tick in enumerate(ax.get_xticklabels()):
-                        if idx % tick_spacing:
-                            tick.set_visible(False)
-
-                    ax.set_xlabel('{}'.format(self.features[idx_num]))
-                    ax.set_ylabel('{}'.format(self.features[idx_cat]))
-            else:
-                ax.set_xticks(np.arange(len(feature_cat_unique)))
-                ax.set_yticks(np.arange(len(feature_num_unique)))
-
-                ax.set_xticklabels(feature_cat_unique)
-                ax.set_yticklabels(num_labels)
-
-                if automatic_layout:
-                    tick_spacing = int(len(feature_num_unique) / 5)
-                    for idx, tick in enumerate(ax.get_yticklabels()):
-                        if idx % tick_spacing:
-                            tick.set_visible(False)
-
-                    ax.set_xlabel('{}'.format(self.features[idx_cat]))
-                    ax.set_ylabel('{}'.format(self.features[idx_num]))
-
-        else:
-            if len(self.features) == 1:
-                ax.bar(
-                    x=grid_values.flatten(),
-                    height=y_grid_mean,
-                    **bar_params
+            for i, j in indexes_product:
+                ax.text(
+                    i, j, text_format.format(values[j, i]), **text_params
                 )
-
-                if automatic_layout:
-                    ax.set_xlabel("{}".format(self.features[0]))
-                    ax.set_ylabel("Average Prediction")
-            else:
-                # Preserves the order of occurrence.
-                feature_x_unique = reduce(
-                    lambda l, x: l.append(x) or l if x not in l else l,
-                    grid_values[:, 0],
-                    []
-                )
-                n_feature_x_unique = len(feature_x_unique)
-                n_feature_y_unique = len(np.unique(grid_values[:, 1]))
-                feature_y_unique = grid_values[:n_feature_y_unique, 1].tolist()
-                values = y_grid_mean.reshape(
-                    (len(feature_y_unique), -1), order='F'
-                )
-
-                imshow = ax.imshow(
-                    values,
-                    **imshow_params
-                )
-                ax.figure.colorbar(imshow, ax=ax)
-
-                ax.set_xticks(np.arange(n_feature_x_unique))
-                ax.set_yticks(np.arange(n_feature_y_unique))
-
-                ax.set_xticklabels(feature_x_unique)
-                ax.set_yticklabels(feature_y_unique)
-
-                ax.set_xlabel('{}'.format(self.features[0]))
-                ax.set_ylabel('{}'.format(self.features[1]))
-
-                if automatic_layout:
-                    plt.setp(
-                        ax.get_xticklabels(), rotation=45,
-                        ha="right", rotation_mode="anchor"
-                    )
-
-                    span_range = abs(np.max(values) - np.min(values))
-                    text_format = "{0:.0f}" if span_range > 10 else "{0:.2f}"
-                else:
-                    text_format = "{0}"
-
-                indexes_product = product(
-                    range(n_feature_x_unique), range(n_feature_y_unique)
-                )
-
-                for i, j in indexes_product:
-                    ax.text(
-                        i, j, text_format.format(values[j, i]), **text_params
-                    )
 
         return ax
 
-    def _plot_mplot(self, centers, neighborhoods, ax, **params):
-        """Plots Marginal Plot."""
-        pass
+    def _replace_unreal_obs_with_nan(self, grid_values, predictions,
+                                     features_are_numeric, neighborhoods):
+        """Replaces unrealistic observations with NaN value.
 
-    def _validate_explain_input(self, iceplot, iceplot_center, mplot,
-                                neighborhoods):
-        if mplot:
-            features_are_numeric = all([
-                is_numeric(self.X_synthetic_[feature])
-                for feature in self.features
-            ])
-            assert features_are_numeric, (
-                'Marginal plot can be drawn only for numerical features, '
-                'because it requires to create a range of near values and to '
-                'do so it has to calculate a distance, which is unclear for '
-                'categorical features.\nConsider changing `mplot` to False or '
-                'pass different features and re-fit the explainer.'
-            )
+        Prepares the predictions for plotting mplot by replacing predictions
+        with nans for grid values which distance from the real values ​​on which
+        they were generated is higher than defined by `neighborhoods`.
 
-            if isinstance(neighborhoods, (int, float)):
-                neighborhoods = [neighborhoods]
-            else:
-                neighborhoods = list(neighborhoods)
+        """
+        grid_values_num = grid_values[:, features_are_numeric]
 
-            valid_neighborhoods = all([
-                isinstance(neighborhood, (int, float))
-                for neighborhood in neighborhoods
-            ])
-            assert valid_neighborhoods, (
-                'Neighborhoods must be specified as int or float or a list '
-                'consisting of a combination of those two types!'
-            )
+        for idx in range(len(self.base_values_)):
+            base_values_num = self.base_values_[idx, features_are_numeric]
 
-            assert len(neighborhoods) == len(self.features), (
-                'The number of neighborhoods must be equal to the number of '
-                'features!'
-            )
+            borde_inferior = grid_values_num - neighborhoods <= base_values_num
+            borde_superior = grid_values_num + neighborhoods >= base_values_num
+            unrealistic_obs = np.any(~(borde_inferior & borde_superior), axis=1)
+
+            predictions[idx, unrealistic_obs] = np.nan
+
+        return predictions
