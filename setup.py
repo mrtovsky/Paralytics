@@ -1,4 +1,5 @@
 import codecs
+import json
 import pathlib
 import re
 
@@ -24,18 +25,15 @@ def find_version(*paths):
         raise RuntimeError('Unable to find version string.')
 
 
-with codecs.open('requirements.txt') as f:
-    requirements = f.read().splitlines()
+with codecs.open("requirements.txt") as f:
+    REQUIREMENTS = f.read().splitlines()
+
+with codecs.open("extras_requirements.json", "r") as f:
+    EXTRAS_REQUIREMENTS = json.load(f)
 
 DESCRIPTION = 'Python analytical scripts that will overcome ' \
               'paralysis in your data analysis.'
 LONG_DESCRIPTION = read('README.rst')
-EXTRAS_REQUIREMENTS = {
-    "all": ["selenium>=3.141.0", "seaborn>=0.9.0", "statsmodels>=0.9.0"],
-    "browser": ["selenium>=3.141.0"],
-    "plot": ["seaborn>=0.9.0"],
-    "vif": ["statsmodels>=0.9.0"]
-}
 
 setup(
     name='paralytics',
@@ -45,7 +43,7 @@ setup(
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     url='https://mrtovsky.github.io/Paralytics/',
-    install_requires=requirements,
+    install_requires=REQUIREMENTS,
     extras_require=EXTRAS_REQUIREMENTS,
     license='MIT',
     packages=find_packages('.'),
