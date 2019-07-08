@@ -53,20 +53,36 @@ Dependencies
 **Paralytics** package requirements are checked and, if needed, installed during the installation
 process automatically. Mainly used packages across the **Paralytics** are:
 
-* `scikit-learn <https://scikit-learn.org/stable/>`_ (>= 0.20.1)
 * `NumPy <http://www.numpy.org/>`_ (>= 1.15.4)
 * `Pandas <https://pandas.pydata.org/>`_ (>= 0.23.4)
+* `scikit-learn <https://scikit-learn.org/stable/>`_ (>= 0.20.1)
+* `SciPy <https://www.scipy.org/>`_ (>= 1.1.0)
 
 For visualizations:
 
-* `seaborn <https://seaborn.pydata.org/>`_ (>= 0.9.0)
 * `matplotlib <https://matplotlib.org/>`_ (>= 3.0.2)
 
 The easiest way to install the package is using ``pip``: ::
 
     pip install paralytics
 
-or directly from the github `repository <https://github.com/mrtovsky/Paralytics.git>`_: ::
+If you want to omit the packages upgrade (when your version does not meet the requirements) run: ::
+
+    pip install paralytics --no-deps
+
+When functionalities requiring optional dependencies are needed you can install those extra requirements by running: ::
+
+    pip install paralytics[<extra-name>]
+
+For example, to use ``BaseSeleniumBrowser`` (requires selenium) and ``VIFSelector`` (requires statsmodels) run: ::
+
+    pip install paralytics[browser, vif]
+  
+Installation of all extras is possible via: ::
+
+    pip install paralytics[all]
+
+You can always install directly from the github `repository <https://github.com/mrtovsky/Paralytics.git>`_: ::
 
     pip install git+https://github.com/mrtovsky/Paralytics.git
 
