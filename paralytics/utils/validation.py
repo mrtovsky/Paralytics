@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 
-from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_categorical_dtype, is_numeric_dtype
 
 
 __all__ = [
@@ -64,7 +64,7 @@ def check_column_existence(X, cols):
     return out
 
 
-def is_numeric(X):
+def is_numeric(X, project=True):
     """Checks whether given vector contains numeric-only values excluding
     boolean vectors.
 
@@ -73,15 +73,20 @@ def is_numeric(X):
     X: array-like, shape = (n_samples, )
         Vector where n_samples is the number of samples.
 
+    project: bool, optional (default=True)
+        If True tries to project on a numeric type unless categorical dtype is
+        passed.
+
     Returns
     -------
     bool
 
     """
-    try:
-        X = np.array(X).astype(np.number)
-    except ValueError:
-        return False
+    if project and not is_categorical_dtype(X):
+        try:
+            X = np.array(X).astype(np.number)
+        except ValueError:
+            return False
 
     return is_numeric_dtype(X) and not set(X) <= {0, 1}
 
