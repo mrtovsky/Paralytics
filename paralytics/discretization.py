@@ -6,7 +6,7 @@ import scipy.stats as stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.tree import DecisionTreeClassifier
 
-from .exceptions import *
+from .exceptions import UniqueValuesError
 from .utils.validation import is_numeric
 
 
@@ -121,7 +121,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
         self.max_tree_depth = max_tree_depth
         self.min_samples_leaf = min_samples_leaf
 
-    def fit(self, X, y=None, **params):
+    def fit(self, X, y=None):
         """Fit the binning with X by extracting upper limits of right-closed
         intervals.
 
@@ -149,14 +149,12 @@ class Discretizer(BaseEstimator, TransformerMixin):
             if is_numeric(X[col]):
                 try:
                     self.bins_[col] = call_method(
-                        X[col], np.asarray(y).ravel(), **params
+                        X[col], np.asarray(y).ravel()
                     ).astype(float)
                 except UniqueValuesError as e:
                     e.args += (f'The problem occured for the column: {col}.',)
                     print(' '.join(e.args))
                     self.bins_[col] = np.unique(X[col]).astype(float)
-            else:
-                self.bins_[col] = np.unique(X[col].astype(str))
 
         return self
 
@@ -187,29 +185,25 @@ class Discretizer(BaseEstimator, TransformerMixin):
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pd.DataFrame()'
 
-        X_new = pd.DataFrame()
-        for col in X.columns.values:
-            if is_numeric(X[col]):
-                cut_points = self.bins_[col][1:-1]
+        X_new = X.copy()
+        for col, cutoffs in self.bins_.items():
+            cut_points = cutoffs[1:-1]
+            try:
+                cut_points = cut_points.tolist()
+            except AttributeError:
+                cut_points = list(cut_points)
 
-                try:
-                    cut_points = cut_points.tolist()
-                except AttributeError:
-                    cut_points = list(cut_points)
+            if not cut_points:
+                cut_points = cutoffs[col]
 
-                if not cut_points:
-                    cut_points = self.bins_[col]
-
-                X_new[col] = self.finger(
-                    X[col],
-                    cut_points=np.array(cut_points)
-                ).astype(str)
-            else:
-                X_new[col] = X[col].astype(str)
+            X_new[col] = self.finger(
+                X[col],
+                cut_points=np.array(cut_points)
+            ).astype(str)
 
         return X_new
 
-    def sapling(self, X, y, **params):
+    def sapling(self, X, y):
         """Creates finitely many intervals for a continuous vector using
         DecisionTreeClassifier optimizing splits with respect to Gini impurity
         criterium.
@@ -254,6 +248,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
         min_val = min(X)
         max_val = max(X)
 
+        # Excluding leaves.
         bins = clf.tree_.threshold[clf.tree_.feature != -2]
         np.append(bins, [min_val, max_val])
         bins = np.unique(bins)
@@ -267,7 +262,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
         return bins
 
-    def spearman(self, X, y, **params):
+    def spearman(self, X, y):
         """Creates finitely many intervals for a continuous vector with use of
         Spearman's rang correlation (supervised).
 
@@ -310,7 +305,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
             })
             df_gr = df.groupby(by='Bucket', as_index=True)
             if not (df_gr.agg('count').X == 0).any():
-                r, p = stats.spearmanr(
+                r, _ = stats.spearmanr(
                     getattr(df_gr, self.formula)().X,
                     getattr(df_gr, self.formula)().y
                 )
@@ -325,7 +320,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
     @staticmethod
     def finger(X, y=None, cut_points=None,
                n_quantiles=4, labels=None,
-               min_val=None, max_val=None, **params):
+               min_val=None, max_val=None):
         """Manually bins continuous variable into the declared intervals.
 
         If the cut-off points are not declared the split is made using
