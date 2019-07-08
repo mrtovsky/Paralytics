@@ -4,8 +4,7 @@ paralytics.
 """
 __all__ = [
     'UniqueValuesError',
-    'NothingSelectedWarning',
-    'OptionalPackageWarning'
+    'NothingSelectedWarning'
 ]
 
 
@@ -23,7 +22,3 @@ class NothingSelectedWarning(UserWarning):
     For example we can thus emphasize that the user forgot to implement the
     appropriate step in the pipeline.
     """
-
-
-class OptionalPackageWarning(ImportWarning):
-    """Warning used to notify user that optional package is not installed."""

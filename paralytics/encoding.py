@@ -5,7 +5,7 @@ import warnings
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import KFold
 
-from .exceptions import *
+from .exceptions import NothingSelectedWarning
 
 
 __all__ = [
