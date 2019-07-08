@@ -1,0 +1,6 @@
+{
+    "all": ["selenium>=3.141.0", "seaborn>=0.9.0", "statsmodels>=0.9.0"],
+    "browser": ["selenium>=3.141.0"],
+    "plot": ["seaborn>=0.9.0"],
+    "vif": ["statsmodels>=0.9.0"]
+}
