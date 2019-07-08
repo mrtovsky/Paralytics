@@ -1,8 +1,31 @@
 History
 =======
 
-0.3 ()
+0.3 (09.07.2019)
 ----------------
+* Initiated ``xai`` subpackage
+    * Creates base class ``ExplainerMixin`` for all explainers with the **fit** & **explain** 
+      convention (familiar from scikit-learn API).
+    * Releases, in the development version, the ``xai.FeatureEffectExplainer`` implementing
+      calculation of **Partial Dependence Plot**, **Individual Conditional Expectation** and
+      **Marginal Plot**.
+* Optimized ``Discretizer``
+    * Limits the transformations only to continuous variables by not taking into consideration
+      categorical variables and leaving them unchanged.
+* Created optional dependencies
+    * Reduces the number of dependent packages by creating optional functionalities 
+      that require additional installation of the extra requirements.
+* Renamed ``collinearity_reduction`` module
+    * Changes the module name to ``feature_selection`` to prepare it for future
+      expansion in this direction.
+* Modified ``utils.is_numeric``
+    * Excludes from checking for numericity categorical pandas.Series.
+    * Adds the ability to disable the attempt to project on a numeric type.
+* Moved ``mathy`` module
+    * Changes the location of ``mathy`` module to ``utils`` subpackage.
+      The new location is as follows: ``utils.mathy``.
+* Fixed missing values temporary imputation inside the ``VIFSelector``
+    * Imputs the missing values ​​before checking the NaN condition.
 
 0.2.2 (19.06.2019)
 ------------------
