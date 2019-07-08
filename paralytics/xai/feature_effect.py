@@ -9,19 +9,7 @@ from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 
 from .base import ExplainerMixin
-from ..exceptions import *
 from ..utils.validation import check_column_existence, is_numeric
-
-# try:
-#     import numba as nb
-# except ImportError as e:
-#     warnings.warn(
-#         "Numba package is not required but installing it can speed up your"
-#         "calculations when plotting `mplot` is selected.\n"
-#         "For more check: https://numba.pydata.org/.",
-#         OptionalPackageWarning
-#     )
-#     nb = e
 
 
 __all__ = [
