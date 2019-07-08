@@ -3,8 +3,12 @@ import pandas as pd
 
 from pandas.api.types import is_numeric_dtype
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.impute import SimpleImputer
-from statsmodels.stats.outliers_influence import variance_inflation_factor
+try:
+    from statsmodels.stats.outliers_influence import variance_inflation_factor
+except ImportError as e:
+    variance_inflation_factor = e
+
+from .preprocessing import Imputer
 
 
 __all__ = [
@@ -29,9 +33,9 @@ class VIFSelector(BaseEstimator, TransformerMixin):
     impute: boolean, optional (default=True)
         Declares whether missing values imputation should be performed.
 
-    impute_strat: string, optional (default='mean')
-        Declares imputation strategy for the scikit-learn SimpleImputer
-        transformation.
+    impute_method: string, optional (default="mean")
+        Declares numerical imputation method for the 
+        `paralytics.preprocessing.Imputer`.
 
     verbose: int, optional (default=0)
         Controls verbosity of output. If 0 there is no output, if 1 displays
@@ -53,16 +57,18 @@ class VIFSelector(BaseEstimator, TransformerMixin):
     [1] Ffisegydd, `sklearn multicollinearity class
     <https://www.kaggle.com/ffisegydd/sklearn-multicollinearity-class>`_, 2017
 
+    See also
+    --------
+    paralytics.preprocessing.Imputer
+
     """
 
     def __init__(self, thresh=5.0, impute=True,
-                 impute_strat='mean', verbose=0):
+                 impute_method="mean", verbose=0):
         self.thresh = thresh
-        self.impute_strat = impute_strat
+        self.impute = impute
+        self.impute_method = impute_method
         self.verbose = verbose
-
-        if impute:
-            self.imputer_ = SimpleImputer(strategy=impute_strat)
 
     def fit(self, X, y=None):
         """Fits columns with a VIF value exceeding the threshold.
@@ -81,8 +87,16 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             Returns the instance itself.
 
         """
-        if hasattr(self, 'imputer_'):
-            self.imputer_.fit(X)
+        if isinstance(variance_inflation_factor, ImportError):
+            raise ImportError(
+                "`VIFSelector` requires extra requirements installed. "
+                "Reinstall paralytics package with 'vif' extra "
+                "specified or install the dependencies directly "
+                "from the source."
+            ).with_traceback(variance_inflation_factor.__traceback__)
+        if self.impute:
+            self.imputer_ = Imputer(numerical_method=self.impute_method)
+            X = self.imputer_.fit_transform(X)
 
         self.viffed_cols_, self.kept_cols_ = self._viffing(
             X, self.thresh, self.verbose
@@ -116,12 +130,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
                                'Fitting is necessary before you do '
                                'the transformation.')
         X_new = X.copy()
-
-        if hasattr(self, 'imputer_'):
-            cols = X_new.columns.tolist()
-            X_new = pd.DataFrame(self.imputer_.transform(X_new), columns=cols)
-
-        X_new = X_new.drop(self.viffed_cols_, axis=1)
+        X_new.drop(self.viffed_cols_, axis=1, inplace=True)
 
         return X_new
 
@@ -131,8 +140,8 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
         assert ~(X.isnull().values).any(), (
-            'DataFrame cannot contain any missing values, consider changing '
-            'impute parameter to True.'
+            'DataFrame cannot contain any missing values, consider using '
+            '`paralytics.preprocessing.Imputer` first.'
         )
         assert all(is_numeric_dtype(X[col]) for col in X.columns), \
             'Only numeric dtypes are acceptable.'
