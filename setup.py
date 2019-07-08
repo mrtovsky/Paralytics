@@ -30,6 +30,12 @@ with codecs.open('requirements.txt') as f:
 DESCRIPTION = 'Python analytical scripts that will overcome ' \
               'paralysis in your data analysis.'
 LONG_DESCRIPTION = read('README.rst')
+EXTRAS_REQUIREMENTS = {
+    "all": ["selenium>=3.141.0", "seaborn>=0.9.0", "statsmodels>=0.9.0"],
+    "browser": ["selenium>=3.141.0"],
+    "plot": ["seaborn>=0.9.0"],
+    "vif": ["statsmodels>=0.9.0"]
+}
 
 setup(
     name='paralytics',
@@ -40,6 +46,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     url='https://mrtovsky.github.io/Paralytics/',
     install_requires=requirements,
+    extras_require=EXTRAS_REQUIREMENTS,
     license='MIT',
     packages=find_packages('.'),
     zip_safe=True
