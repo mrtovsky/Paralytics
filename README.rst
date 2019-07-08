@@ -76,7 +76,7 @@ When functionalities requiring optional dependencies are needed you can install 
 
 For example, to use ``BaseSeleniumBrowser`` (requires selenium) and ``VIFSelector`` (requires statsmodels) run: ::
 
-    pip install paralytics[browser, vif]
+    pip install paralytics[browser,vif]
   
 Installation of all extras is possible via: ::
 
