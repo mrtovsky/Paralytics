@@ -97,7 +97,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
@@ -260,6 +259,27 @@ predictions for consecutive observations.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Attributes Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.CORRECT_DTYPES" title="paralytics.xai.FeatureEffectExplainer.CORRECT_DTYPES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CORRECT_DTYPES</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.dtypes" title="paralytics.xai.FeatureEffectExplainer.dtypes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtypes</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.estimation_values" title="paralytics.xai.FeatureEffectExplainer.estimation_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">estimation_values</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.features" title="paralytics.xai.FeatureEffectExplainer.features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">features</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -273,12 +293,39 @@ predictions for consecutive observations.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.fit" title="paralytics.xai.FeatureEffectExplainer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fits creation of synthetic data to X.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.predict_grid_features" title="paralytics.xai.FeatureEffectExplainer.predict_grid_features"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_grid_features</span></code></a>(self, X)</p></td>
+<td><p>Predicts previously substituting grid features with generated values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.xai.FeatureEffectExplainer.select_sample" title="paralytics.xai.FeatureEffectExplainer.select_sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_sample</span></code></a>(self, X)</p></td>
+<td><p>Selects sample data with <cite>sample_size</cite> number of samples.</p></td>
+</tr>
 </tbody>
 </table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="paralytics.xai.FeatureEffectExplainer.CORRECT_DTYPES">
+<code class="sig-name descname">CORRECT_DTYPES</code><em class="property"> = {'category', 'numeric'}</em><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.CORRECT_DTYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="paralytics.xai.FeatureEffectExplainer.dtypes">
+<code class="sig-name descname">dtypes</code><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.dtypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="paralytics.xai.FeatureEffectExplainer.estimation_values">
+<code class="sig-name descname">estimation_values</code><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.estimation_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="paralytics.xai.FeatureEffectExplainer.features">
+<code class="sig-name descname">features</code><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.xai.FeatureEffectExplainer.explain">
-<code class="sig-name descname">explain</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">pdplot=True</em>, <em class="sig-param">iceplot=False</em>, <em class="sig-param">mplot=False</em>, <em class="sig-param">aleplot=False</em>, <em class="sig-param">automatic_layout=True</em>, <em class="sig-param">centers=None</em>, <em class="sig-param">iceplot_thresh=None</em>, <em class="sig-param">neighborhoods=0.1</em>, <em class="sig-param">pdline_params=None</em>, <em class="sig-param">iceline_params=None</em>, <em class="sig-param">mline_params=None</em>, <em class="sig-param">aleline_params=None</em>, <em class="sig-param">contour_params=None</em>, <em class="sig-param">contourf_params=None</em>, <em class="sig-param">bar_params=None</em>, <em class="sig-param">imshow_params=None</em>, <em class="sig-param">text_params=None</em>, <em class="sig-param">ax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer.explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.explain" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">explain</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">pdplot=True</em>, <em class="sig-param">iceplot=False</em>, <em class="sig-param">mplot=False</em>, <em class="sig-param">aleplot=False</em>, <em class="sig-param">automatic_layout=True</em>, <em class="sig-param">centers=None</em>, <em class="sig-param">iceplot_thresh=None</em>, <em class="sig-param">neighborhoods=0.1</em>, <em class="sig-param">pdline_params=None</em>, <em class="sig-param">iceline_params=None</em>, <em class="sig-param">mline_params=None</em>, <em class="sig-param">aleline_params=None</em>, <em class="sig-param">contour_params=None</em>, <em class="sig-param">contourf_params=None</em>, <em class="sig-param">bar_params=None</em>, <em class="sig-param">imshow_params=None</em>, <em class="sig-param">text_params=None</em>, <em class="sig-param">verbose=True</em>, <em class="sig-param">ax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer.explain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.explain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Explains the features effect with use of the selected methods.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -337,7 +384,13 @@ features are given.</p>
 </dd>
 <dt><strong>{pd, ice, m, ale}plot_params: dicts, optional (default=None)</strong></dt><dd><p>Keyword arguments for underlying plotting functions.</p>
 </dd>
+<dt><strong>verbose: TODO</strong></dt><dd></dd>
 <dt><strong>ax: TODO</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>TODO</dt><dd></dd>
 </dl>
 </dd>
 </dl>
@@ -362,6 +415,25 @@ features are given.</p>
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="paralytics.xai.FeatureEffectExplainer.predict_grid_features">
+<code class="sig-name descname">predict_grid_features</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer.predict_grid_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.predict_grid_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts previously substituting grid features with generated values.</p>
+<p>For every combination in the cartesian product of unique grid features
+generates a temporary DataFrame containing this set of values across the
+whole grid features leaving the rest of the features unchanged. Then
+makes prediction for this synthetic DataFrame.</p>
+<p>Returns list of predictions for every synthetic DataFrame and list of
+grid values which replaced the original values across the grid features
+to create these DataFrames for prediction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="paralytics.xai.FeatureEffectExplainer.select_sample">
+<code class="sig-name descname">select_sample</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/xai/feature_effect.html#FeatureEffectExplainer.select_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.xai.FeatureEffectExplainer.select_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selects sample data with <cite>sample_size</cite> number of samples.</p>
 </dd></dl>
 
 </dd></dl>

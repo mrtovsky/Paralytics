@@ -100,7 +100,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
@@ -290,10 +289,10 @@ passed.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.fit" title="paralytics.Discretizer.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
 <td><p>Fit the binning with X by extracting upper limits of right-closed intervals.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.sapling" title="paralytics.Discretizer.sapling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sapling</span></code></a>(self, X, y, \*\*params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.sapling" title="paralytics.Discretizer.sapling"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sapling</span></code></a>(self, X, y)</p></td>
 <td><p>Creates finitely many intervals for a continuous vector using DecisionTreeClassifier optimizing splits with respect to Gini impurity criterium.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.spearman" title="paralytics.Discretizer.spearman"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spearman</span></code></a>(self, X, y, \*\*params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.Discretizer.spearman" title="paralytics.Discretizer.spearman"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spearman</span></code></a>(self, X, y)</p></td>
 <td><p>Creates finitely many intervals for a continuous vector with use of Spearman’s rang correlation (supervised).</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.Discretizer.transform" title="paralytics.Discretizer.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
@@ -304,7 +303,7 @@ passed.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.Discretizer.finger">
-<em class="property">static </em><code class="sig-name descname">finger</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">cut_points=None</em>, <em class="sig-param">n_quantiles=4</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">min_val=None</em>, <em class="sig-param">max_val=None</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.finger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.finger" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">finger</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">cut_points=None</em>, <em class="sig-param">n_quantiles=4</em>, <em class="sig-param">labels=None</em>, <em class="sig-param">min_val=None</em>, <em class="sig-param">max_val=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.finger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.finger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Manually bins continuous variable into the declared intervals.</p>
 <p>If the cut-off points are not declared the split is made using
 quantiles.</p>
@@ -353,7 +352,7 @@ respective labels.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the binning with X by extracting upper limits of right-closed
 intervals.</p>
 <dl class="field-list simple">
@@ -376,7 +375,7 @@ intervals.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.sapling">
-<code class="sig-name descname">sapling</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.sapling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.sapling" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sapling</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.sapling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.sapling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates finitely many intervals for a continuous vector using
 DecisionTreeClassifier optimizing splits with respect to Gini impurity
 criterium.</p>
@@ -403,7 +402,7 @@ corresponding intervals as well as containing a minimum value.</p>
 
 <dl class="method">
 <dt id="paralytics.Discretizer.spearman">
-<code class="sig-name descname">spearman</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.spearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.spearman" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">spearman</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer.spearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer.spearman" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates finitely many intervals for a continuous vector with use of
 Spearman’s rang correlation (supervised).</p>
 <dl class="field-list simple">

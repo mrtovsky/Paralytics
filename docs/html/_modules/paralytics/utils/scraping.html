@@ -155,8 +155,13 @@
 <span></span><span class="sd">&quot;&quot;&quot;Utilities for web scraping.&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">selenium</span> <span class="k">import</span> <span class="n">webdriver</span>
-<span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="k">import</span> <span class="n">WebDriverException</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">selenium</span> <span class="k">import</span> <span class="n">webdriver</span>
+    <span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="k">import</span> <span class="n">WebDriverException</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">_has_selenium</span> <span class="o">=</span> <span class="n">e</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">_has_selenium</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -192,6 +197,13 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">browser_name</span><span class="p">,</span> <span class="n">executable_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_has_selenium</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;`BaseSeleniumBrowser` requires extra requirements installed. &quot;</span>
+                <span class="s2">&quot;Reinstall paralytics package with &#39;browser&#39; extra &quot;</span>
+                <span class="s2">&quot;specified or install the dependencies directly &quot;</span>
+                <span class="s2">&quot;from the source.&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">_has_selenium</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">browser</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">webdriver</span><span class="p">,</span> <span class="n">browser_name</span><span class="p">)()</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>

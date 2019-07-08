@@ -90,7 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="example.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">0.3 ()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.3 (09.07.2019)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id2">0.2.2 (19.06.2019)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">0.2.1 (31.03.2019)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">0.2 (31.03.2019)</a></li>
@@ -164,7 +164,67 @@
   <div class="section" id="history">
 <h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>0.3 ()<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>0.3 (09.07.2019)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Initiated <code class="docutils literal notranslate"><span class="pre">xai</span></code> subpackage</dt><dd><ul>
+<li><p>Creates base class <code class="docutils literal notranslate"><span class="pre">ExplainerMixin</span></code> for all explainers with the <strong>fit</strong> &amp; <strong>explain</strong>
+convention (familiar from scikit-learn API).</p></li>
+<li><p>Releases, in the development version, the <code class="docutils literal notranslate"><span class="pre">xai.FeatureEffectExplainer</span></code> implementing
+calculation of <strong>Partial Dependence Plot</strong>, <strong>Individual Conditional Expectation</strong> and
+<strong>Marginal Plot</strong>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Optimized <code class="docutils literal notranslate"><span class="pre">Discretizer</span></code></dt><dd><ul>
+<li><p>Limits the transformations only to continuous variables by not taking into consideration
+categorical variables and leaving them unchanged.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Created optional dependencies</dt><dd><ul>
+<li><p>Reduces the number of dependent packages by creating optional functionalities
+that require additional installation of the extra requirements.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Renamed <code class="docutils literal notranslate"><span class="pre">collinearity_reduction</span></code> module</dt><dd><ul>
+<li><p>Changes the module name to <code class="docutils literal notranslate"><span class="pre">feature_selection</span></code> to prepare it for future
+expansion in this direction.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Modified <code class="docutils literal notranslate"><span class="pre">utils.is_numeric</span></code></dt><dd><ul>
+<li><p>Excludes from checking for numericity categorical pandas.Series.</p></li>
+<li><p>Adds the ability to disable the attempt to project on a numeric type.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Moved <code class="docutils literal notranslate"><span class="pre">mathy</span></code> module</dt><dd><ul>
+<li><p>Changes the location of <code class="docutils literal notranslate"><span class="pre">mathy</span></code> module to <code class="docutils literal notranslate"><span class="pre">utils</span></code> subpackage.
+The new location is as follows: <code class="docutils literal notranslate"><span class="pre">utils.mathy</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Fixed missing values temporary imputation inside the <code class="docutils literal notranslate"><span class="pre">VIFSelector</span></code></dt><dd><ul>
+<li><p>Imputs the missing values ​​before checking the NaN condition.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 <div class="section" id="id2">
 <h2>0.2.2 (19.06.2019)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>

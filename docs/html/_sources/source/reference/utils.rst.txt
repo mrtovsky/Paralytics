@@ -10,6 +10,17 @@ Importing
 
    api/*utils.get_csv
 
+Mathy
+-----
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   api/*utils.check_prime
+   api/*utils.custom_round
+   api/*utils.lcm
+
 Plotting
 --------
 

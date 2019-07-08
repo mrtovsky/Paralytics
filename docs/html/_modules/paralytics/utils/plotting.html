@@ -155,9 +155,12 @@
 <span></span><span class="sd">&quot;&quot;&quot;Utilities for drawing plots.&quot;&quot;&quot;</span>
 
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">sns</span> <span class="o">=</span> <span class="n">e</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -195,6 +198,14 @@
 <span class="sd">    None</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sns</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;`multipleplots` requires extra requirements installed. &quot;</span>
+            <span class="s2">&quot;Reinstall paralytics package with &#39;plot&#39; extra &quot;</span>
+            <span class="s2">&quot;specified or install the dependencies directly &quot;</span>
+            <span class="s2">&quot;from the source.&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
+
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
         <span class="s1">&#39;Input &quot;data&quot; must be an instance of pandas.DataFrame()!&#39;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> \

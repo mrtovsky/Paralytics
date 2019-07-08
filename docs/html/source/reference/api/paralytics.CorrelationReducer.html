@@ -100,7 +100,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mathy.html">Math</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
@@ -179,7 +178,7 @@
 <h1>CorrelationReducer<a class="headerlink" href="#correlationreducer" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.CorrelationReducer">
-<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">CorrelationReducer</code><span class="sig-paren">(</span><em class="sig-param">thresh=0.8</em>, <em class="sig-param">method='pearson'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">CorrelationReducer</code><span class="sig-paren">(</span><em class="sig-param">thresh=0.8</em>, <em class="sig-param">method='pearson'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_selection.html#CorrelationReducer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Removes correlated columns exceeding the thresh value.</p>
 <dl class="field-list simple">
@@ -223,7 +222,7 @@ discontinued.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="paralytics.CorrelationReducer.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_selection.html#CorrelationReducer.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fits columns with a correlation coefficients exceeding the threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -245,7 +244,7 @@ is the number of features.</p>
 
 <dl class="method">
 <dt id="paralytics.CorrelationReducer.transform">
-<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/collinearity_reduction.html#CorrelationReducer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_selection.html#CorrelationReducer.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.CorrelationReducer.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply feature selection based on correlation coefficients.</p>
 <p>Removes correlated features with coefficient higher than the threshold
 value.</p>
