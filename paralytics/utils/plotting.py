@@ -1,9 +1,12 @@
 """Utilities for drawing plots."""
 
 
-import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
+try:
+    import seaborn as sns
+except ImportError as e:
+    sns = e
 
 
 __all__ = [
@@ -41,6 +44,14 @@ def multipleplots(data, x, nrows=1, ncols=1, figsize=(8, 6),
     None
 
     """
+    if isinstance(sns, ImportError):
+        raise ImportError(
+            "`multipleplots` requires extra requirements installed. "
+            "Reinstall paralytics package with 'plot' extra "
+            "specified or install the dependencies directly "
+            "from the source."
+        ).with_traceback(sns.__traceback__)
+
     assert isinstance(data, pd.DataFrame), \
         'Input "data" must be an instance of pandas.DataFrame()!'
     assert isinstance(x, list), \
