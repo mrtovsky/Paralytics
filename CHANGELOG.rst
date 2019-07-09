@@ -1,6 +1,11 @@
 History
 =======
 
+0.3.1 (09.07.2019)
+------------------
+* Fixed ``MANIFEST.in``
+    * Includes ``extras_requirements.json`` to distribution package.
+
 0.3 (09.07.2019)
 ----------------
 * Initiated ``xai`` subpackage
