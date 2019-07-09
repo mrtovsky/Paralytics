@@ -1,6 +1,0 @@
-OptionalPackageWarning
-======================
-
-.. currentmodule:: paralytics
-
-.. autoexception:: OptionalPackageWarning

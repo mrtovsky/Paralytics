@@ -1,6 +1,0 @@
-check_train_test_similarity
-===========================
-
-.. currentmodule:: paralytics.utils
-
-.. autofunction:: check_train_test_similarity
