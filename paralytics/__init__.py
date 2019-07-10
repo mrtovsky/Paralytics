@@ -7,4 +7,4 @@ from .feature_selection import *
 from .feature_union import *
 
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
