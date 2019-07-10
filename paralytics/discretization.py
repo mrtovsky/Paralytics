@@ -66,6 +66,9 @@ class Discretizer(BaseEstimator, TransformerMixin):
         Specifies the minimum part of the entire population that must be
         included in the leaf.
 
+    random_state: int, optional (default=None)
+        Random state for sklearn algorithms.
+
     Attributes
     ----------
     bins_: dictionary, length = n_features
@@ -99,7 +102,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
     >>> y = np.random.randint(low=0, high=2, size=100)
 
     >>> # Do discretization.
-    >>> discretizer = prl.Discretizer(max_bins=5)
+    >>> discretizer = prl.Discretizer(max_bins=5, random_state=SEED)
     >>> X_discretized = discretizer.fit_transform(X, y)
     >>> print(X_discretized.head())
       NormalVariable UniformVariable   IntVariable     Sex
@@ -113,13 +116,14 @@ class Discretizer(BaseEstimator, TransformerMixin):
 
     def __init__(self, method='sapling', formula='mean',
                  max_bins=20, min_bins=3, max_tree_depth=None,
-                 min_samples_leaf=.05):
+                 min_samples_leaf=.05, random_state=None):
         self.method = method
         self.formula = formula
         self.max_bins = max_bins
         self.min_bins = min_bins
         self.max_tree_depth = max_tree_depth
         self.min_samples_leaf = min_samples_leaf
+        self.random_state = random_state
 
     def fit(self, X, y=None):
         """Fit the binning with X by extracting upper limits of right-closed
@@ -194,7 +198,7 @@ class Discretizer(BaseEstimator, TransformerMixin):
                 cut_points = list(cut_points)
 
             if not cut_points:
-                cut_points = cutoffs[col]
+                cut_points = cutoffs
 
             X_new[col] = self.finger(
                 X[col],
@@ -239,7 +243,8 @@ class Discretizer(BaseEstimator, TransformerMixin):
         clf = DecisionTreeClassifier(
             max_depth=self.max_tree_depth,
             min_samples_leaf=self.min_samples_leaf,
-            max_leaf_nodes=self.max_bins
+            max_leaf_nodes=self.max_bins,
+            random_state=self.random_state
         )
         X = X.reshape(-1, 1)
 
