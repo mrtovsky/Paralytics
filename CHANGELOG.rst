@@ -1,6 +1,19 @@
 History
 =======
 
+0.3.2 ()
+------------------
+* Fixed ``Discretizer``
+    * Properly addresses the cut-offs in the ``transform`` method, when not enough
+      split points is provided.
+    * Adds ``random_state`` parameter for reproducibility.
+
+* Added ``fit_intercept`` parameter to the ``VIFSelector``
+    * Extends functionality through the ability to control the model intercept.
+      Statsmodels natively do not include the intercept in the linear regression
+      so to properly execute the VIF selection it is recommended to add the intercept
+      and aforementioned parameter provides this.
+
 0.3.1 (09.07.2019)
 ------------------
 * Fixed ``MANIFEST.in``
