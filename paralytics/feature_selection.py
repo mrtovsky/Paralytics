@@ -34,8 +34,12 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         Declares whether missing values imputation should be performed.
 
     impute_method: string, optional (default="mean")
-        Declares numerical imputation method for the 
+        Declares numerical imputation method for the
         `paralytics.preprocessing.Imputer`.
+    
+    fit_intercept: bool, optional (default=True)
+        Specifies if the constant (a.k.a. bias or intercept) should be added to
+        the decision functions.
 
     verbose: int, optional (default=0)
         Controls verbosity of output. If 0 there is no output, if 1 displays
@@ -63,11 +67,12 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, thresh=5.0, impute=True,
-                 impute_method="mean", verbose=0):
+    def __init__(self, thresh=5.0, impute=True, impute_method="mean",
+                 fit_intercept=True, verbose=0):
         self.thresh = thresh
         self.impute = impute
         self.impute_method = impute_method
+        self.fit_intercept = fit_intercept
         self.verbose = verbose
 
     def fit(self, X, y=None):
@@ -98,9 +103,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
             self.imputer_ = Imputer(numerical_method=self.impute_method)
             X = self.imputer_.fit_transform(X)
 
-        self.viffed_cols_, self.kept_cols_ = self._viffing(
-            X, self.thresh, self.verbose
-        )
+        self.viffed_cols_, self.kept_cols_ = self._viffing(X)
 
         return self
 
@@ -134,8 +137,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
         return X_new
 
-    @staticmethod
-    def _viffing(X, thresh, verbose):
+    def _viffing(self, X):
         """In every iteration removes variable with the highest VIF value."""
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
@@ -146,37 +148,48 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         assert all(is_numeric_dtype(X[col]) for col in X.columns), \
             'Only numeric dtypes are acceptable.'
 
-        X_new = X.copy()
+        if self.fit_intercept:
+            assert not "_constant" in X, (
+                "When `fit_intercept == True` the DataFrame can not contain "
+                "a column named `_constant`."
+            )
+            X_new = X.assign(_constant=1.)
+        else:
+            X_new = X.copy()
+
         viffed_cols = []
 
         keep_digging = True
         while keep_digging:
             keep_digging = False
-            if len(X_new.columns) == 1:
-                print("Last variable survived, I'm stopping it right now!")
+
+            if self.fit_intercept:
+                kept_cols = [col for col in X_new if col != "_constant"]
+            else:
+                kept_cols = X_new.columns.tolist()
+
+            if len(kept_cols) == 1:
+                print("Last variable survived, I'm stopping the procedure!")
                 break
 
             vifs = [
                 variance_inflation_factor(
                     X_new.values,
                     X_new.columns.get_loc(var)
-                ) for var in X_new.columns
+                ) for var in kept_cols
             ]
 
             max_vif = max(vifs)
-            if max_vif > thresh:
-                max_loc = vifs.index(max_vif)
-                col_out = X_new.columns[max_loc]
-                if verbose:
+            if max_vif > self.thresh:
+                col_out = kept_cols[vifs.index(max_vif)]
+                if self.verbose:
                     print(
                         '{0} with vif={1:.2f} exceeds the threshold.'
                         .format(col_out, max_vif)
                     )
-                X_new.drop([col_out], axis=1, inplace=True)
+                X_new.drop(col_out, axis=1, inplace=True)
                 viffed_cols.append(col_out)
                 keep_digging = True
-
-        kept_cols = X_new.columns.tolist()
 
         return viffed_cols, kept_cols
 
