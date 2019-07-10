@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>paralytics.feature_selection &mdash; Paralytics 0.3.1 documentation</title>
+  <title>paralytics.feature_selection &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -188,8 +188,12 @@
 <span class="sd">        Declares whether missing values imputation should be performed.</span>
 
 <span class="sd">    impute_method: string, optional (default=&quot;mean&quot;)</span>
-<span class="sd">        Declares numerical imputation method for the </span>
+<span class="sd">        Declares numerical imputation method for the</span>
 <span class="sd">        `paralytics.preprocessing.Imputer`.</span>
+<span class="sd">    </span>
+<span class="sd">    fit_intercept: bool, optional (default=True)</span>
+<span class="sd">        Specifies if the constant (a.k.a. bias or intercept) should be added to</span>
+<span class="sd">        the decision functions.</span>
 
 <span class="sd">    verbose: int, optional (default=0)</span>
 <span class="sd">        Controls verbosity of output. If 0 there is no output, if 1 displays</span>
@@ -217,11 +221,12 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">impute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">impute_method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">impute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">impute_method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+                 <span class="n">fit_intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">thresh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">impute</span> <span class="o">=</span> <span class="n">impute</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">impute_method</span> <span class="o">=</span> <span class="n">impute_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_intercept</span> <span class="o">=</span> <span class="n">fit_intercept</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
 
 <div class="viewcode-block" id="VIFSelector.fit"><a class="viewcode-back" href="../../source/reference/api/paralytics.VIFSelector.html#paralytics.VIFSelector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -252,9 +257,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">imputer_</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span><span class="n">numerical_method</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">impute_method</span><span class="p">)</span>
             <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imputer_</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">viffed_cols_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kept_cols_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viffing</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viffed_cols_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kept_cols_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_viffing</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -288,8 +291,7 @@
 
         <span class="k">return</span> <span class="n">X_new</span></div>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_viffing</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">thresh</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_viffing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;In every iteration removes variable with the highest VIF value.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
             <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
@@ -300,37 +302,48 @@
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> \
             <span class="s1">&#39;Only numeric dtypes are acceptable.&#39;</span>
 
-        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_intercept</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="ow">not</span> <span class="s2">&quot;_constant&quot;</span> <span class="ow">in</span> <span class="n">X</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;When `fit_intercept == True` the DataFrame can not contain &quot;</span>
+                <span class="s2">&quot;a column named `_constant`.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">_constant</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
         <span class="n">viffed_cols</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">keep_digging</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">while</span> <span class="n">keep_digging</span><span class="p">:</span>
             <span class="n">keep_digging</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Last variable survived, I&#39;m stopping it right now!&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_intercept</span><span class="p">:</span>
+                <span class="n">kept_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X_new</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;_constant&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kept_cols</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kept_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Last variable survived, I&#39;m stopping the procedure!&quot;</span><span class="p">)</span>
                 <span class="k">break</span>
 
             <span class="n">vifs</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">variance_inflation_factor</span><span class="p">(</span>
                     <span class="n">X_new</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
                     <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-                <span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span>
+                <span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">kept_cols</span>
             <span class="p">]</span>
 
             <span class="n">max_vif</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">vifs</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">max_vif</span> <span class="o">&gt;</span> <span class="n">thresh</span><span class="p">:</span>
-                <span class="n">max_loc</span> <span class="o">=</span> <span class="n">vifs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">max_vif</span><span class="p">)</span>
-                <span class="n">col_out</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">max_loc</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">max_vif</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">:</span>
+                <span class="n">col_out</span> <span class="o">=</span> <span class="n">kept_cols</span><span class="p">[</span><span class="n">vifs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">max_vif</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span>
                         <span class="s1">&#39;</span><span class="si">{0}</span><span class="s1"> with vif=</span><span class="si">{1:.2f}</span><span class="s1"> exceeds the threshold.&#39;</span>
                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col_out</span><span class="p">,</span> <span class="n">max_vif</span><span class="p">)</span>
                     <span class="p">)</span>
-                <span class="n">X_new</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">col_out</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">X_new</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col_out</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">viffed_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_out</span><span class="p">)</span>
                 <span class="n">keep_digging</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="n">kept_cols</span> <span class="o">=</span> <span class="n">X_new</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">viffed_cols</span><span class="p">,</span> <span class="n">kept_cols</span></div>
 

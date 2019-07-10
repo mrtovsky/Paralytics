@@ -35,7 +35,7 @@ recognize which variables are of the continuous type.
    y = np.random.randint(low=0, high=2, size=100)
 
    # Do discretization.
-   discretizer = prl.Discretizer(max_bins=5)
+   discretizer = prl.Discretizer(max_bins=5, random_state=SEED)
    X_discretized = discretizer.fit_transform(X, y)
 
 The ``X_discretized`` dataframe is already a fully discretized equivalent of the

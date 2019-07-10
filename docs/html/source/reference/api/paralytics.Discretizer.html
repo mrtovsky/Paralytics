@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Discretizer &mdash; Paralytics 0.3.1 documentation</title>
+  <title>Discretizer &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -178,7 +178,7 @@
 <h1>Discretizer<a class="headerlink" href="#discretizer" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.Discretizer">
-<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">Discretizer</code><span class="sig-paren">(</span><em class="sig-param">method='sapling'</em>, <em class="sig-param">formula='mean'</em>, <em class="sig-param">max_bins=20</em>, <em class="sig-param">min_bins=3</em>, <em class="sig-param">max_tree_depth=None</em>, <em class="sig-param">min_samples_leaf=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">Discretizer</code><span class="sig-paren">(</span><em class="sig-param">method='sapling'</em>, <em class="sig-param">formula='mean'</em>, <em class="sig-param">max_bins=20</em>, <em class="sig-param">min_bins=3</em>, <em class="sig-param">max_tree_depth=None</em>, <em class="sig-param">min_samples_leaf=0.05</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/discretization.html#Discretizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.Discretizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Discretizes variables in a given data set.</p>
 <p>Reduces continuous variables to a finite number of intervals with use of
@@ -223,6 +223,8 @@ Spearman’s rank correlation:</p>
 <dt><strong>min_samples_leaf: float, optional (default=.05)</strong></dt><dd><p>Specifies the minimum part of the entire population that must be
 included in the leaf.</p>
 </dd>
+<dt><strong>random_state: int, optional (default=None)</strong></dt><dd><p>Random state for sklearn algorithms.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -255,7 +257,7 @@ included in the leaf.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Do discretization.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">discretizer</span> <span class="o">=</span> <span class="n">prl</span><span class="o">.</span><span class="n">Discretizer</span><span class="p">(</span><span class="n">max_bins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">discretizer</span> <span class="o">=</span> <span class="n">prl</span><span class="o">.</span><span class="n">Discretizer</span><span class="p">(</span><span class="n">max_bins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">X_discretized</span> <span class="o">=</span> <span class="n">discretizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">X_discretized</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 <span class="go">  NormalVariable UniformVariable   IntVariable     Sex</span>

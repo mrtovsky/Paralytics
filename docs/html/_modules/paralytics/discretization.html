@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>paralytics.discretization &mdash; Paralytics 0.3.1 documentation</title>
+  <title>paralytics.discretization &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -220,6 +220,9 @@
 <span class="sd">        Specifies the minimum part of the entire population that must be</span>
 <span class="sd">        included in the leaf.</span>
 
+<span class="sd">    random_state: int, optional (default=None)</span>
+<span class="sd">        Random state for sklearn algorithms.</span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    bins_: dictionary, length = n_features</span>
@@ -253,7 +256,7 @@
 <span class="sd">    &gt;&gt;&gt; y = np.random.randint(low=0, high=2, size=100)</span>
 
 <span class="sd">    &gt;&gt;&gt; # Do discretization.</span>
-<span class="sd">    &gt;&gt;&gt; discretizer = prl.Discretizer(max_bins=5)</span>
+<span class="sd">    &gt;&gt;&gt; discretizer = prl.Discretizer(max_bins=5, random_state=SEED)</span>
 <span class="sd">    &gt;&gt;&gt; X_discretized = discretizer.fit_transform(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; print(X_discretized.head())</span>
 <span class="sd">      NormalVariable UniformVariable   IntVariable     Sex</span>
@@ -267,13 +270,14 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;sapling&#39;</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>
                  <span class="n">max_bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">min_bins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_tree_depth</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">min_samples_leaf</span><span class="o">=.</span><span class="mi">05</span><span class="p">):</span>
+                 <span class="n">min_samples_leaf</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_bins</span> <span class="o">=</span> <span class="n">max_bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_bins</span> <span class="o">=</span> <span class="n">min_bins</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_tree_depth</span> <span class="o">=</span> <span class="n">max_tree_depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span> <span class="o">=</span> <span class="n">min_samples_leaf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
 
 <div class="viewcode-block" id="Discretizer.fit"><a class="viewcode-back" href="../../source/reference/api/paralytics.Discretizer.html#paralytics.Discretizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit the binning with X by extracting upper limits of right-closed</span>
@@ -348,7 +352,7 @@
                 <span class="n">cut_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cut_points</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">cut_points</span><span class="p">:</span>
-                <span class="n">cut_points</span> <span class="o">=</span> <span class="n">cutoffs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                <span class="n">cut_points</span> <span class="o">=</span> <span class="n">cutoffs</span>
 
             <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finger</span><span class="p">(</span>
                 <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
@@ -393,7 +397,8 @@
         <span class="n">clf</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span>
             <span class="n">max_depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_tree_depth</span><span class="p">,</span>
             <span class="n">min_samples_leaf</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span><span class="p">,</span>
-            <span class="n">max_leaf_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_bins</span>
+            <span class="n">max_leaf_nodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_bins</span><span class="p">,</span>
+            <span class="n">random_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span>
         <span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 

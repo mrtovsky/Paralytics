@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>History &mdash; Paralytics 0.3.1 documentation</title>
+  <title>History &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -90,12 +90,13 @@
 <li class="toctree-l1"><a class="reference internal" href="example.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="source/reference/index.html">API Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">History</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">0.3.1 (09.07.2019)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">0.3 (09.07.2019)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">0.2.2 (19.06.2019)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id4">0.2.1 (31.03.2019)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">0.2 (31.03.2019)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">0.1 (24.03.2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.3.2 ()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.3.1 (09.07.2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">0.3 (09.07.2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.2.2 (19.06.2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.2.1 (31.03.2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">0.2 (31.03.2019)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.1 (24.03.2019)</a></li>
 </ul>
 </li>
 </ul>
@@ -165,7 +166,31 @@
   <div class="section" id="history">
 <h1>History<a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="id1">
-<h2>0.3.1 (09.07.2019)<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>0.3.2 ()<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Fixed <code class="docutils literal notranslate"><span class="pre">Discretizer</span></code></dt><dd><ul>
+<li><p>Properly addresses the cut-offs in the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method, when not enough
+split points is provided.</p></li>
+<li><p>Adds <code class="docutils literal notranslate"><span class="pre">random_state</span></code> parameter for reproducibility.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Added <code class="docutils literal notranslate"><span class="pre">fit_intercept</span></code> parameter to the <code class="docutils literal notranslate"><span class="pre">VIFSelector</span></code></dt><dd><ul>
+<li><p>Extends functionality through the ability to control the model intercept.
+Statsmodels natively do not include the intercept in the linear regression
+so to properly execute the VIF selection it is recommended to add the intercept
+and aforementioned parameter provides this.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>0.3.1 (09.07.2019)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Fixed <code class="docutils literal notranslate"><span class="pre">MANIFEST.in</span></code></dt><dd><ul>
@@ -176,8 +201,8 @@
 </li>
 </ul>
 </div>
-<div class="section" id="id2">
-<h2>0.3 (09.07.2019)<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>0.3 (09.07.2019)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Initiated <code class="docutils literal notranslate"><span class="pre">xai</span></code> subpackage</dt><dd><ul>
@@ -239,8 +264,8 @@ The new location is as follows: <code class="docutils literal notranslate"><span
 </li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>0.2.2 (19.06.2019)<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h2>0.2.2 (19.06.2019)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Added <code class="docutils literal notranslate"><span class="pre">PandasFeatureUnion</span></code> transformer</dt><dd><ul>
@@ -292,8 +317,8 @@ repetition threshold.</p></li>
 </li>
 </ul>
 </div>
-<div class="section" id="id4">
-<h2>0.2.1 (31.03.2019)<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h2>0.2.1 (31.03.2019)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Fixed references to correct redirections</dt><dd><ul>
@@ -304,8 +329,8 @@ repetition threshold.</p></li>
 </li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h2>0.2 (31.03.2019)<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>0.2 (31.03.2019)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Changed the topology of the repository</dt><dd><ul>
@@ -354,8 +379,8 @@ which will be developed over the 0.2.X versions.</p></li>
 </li>
 </ul>
 </div>
-<div class="section" id="id6">
-<h2>0.1 (24.03.2019)<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>0.1 (24.03.2019)<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Initial package</dt><dd><ul>

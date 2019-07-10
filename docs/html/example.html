@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Examples &mdash; Paralytics 0.3.1 documentation</title>
+  <title>Examples &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -191,7 +191,7 @@ recognize which variables are of the continuous type.</p>
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 
 <span class="c1"># Do discretization.</span>
-<span class="n">discretizer</span> <span class="o">=</span> <span class="n">prl</span><span class="o">.</span><span class="n">Discretizer</span><span class="p">(</span><span class="n">max_bins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">discretizer</span> <span class="o">=</span> <span class="n">prl</span><span class="o">.</span><span class="n">Discretizer</span><span class="p">(</span><span class="n">max_bins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span>
 <span class="n">X_discretized</span> <span class="o">=</span> <span class="n">discretizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
