@@ -10,6 +10,7 @@ from pandas.api.types import is_categorical_dtype, is_numeric_dtype
 __all__ = [
     "check_uniq",
     "check_column_existence",
+    "check_is_dataframe",
     "is_numeric",
     "find_sparsity",
     "check_continuity"
@@ -65,6 +66,28 @@ def check_column_existence(X, columns):
             "Columns not found in the DataFrame: {}"
             .format(", ".join(cols_error))
         )
+
+
+def check_is_dataframe(X):
+    """Checks whether object is a pandas.DataFrame.
+
+    Parameters
+    ----------
+    X: object
+        Object suspected of being a pandas.DataFrame.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    TypeError
+        If object is not a pandas.DataFrame.
+
+    """
+    if not isinstance(X, pd.DataFrame):
+        raise TypeError("Input must be an instance of pandas.DataFrame.")
 
 
 def is_numeric(X, project=True):
