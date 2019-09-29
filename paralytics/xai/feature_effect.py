@@ -1,15 +1,17 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import warnings
 
 from functools import reduce
 from itertools import product
+
+import matplotlib.pyplot as plt
+import numpy as np
+
 from joblib import delayed, Parallel
 from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 
 from .base import ExplainerMixin
-from ..utils.validation import check_column_existence, is_numeric
+from ..utils import check_column_existence, is_numeric
 
 
 __all__ = [
@@ -206,8 +208,7 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
             Returns the instance itself.
 
         """
-        assert check_column_existence(X, self.features), \
-            'Specified features do not exist in the given DataFrame.'
+        check_column_existence(X, self.features)
 
         if self.dtypes is None:
             self.dtypes_ = [
@@ -275,8 +276,10 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
             features are passed to explanation, in the same order in which the
             features are given.
 
-        iceplot_thresh: int, optional (default=None)
-            TODO
+        iceplot_thresh: int or float, optional (default=None)
+            Declares how many observations to take to visualize the ICE plots.
+            If `int`, gives the exact number of observations, if `float`, gives
+            a fraction of all observations to be taken.
 
         neighborhoods: int or float or list, optional (default=.1)
             Neighborhood of the value to determine the interval
@@ -563,10 +566,15 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
 
         random_state = check_random_state(self.random_state)
 
-        more_indexes_than_thresh = len(predictions) > thresh
+        if isinstance(thresh, float):
+            thresh = int(len(predictions) * thresh)
+        try:
+            more_indexes_than_thresh = len(predictions) > thresh
+        except TypeError:
+            more_indexes_than_thresh = False
 
         # Select observations to plot Ceteris Paribus profiles for.
-        if thresh is not None and more_indexes_than_thresh:
+        if more_indexes_than_thresh:
             predictions = predictions[random_state.choice(
                 len(predictions),
                 size=thresh,
