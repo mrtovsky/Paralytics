@@ -1,168 +1,54 @@
 import pandas as pd
 
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.utils.validation import check_is_fitted
+from ..utils import check_column_existence, check_is_dataframe, is_numeric
 
-from ..utils import is_numeric
 
 __all__ = [
-    'CategoricalBinarizer',
-    'CategoricalGrouper',
-    'ColumnProjector',
-    'ColumnSelector',
-    'TypeSelector'
+    "ColumnProjector",
+    "ColumnSelector",
+    "SparsityGrouper",
+    "TypeSelector"
 ]
 
 
-class CategoricalBinarizer(BaseEstimator, TransformerMixin):
-    """Finds categorical columns with binary-like response and converts them.
-
-    Searches throughout the categorical columns in the DataFrame and finds
-    those which contain categories corresponding to the passed boolean values
-    only.
-
-    Parameters
-    ----------
-    keywords_{true, false}: list, optional (default=None)
-        List of categories' names corresponding to {True, False} logical
-        values.
-
-    Attributes
-    ----------
-    columns_binarylike_: list
-        List of column names that should be mapped to boolean.
-
-    """
-    def __init__(self, keywords_true=None, keywords_false=None):
-        self.keywords_true = keywords_true
-        self.keywords_false = keywords_false
-
-    def fit(self, X, y=None):
-        """Fits selection of binary-like columns.
-
-        Parameters
-        ----------
-        X: pd.DataFrame, shape = (n_samples, n_features)
-            Data with n_samples as its number of samples and n_features as its
-            number of features.
-
-        y: ignore
-
-        Returns
-        -------
-        self: object
-            Returns the instance itself.
-
-        """
-        self.columns_binarylike_ = []
-
-        if self.keywords_true is None:
-            self.keywords_true = ['yes', 'YES', 'Yes']
-        if self.keywords_false is None:
-            self.keywords_false = ['no', 'NO', 'No']
-
-        keywords_binarylike = set(self.keywords_true + self.keywords_false)
-
-        for col in X.columns:
-            try:
-                binarylike_only = \
-                    set(X[col].cat.categories) <= keywords_binarylike
-            except AttributeError as e:
-                continue
-            if binarylike_only:
-                self.columns_binarylike_.append(col)
-
-        return self
-
-    def transform(self, X):
-        """Applies boolean convertion to binary-like category columns.
-
-        X columns that match the condition of containing only binary-like
-        string values are mapped to boolean values corresponding to the
-        passed strings expected to be interpreted as binary response.
-
-        Parameters
-        ----------
-        X: pd.DataFrame, shape = (n_samples, n_features)
-            Data with n_samples as its number of samples and n_features as its
-            number of features.
-
-        Returns
-        -------
-        X_new: pd.DataFrame, shape = (n_samples, n_features)
-            X data with substituted binary-like category columns with its
-            corresponding binary values.
-        """
-        try:
-            getattr(self, 'columns_binarylike_')
-        except AttributeError:
-            raise RuntimeError(
-                'Could not find the attribute.\nFitting is necessary before '
-                'you do the transformation!'
-            )
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()!'
-
-        X_new = X.copy()
-
-        dict_true = dict.fromkeys(self.keywords_true, True)
-        dict_false = dict.fromkeys(self.keywords_false, False)
-
-        translator_binarylike = {**dict_true, **dict_false}
-
-        for col in self.columns_binarylike_:
-            X_new[col] = X[col].map(translator_binarylike)
-
-        return X_new
-
-
-class CategoricalGrouper(BaseEstimator, TransformerMixin):
+class SparsityGrouper(BaseEstimator, TransformerMixin):
     """Groups sparse observations in a categorical columns into one category.
 
+    Counts the frequency against each category. Retains categories whose
+    cumulative share (with respect to descending sort) in the total dataset is
+    equal or higher than the percentile threshold.
+
     Parameters
     ----------
-    method: string {'freq'}, optional (default='freq')
-        The sparse categories grouping method:
+    columns : list-like, optional (default=None)
+        Columns to check for sparsity. If None then groups all columns of
+        `object` or `category` dtypes.
 
-        - `freq`:
+    percentile_thresh : float, optional (default=.05)
+        Defines the percentile threshold.
 
-          Counts the frequency against each category. Retains categories
-          whose cumulative share (with respect to descending sort) in the
-          total dataset is equal or higher than the percentile threshold.
-
-    percentile_thresh: float, optional (default=.05)
-        Defines the percentile threshold for 'freq' method.
-
-    new_cat: string or int, optional (default='Other')
+    new_category : string or int, optional (default='Other')
         Specifies the category name that will be imputed to the chosen sparse
         observations.
 
-    include_cols: list, optional (default=None)
-        Specifies column names that should be treated like categorical
-        features. If None then estimator is executed only on the automatically
-        selected categorical columns.
-
-    exclude_cols: list, optional (default=None)
-        Specifies categorical column names that should not be treated like
-        categorical features. If None then no column is excluded from
-        transformation.
-
     Attributes
     ----------
-    cat_cols_: list
-        List of categorical columns in a given dataset.
+    categorical_columns_ : list
+        List of categorical columns in a given dataset that has been selected
+        for sparsity grouping.
 
-    imp_cats_: dict
+    imputed_categories_ : dict
         Dictionary that keeps track of replaced category names with the new
         category for every feature in the dataset.
 
     """
-    def __init__(self, method='freq', percentile_thresh=.05, new_cat='Other',
-                 include_cols=None, exclude_cols=None):
-        self.method = method
+    def __init__(self, columns=None, percentile_thresh=.05, 
+                 new_category="Other"):
+        self.columns = columns
         self.percentile_thresh = percentile_thresh
-        self.new_cat = new_cat
-        self.include_cols = include_cols
-        self.exclude_cols = exclude_cols
+        self.new_category = new_category
 
     def fit(self, X, y=None):
         """Fits grouping with X by using given method.
@@ -180,27 +66,28 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
             Returns the instance itself.
 
         """
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()!'
-        assert len(X) > 0, 'Input data can not be empty!'
+        check_is_dataframe(X)
 
-        self.cat_cols_ = self._cat_cols_selection(
-            X, self.include_cols, self.exclude_cols
-        )
+        if self.columns is None:
+            self.categorical_columns_ = X.select_dtypes(
+                include=["object", "category"]
+            ).columns.tolist()
+        else:
+            check_column_existence(X, self.columns)
+            self.categorical_columns_ = list(self.columns)
 
-        self.imp_cats_ = {}
-        if self.method == 'freq':
-            for col in self.cat_cols_:
-                tracker, i = 0, 0
-                sorted_series = X[col].value_counts(normalize=True)
-                while tracker < 1 - self.percentile_thresh:
-                    tracker += sorted_series.iloc[i]
-                    i += 1
-                sparse_cats = sorted_series.index[i:].tolist()
-                if len(sparse_cats) > 1:
-                    self.imp_cats_[col] = sparse_cats
-                else:
-                    self.imp_cats_[col] = []
+        self.imputed_categories_ = {}
+        for col in self.categorical_columns_:
+            tracker, idx = 0, 0
+            sorted_series = X[col].value_counts(normalize=True)
+            while tracker < 1 - self.percentile_thresh:
+                tracker += sorted_series.iloc[idx]
+                idx += 1
+            sparse_categories = sorted_series.index[idx:].tolist()
+            if len(sparse_categories) > 1:
+                self.imputed_categories_[col] = sparse_categories
+            else:
+                self.imputed_categories_[col] = []
 
         return self
 
@@ -218,61 +105,32 @@ class CategoricalGrouper(BaseEstimator, TransformerMixin):
             X data with substituted sparse categories to new_cat.
 
         """
-        try:
-            getattr(self, 'imp_cats_')
-            getattr(self, 'cat_cols_')
-        except AttributeError:
-            raise RuntimeError('Could not find the attribute.\n'
-                               'Fitting is necessary before you do '
-                               'the transformation.')
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()'
+        check_is_fitted(self, ["categorical_columns_", "imputed_categories_"])
+        check_is_dataframe(X)
+        check_column_existence(X, self.categorical_columns_)
 
         X_new = X.copy()
-        for col in self.cat_cols_:
-            row_indices = X_new[col].isin(self.imp_cats_[col])
-            if X_new[col].dtype.name == 'category':
+        for col in self.categorical_columns_:
+            row_indices = X_new[col].isin(self.imputed_categories_[col])
+            if X_new[col].dtype == "category":
                 try:
-                    X_new[col].cat.add_categories(self.new_cat, inplace=True)
-                except ValueError as e:
-                    raise ValueError(
-                        'You need to specify different "new_cat" value, '
-                        'because the current one is already included in the '
-                        'category names.'
-                    ).with_traceback(e.__traceback__)
-                cat_removals = list(
-                    set(self.imp_cats_[col]).intersection(
+                    X_new[col].cat.add_categories(
+                        self.new_category, inplace=True
+                    )
+                except ValueError:
+                    pass
+                categories_to_remove = list(
+                    set(self.imputed_categories_[col]).intersection(
                         X_new[col].cat.categories
                     )
                 )
                 X_new[col].cat.remove_categories(
-                    cat_removals,
+                    categories_to_remove,
                     inplace=True
                 )
-            X_new.loc[row_indices, col] = self.new_cat
+            X_new.loc[row_indices, col] = self.new_category
 
         return X_new
-
-    @staticmethod
-    def _cat_cols_selection(X, include, exclude):
-        """Returns categorical columns including the user's corrections."""
-        cat_cols = X.select_dtypes('category').columns.tolist()
-
-        if include is not None:
-            assert isinstance(include, list), \
-                'Columns to include must be given as an instance of a list!'
-            cat_cols = [
-                col for col in X.columns
-                if col in cat_cols or col in include
-            ]
-
-        if exclude is not None:
-            assert isinstance(exclude, list), \
-                'Columns to exclude must be given as an instance of a list!'
-            cat_cols = [col for col in cat_cols if col not in exclude]
-
-        return cat_cols
-
 
 class ColumnProjector(BaseEstimator, TransformerMixin):
     """Projects variable types onto basic dtypes.
@@ -282,7 +140,7 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    manual_projection: dictionary, optional (default=None)
+    manual_projection: dict-like, optional (default=None)
         Dictionary where keys are dtype names onto which specified columns
         will be projected and values are lists containing names of variables to
         be projected onto given dtype. Example usage:
@@ -385,13 +243,7 @@ class ColumnProjector(BaseEstimator, TransformerMixin):
             skip_columns = []
 
         if projection_dict is not None:
-            assert isinstance(projection_dict, dict), \
-                'projection_dict must be an instance of the dictionary!'
             for col_type, col_names in projection_dict.items():
-                assert isinstance(col_names, list), (
-                    'Values of projection_dict must be an instance '
-                    'of the list!'
-                )
                 cols_to_project = [
                     col for col in col_names if col not in skip_columns
                 ]
@@ -479,7 +331,7 @@ class TypeSelector(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    col_type: string or list-like
+    column_type: string or list-like
         Names of types to be selected.
 
     References
@@ -489,8 +341,8 @@ class TypeSelector(BaseEstimator, TransformerMixin):
     April 16, 2018
 
     """
-    def __init__(self, col_type):
-        self.col_type = col_type
+    def __init__(self, column_type):
+        self.column_type = column_type
 
     def fit(self, X, y=None):
         """Fits types selection to X.
@@ -526,6 +378,6 @@ class TypeSelector(BaseEstimator, TransformerMixin):
         """
         assert isinstance(X, pd.DataFrame), \
             'Input must be an instance of pandas.DataFrame()'
-        X_new = X.select_dtypes(include=[self.col_type])
+        X_new = X.select_dtypes(include=[self.column_type])
 
         return X_new
