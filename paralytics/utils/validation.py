@@ -8,11 +8,11 @@ from pandas.api.types import is_categorical_dtype, is_numeric_dtype
 
 
 __all__ = [
-    'check_uniq',
-    'check_column_existence',
-    'is_numeric',
-    'find_sparsity',
-    'check_continuity'
+    "check_uniq",
+    "check_column_existence",
+    "is_numeric",
+    "find_sparsity",
+    "check_continuity"
 ]
 
 
@@ -33,7 +33,7 @@ def check_uniq(X):
     return not any(x in s or s.add(x) for x in X)
 
 
-def check_column_existence(X, cols):
+def check_column_existence(X, columns):
     """Checks whether all listed columns are in a given DataFrame.
 
     Parameters
@@ -41,27 +41,30 @@ def check_column_existence(X, cols):
     X: pandas.DataFrame
         Data with columns to be checked for occurrence.
 
-    cols: single label or list-like
-        Column labels to check.
+    columns: single label or list-like
+        Columns' labels to check.
 
     Returns
     -------
-    boolean: Whether or not X contains all of given column labels.
+    None
+
+    Raises
+    ------
+    ValueError
+        If one of the elements of `cols` is not found in the `X` columns.
 
     """
-    assert isinstance(X, pd.DataFrame), \
-        'Input must be an instance of pandas.DataFrame()'
+    if isinstance(columns, str):
+        columns = [columns]
 
-    if isinstance(cols, str):
-        cols = [cols]
+    exist = all(col in X.columns for col in columns)
 
-    out = all(col in X.columns for col in cols)
-
-    if not out:
-        cols_error = list(set(cols) - set(X.columns))
-        print('Columns not found in the DataFrame: %s' % cols_error)
-
-    return out
+    if not exist:
+        cols_error = list(set(columns) - set(X.columns))
+        raise ValueError(
+            "Columns not found in the DataFrame: {}"
+            .format(", ".join(cols_error))
+        )
 
 
 def is_numeric(X, project=True):
