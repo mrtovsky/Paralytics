@@ -8,9 +8,120 @@ from ..utils import check_column_existence, check_is_dataframe, is_numeric
 __all__ = [
     "ColumnProjector",
     "ColumnSelector",
+    "ManualGrouper",
     "SparsityGrouper",
     "TypeSelector"
 ]
+
+
+class ManualGrouper(BaseEstimator, TransformerMixin):
+    """Groups columns in accordance with the guidelines provided.
+
+    Parameters
+    ----------
+    replace : dict-like
+        Dictionary-like object where key is the value that will be imputed
+        to the selected values. Values' selection is defined in the values
+        assigned to key, which should also be a dictionary containing two
+        keys. First key: `regex` with regex sentence assigned as string,
+        second key: `case` is the boolean value mentioning whether regex
+        should be case-sensitive. Alternatively you can pass a string
+        instead of dictionary-like object but then automatically regex will
+        be case-insensitive.
+    group_columns : string or list-like, optional (default=None)
+        Columns for which not matched records will be grouped into a separate
+        category. Left by default doesn't group any column. If:
+
+        - `all`:
+
+          Groups all of the categorical columns selected for grouping.
+
+    other_name : string, optional (default="Other")
+        Name of the group for unselected records. Valid only if
+        `group_others` is set to `True`.
+
+    Attributes
+    ----------
+    categorical_columns_ : list
+        List of categorical columns in a given dataset that has been selected
+        for sparsity grouping.
+    group_columns_ : list
+        List of categorical columns where no matching was found in the provided
+        replace sentence that has been grouped into a separate category.
+
+    """
+    def __init__(self, replace, group_columns=None, other_name="Other"):
+        self.replace = replace
+        self.group_columns = group_columns
+        self.other_name = other_name
+
+    def fit(self, X, y=None):
+        check_is_dataframe(X)
+
+        _categorical_columns = list(self.replace.keys())
+        check_column_existence(X, _categorical_columns)
+
+        self.categorical_columns_ = _categorical_columns
+
+        if self.group_columns is None:
+            self.group_columns_ = []
+        elif self.group_columns == "all":
+            self.group_columns_ = self.categorical_columns_.copy()
+        elif isinstance(self.group_columns, str):
+            self.group_columns_ = [self.group_columns]
+        else:
+            assert set(self.group_columns) <= set(self.categorical_columns_), (
+                "Columns to group must be a subset "
+                "of selected categorical columns."
+            )
+            self.group_columns_ = list(self.group_columns)
+
+        return self
+
+    def transform(self, X):
+        check_is_fitted(self, ["categorical_columns_", "group_columns_"])
+        check_is_dataframe(X)
+        check_column_existence(X, self.categorical_columns_)
+
+        X_new = X.copy()
+        for col, pair in self.replace.items():
+            for name, params in pair.items():
+                if isinstance(params, str):
+                    params = {
+                        "pat": params,
+                        "case": False,
+                        "regex": True
+                    }
+                self._find_and_replace(
+                    df=X_new,
+                    column=col,
+                    replace_value=name,
+                    contains_params=params,
+                    inplace=True
+                )
+            if col in self.group_columns_:
+                other_sentence = (
+                    "^(?:"
+                    + "|".join(list(pair.keys()))
+                    + ")$"
+                )
+                X_new.loc[
+                    ~X_new[col].str.contains(other_sentence, case=True), col
+                ] = self.other_name
+
+        return X_new
+
+    @staticmethod
+    def _find_and_replace(df, column, replace_value, contains_params=None,
+                          inplace=False):
+        if inplace:
+            df_new = df
+        else:
+            df_new = df.copy()
+        is_matched = df_new[column].str.contains(**contains_params)
+        df_new.loc[is_matched, column] = replace_value
+
+        return df_new if not inplace else None
 
 
 class SparsityGrouper(BaseEstimator, TransformerMixin):
