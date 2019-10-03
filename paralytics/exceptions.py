@@ -22,3 +22,11 @@ class NothingSelectedWarning(UserWarning):
     For example we can thus emphasize that the user forgot to implement the
     appropriate step in the pipeline.
     """
+
+
+class DevelopmentStageWarning(UserWarning):
+    """Warning used to notify that functionality is in the development stage.
+
+    Warning raised when functionality has not yet been fully implemented and
+    tested, and thus may cause unexpected errors.
+    """

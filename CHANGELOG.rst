@@ -1,6 +1,12 @@
 History
 =======
 
+X.Y.Z (DD.MM.YYYY)
+------------------
+* Created ``DevelopmentStageWarning``
+    * Creates custom warning raised when the functionality is to some extent put into use,
+      but not yet fully implemented.
+
 0.3.2 (03.10.2019)
 ------------------
 * Fixed ``Discretizer``
