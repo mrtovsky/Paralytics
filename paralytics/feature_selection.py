@@ -9,6 +9,7 @@ except ImportError as e:
     variance_inflation_factor = e
 
 from .preprocessing import Imputer
+from .utils import check_is_dataframe
 
 
 __all__ = [
@@ -36,14 +37,13 @@ class VIFSelector(BaseEstimator, TransformerMixin):
     impute_method: string, optional (default="mean")
         Declares numerical imputation method for the
         `paralytics.preprocessing.Imputer`.
-    
+
     fit_intercept: bool, optional (default=True)
         Specifies if the constant (a.k.a. bias or intercept) should be added to
         the decision functions.
 
     verbose: int, optional (default=0)
         Controls verbosity of output. If 0 there is no output, if 1 displays
-        which features were removed.
 
     Attributes
     ----------
@@ -67,7 +67,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, thresh=5.0, impute=True, impute_method="mean",
+    def __init__(self, thresh=5.0, impute=False, impute_method="mean",
                  fit_intercept=True, verbose=0):
         self.thresh = thresh
         self.impute = impute
@@ -139,11 +139,10 @@ class VIFSelector(BaseEstimator, TransformerMixin):
 
     def _viffing(self, X):
         """In every iteration removes variable with the highest VIF value."""
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()'
+        check_is_dataframe(X)
         assert ~(X.isnull().values).any(), (
-            'DataFrame cannot contain any missing values, consider using '
-            '`paralytics.preprocessing.Imputer` first.'
+            'DataFrame cannot contain any missing values, consider setting '
+            '`impute` parameter to `True` first.'
         )
         assert all(is_numeric_dtype(X[col]) for col in X.columns), \
             'Only numeric dtypes are acceptable.'
@@ -238,8 +237,7 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
             Returns the instance itself.
 
         """
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()'
+        check_is_dataframe(X)
 
         self.correlated_cols_ = self._reduce_corr(X, self.thresh, self.method)
 
@@ -268,6 +266,7 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
             raise RuntimeError('Could not find the attribute.\n'
                                'Fitting is necessary before you do '
                                'the transformation.')
+        check_is_dataframe(X)
 
         X_new = X.drop(self.correlated_cols_, axis=1)
 
@@ -285,6 +284,6 @@ class CorrelationReducer(BaseEstimator, TransformerMixin):
         L_arr_one = np.tril(arr_one)
         df.mask(L_arr_one, other=0., inplace=True)
         corr_cols = (df.abs() >= thresh).any()
-        cols_out = corr_cols[corr_cols == True].index.tolist()
+        cols_out = corr_cols[corr_cols].index.tolist()
 
         return cols_out
