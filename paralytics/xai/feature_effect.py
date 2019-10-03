@@ -11,6 +11,7 @@ from sklearn.base import BaseEstimator
 from sklearn.utils import check_random_state
 
 from .base import ExplainerMixin
+from ..exceptions import DevelopmentStageWarning
 from ..utils import check_column_existence, is_numeric
 
 
@@ -113,6 +114,12 @@ class FeatureEffectExplainer(BaseEstimator, ExplainerMixin):
     <https://christophm.github.io/interpretable-ml-book/pdp.html>`_, 2019
 
     """
+    warnings.warn(
+        "This funcitonality is still in the development stage, "
+        "you are using it on your own risk.",
+        DevelopmentStageWarning
+    )
+
     CORRECT_DTYPES = {'numeric', 'category'}
 
     def __init__(self, estimator, features, dtypes=None, sample_size=None,
