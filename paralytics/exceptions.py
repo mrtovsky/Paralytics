@@ -2,9 +2,12 @@
 This module includes all custom warnings and error classes used across
 paralytics.
 """
+
+
 __all__ = [
-    'UniqueValuesError',
-    'NothingSelectedWarning'
+    "UniqueValuesError",
+    "NothingSelectedWarning",
+    "DevelopmentStageWarning"
 ]
 
 
