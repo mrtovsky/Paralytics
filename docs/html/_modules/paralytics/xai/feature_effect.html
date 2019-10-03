@@ -152,18 +152,20 @@
            <div itemprop="articleBody">
             
   <h1>Source code for paralytics.xai.feature_effect</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="k">import</span> <span class="n">delayed</span><span class="p">,</span> <span class="n">Parallel</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">check_random_state</span>
 
 <span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">ExplainerMixin</span>
-<span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="k">import</span> <span class="n">check_column_existence</span><span class="p">,</span> <span class="n">is_numeric</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">check_column_existence</span><span class="p">,</span> <span class="n">is_numeric</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -360,8 +362,7 @@
 <span class="sd">            Returns the instance itself.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">),</span> \
-            <span class="s1">&#39;Specified features do not exist in the given DataFrame.&#39;</span>
+        <span class="n">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtypes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dtypes_</span> <span class="o">=</span> <span class="p">[</span>
@@ -429,8 +430,10 @@
 <span class="sd">            features are passed to explanation, in the same order in which the</span>
 <span class="sd">            features are given.</span>
 
-<span class="sd">        iceplot_thresh: int, optional (default=None)</span>
-<span class="sd">            TODO</span>
+<span class="sd">        iceplot_thresh: int or float, optional (default=None)</span>
+<span class="sd">            Declares how many observations to take to visualize the ICE plots.</span>
+<span class="sd">            If `int`, gives the exact number of observations, if `float`, gives</span>
+<span class="sd">            a fraction of all observations to be taken.</span>
 
 <span class="sd">        neighborhoods: int or float or list, optional (default=.1)</span>
 <span class="sd">            Neighborhood of the value to determine the interval</span>
@@ -717,10 +720,15 @@
 
         <span class="n">random_state</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
 
-        <span class="n">more_indexes_than_thresh</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">thresh</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="n">thresh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">*</span> <span class="n">thresh</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">more_indexes_than_thresh</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">thresh</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">more_indexes_than_thresh</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># Select observations to plot Ceteris Paribus profiles for.</span>
-        <span class="k">if</span> <span class="n">thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">more_indexes_than_thresh</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">more_indexes_than_thresh</span><span class="p">:</span>
             <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="n">random_state</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">),</span>
                 <span class="n">size</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span>

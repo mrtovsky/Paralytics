@@ -1,7 +1,7 @@
 History
 =======
 
-0.3.2 ()
+0.3.2 (03.10.2019)
 ------------------
 * Fixed ``Discretizer``
     * Properly addresses the cut-offs in the ``transform`` method, when not enough

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>check_column_existence &mdash; Paralytics 0.3.2 documentation</title>
+  <title>check_is_dataframe &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -35,9 +35,7 @@
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="is_numeric" href="paralytics.utils.is_numeric.html" />
-    <link rel="prev" title="check_uniq" href="paralytics.utils.check_uniq.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -86,32 +84,10 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Paralytics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../example.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../generals.html">Generals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../xai.html">Explainable AI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../utils.html">Utilities</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#importing">Importing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#mathy">Mathy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#plotting">Plotting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#scraping">Scraping</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#validation">Validation</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_uniq.html">check_uniq</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">check_column_existence</a></li>
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.is_numeric.html">is_numeric</a></li>
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.find_sparsity.html">find_sparsity</a></li>
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_continuity.html">check_continuity</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../decorators.html">Decorators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">Exceptions &amp; Warnings</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">API Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">History</a></li>
 </ul>
 
@@ -158,17 +134,13 @@
     
       <li><a href="../../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../index.html">API Reference</a> &raquo;</li>
-        
-          <li><a href="../utils.html">Utilities</a> &raquo;</li>
-        
-      <li>check_column_existence</li>
+      <li>check_is_dataframe</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../../_sources/source/reference/api/paralytics.utils.check_column_existence.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/source/reference/api/paralytics.utils.check_is_dataframe.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -181,18 +153,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="check-column-existence">
-<h1>check_column_existence<a class="headerlink" href="#check-column-existence" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="check-is-dataframe">
+<h1>check_is_dataframe<a class="headerlink" href="#check-is-dataframe" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="paralytics.utils.check_column_existence">
-<code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">check_column_existence</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">columns</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#check_column_existence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.check_column_existence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks whether all listed columns are in a given DataFrame.</p>
+<dt id="paralytics.utils.check_is_dataframe">
+<code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">check_is_dataframe</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/validation.html#check_is_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.check_is_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether object is a pandas.DataFrame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X: pandas.DataFrame</strong></dt><dd><p>Data with columns to be checked for occurrence.</p>
-</dd>
-<dt><strong>columns: single label or list-like</strong></dt><dd><p>Columns’ labels to check.</p>
+<dt><strong>X: object</strong></dt><dd><p>Object suspected of being a pandas.DataFrame.</p>
 </dd>
 </dl>
 </dd>
@@ -203,7 +173,7 @@
 </dd>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>ValueError</dt><dd><p>If one of the elements of <cite>cols</cite> is not found in the <cite>X</cite> columns.</p>
+<dt>TypeError</dt><dd><p>If object is not a pandas.DataFrame.</p>
 </dd>
 </dl>
 </dd>
@@ -217,15 +187,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="paralytics.utils.is_numeric.html" class="btn btn-neutral float-right" title="is_numeric" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="paralytics.utils.check_uniq.html" class="btn btn-neutral float-left" title="check_uniq" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

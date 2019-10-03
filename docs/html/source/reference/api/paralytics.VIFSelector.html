@@ -178,7 +178,7 @@
 <h1>VIFSelector<a class="headerlink" href="#vifselector" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="paralytics.VIFSelector">
-<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">VIFSelector</code><span class="sig-paren">(</span><em class="sig-param">thresh=5.0</em>, <em class="sig-param">impute=True</em>, <em class="sig-param">impute_method='mean'</em>, <em class="sig-param">fit_intercept=True</em>, <em class="sig-param">verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_selection.html#VIFSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.</code><code class="sig-name descname">VIFSelector</code><span class="sig-paren">(</span><em class="sig-param">thresh=5.0</em>, <em class="sig-param">impute=False</em>, <em class="sig-param">impute_method='mean'</em>, <em class="sig-param">fit_intercept=True</em>, <em class="sig-param">verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/feature_selection.html#VIFSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.VIFSelector" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
 <p>Makes feature selection based on Variance Inflation Factor.</p>
 <p>Calculates Variance Inflation Factor for a given dataset, in each iteration
@@ -190,7 +190,7 @@ process until it is not below the declared threshold.</p>
 <dt><strong>thresh: float, optional (default=5.0)</strong></dt><dd><p>Threshold value after which further rejection of variables is
 discontinued.</p>
 </dd>
-<dt><strong>impute: boolean, optional (default=True)</strong></dt><dd><p>Declares whether missing values imputation should be performed.</p>
+<dt><strong>impute: boolean, optional (default=False)</strong></dt><dd><p>Declares whether missing values imputation should be performed.</p>
 </dd>
 <dt><strong>impute_method: string, optional (default=”mean”)</strong></dt><dd><p>Declares numerical imputation method for the
 <cite>paralytics.preprocessing.Imputer</cite>.</p>
@@ -198,8 +198,7 @@ discontinued.</p>
 <dt><strong>fit_intercept: bool, optional (default=True)</strong></dt><dd><p>Specifies if the constant (a.k.a. bias or intercept) should be added to
 the decision functions.</p>
 </dd>
-<dt><strong>verbose: int, optional (default=0)</strong></dt><dd><p>Controls verbosity of output. If 0 there is no output, if 1 displays
-which features were removed.</p>
+<dt><strong>verbose: int, optional (default=0)</strong></dt><dd><p>Controls verbosity of output. If 0 there is no output, if 1 displays</p>
 </dd>
 </dl>
 </dd>

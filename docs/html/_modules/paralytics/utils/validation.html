@@ -162,11 +162,12 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;check_uniq&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;check_column_existence&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;is_numeric&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;find_sparsity&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;check_continuity&#39;</span>
+    <span class="s2">&quot;check_uniq&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;check_column_existence&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;check_is_dataframe&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_numeric&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_sparsity&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;check_continuity&quot;</span>
 <span class="p">]</span>
 
 
@@ -187,7 +188,7 @@
     <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_column_existence"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_column_existence.html#paralytics.utils.check_column_existence">[docs]</a><span class="k">def</span> <span class="nf">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+<div class="viewcode-block" id="check_column_existence"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_column_existence.html#paralytics.utils.check_column_existence">[docs]</a><span class="k">def</span> <span class="nf">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks whether all listed columns are in a given DataFrame.</span>
 
 <span class="sd">    Parameters</span>
@@ -195,27 +196,52 @@
 <span class="sd">    X: pandas.DataFrame</span>
 <span class="sd">        Data with columns to be checked for occurrence.</span>
 
-<span class="sd">    cols: single label or list-like</span>
-<span class="sd">        Column labels to check.</span>
+<span class="sd">    columns: single label or list-like</span>
+<span class="sd">        Columns&#39; labels to check.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    boolean: Whether or not X contains all of given column labels.</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If one of the elements of `cols` is not found in the `X` columns.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
-        <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">columns</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">cols</span><span class="p">]</span>
+    <span class="n">exist</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">)</span>
 
-    <span class="n">out</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exist</span><span class="p">:</span>
+        <span class="n">cols_error</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Columns not found in the DataFrame: </span><span class="si">{}</span><span class="s2">&quot;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cols_error</span><span class="p">))</span>
+        <span class="p">)</span></div>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="p">:</span>
-        <span class="n">cols_error</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Columns not found in the DataFrame: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">cols_error</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">out</span></div>
+<div class="viewcode-block" id="check_is_dataframe"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.check_is_dataframe.html#paralytics.utils.check_is_dataframe">[docs]</a><span class="k">def</span> <span class="nf">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks whether object is a pandas.DataFrame.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X: object</span>
+<span class="sd">        Object suspected of being a pandas.DataFrame.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If object is not a pandas.DataFrame.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input must be an instance of pandas.DataFrame.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="is_numeric"><a class="viewcode-back" href="../../../source/reference/api/paralytics.utils.is_numeric.html#paralytics.utils.is_numeric">[docs]</a><span class="k">def</span> <span class="nf">is_numeric</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
