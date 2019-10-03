@@ -362,7 +362,9 @@ centering.</p>
 features are passed to explanation, in the same order in which the
 features are given.</p>
 </dd>
-<dt><strong>iceplot_thresh: int, optional (default=None)</strong></dt><dd><p>TODO</p>
+<dt><strong>iceplot_thresh: int or float, optional (default=None)</strong></dt><dd><p>Declares how many observations to take to visualize the ICE plots.
+If <cite>int</cite>, gives the exact number of observations, if <cite>float</cite>, gives
+a fraction of all observations to be taken.</p>
 </dd>
 <dt><strong>neighborhoods: int or float or list, optional (default=.1)</strong></dt><dd><p>Neighborhood of the value to determine the interval
 <cite>[current_value - neighborhood, current_value + neighborhood]</cite>

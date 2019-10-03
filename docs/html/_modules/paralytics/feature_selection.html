@@ -163,6 +163,7 @@
     <span class="n">variance_inflation_factor</span> <span class="o">=</span> <span class="n">e</span>
 
 <span class="kn">from</span> <span class="nn">.preprocessing</span> <span class="k">import</span> <span class="n">Imputer</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">check_is_dataframe</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -184,20 +185,19 @@
 <span class="sd">        Threshold value after which further rejection of variables is</span>
 <span class="sd">        discontinued.</span>
 
-<span class="sd">    impute: boolean, optional (default=True)</span>
+<span class="sd">    impute: boolean, optional (default=False)</span>
 <span class="sd">        Declares whether missing values imputation should be performed.</span>
 
 <span class="sd">    impute_method: string, optional (default=&quot;mean&quot;)</span>
 <span class="sd">        Declares numerical imputation method for the</span>
 <span class="sd">        `paralytics.preprocessing.Imputer`.</span>
-<span class="sd">    </span>
+
 <span class="sd">    fit_intercept: bool, optional (default=True)</span>
 <span class="sd">        Specifies if the constant (a.k.a. bias or intercept) should be added to</span>
 <span class="sd">        the decision functions.</span>
 
 <span class="sd">    verbose: int, optional (default=0)</span>
 <span class="sd">        Controls verbosity of output. If 0 there is no output, if 1 displays</span>
-<span class="sd">        which features were removed.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -221,7 +221,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">impute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">impute_method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">impute</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">impute_method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
                  <span class="n">fit_intercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">thresh</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">impute</span> <span class="o">=</span> <span class="n">impute</span>
@@ -293,11 +293,10 @@
 
     <span class="k">def</span> <span class="nf">_viffing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;In every iteration removes variable with the highest VIF value.&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
-            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">assert</span> <span class="o">~</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="p">(</span>
-            <span class="s1">&#39;DataFrame cannot contain any missing values, consider using &#39;</span>
-            <span class="s1">&#39;`paralytics.preprocessing.Imputer` first.&#39;</span>
+            <span class="s1">&#39;DataFrame cannot contain any missing values, consider setting &#39;</span>
+            <span class="s1">&#39;`impute` parameter to `True` first.&#39;</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> \
             <span class="s1">&#39;Only numeric dtypes are acceptable.&#39;</span>
@@ -392,8 +391,7 @@
 <span class="sd">            Returns the instance itself.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
-            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">correlated_cols_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce_corr</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
 
@@ -422,6 +420,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">&#39;</span>
                                <span class="s1">&#39;Fitting is necessary before you do &#39;</span>
                                <span class="s1">&#39;the transformation.&#39;</span><span class="p">)</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correlated_cols_</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -439,7 +438,7 @@
         <span class="n">L_arr_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">arr_one</span><span class="p">)</span>
         <span class="n">df</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">L_arr_one</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">corr_cols</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">thresh</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
-        <span class="n">cols_out</span> <span class="o">=</span> <span class="n">corr_cols</span><span class="p">[</span><span class="n">corr_cols</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">cols_out</span> <span class="o">=</span> <span class="n">corr_cols</span><span class="p">[</span><span class="n">corr_cols</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">cols_out</span></div>
 </pre></div>
