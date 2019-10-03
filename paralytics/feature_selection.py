@@ -31,7 +31,7 @@ class VIFSelector(BaseEstimator, TransformerMixin):
         Threshold value after which further rejection of variables is
         discontinued.
 
-    impute: boolean, optional (default=True)
+    impute: boolean, optional (default=False)
         Declares whether missing values imputation should be performed.
 
     impute_method: string, optional (default="mean")
