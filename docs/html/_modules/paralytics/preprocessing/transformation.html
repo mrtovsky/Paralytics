@@ -155,170 +155,167 @@
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="k">import</span> <span class="n">check_is_fitted</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">check_column_existence</span><span class="p">,</span> <span class="n">check_is_dataframe</span><span class="p">,</span> <span class="n">is_numeric</span>
 
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="k">import</span> <span class="n">is_numeric</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;CategoricalBinarizer&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CategoricalGrouper&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ColumnProjector&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;ColumnSelector&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;TypeSelector&#39;</span>
+    <span class="s2">&quot;ColumnProjector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ColumnSelector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ManualGrouper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SparsityGrouper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TypeSelector&quot;</span>
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="CategoricalBinarizer"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.CategoricalBinarizer.html#paralytics.preprocessing.CategoricalBinarizer">[docs]</a><span class="k">class</span> <span class="nc">CategoricalBinarizer</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Finds categorical columns with binary-like response and converts them.</span>
-
-<span class="sd">    Searches throughout the categorical columns in the DataFrame and finds</span>
-<span class="sd">    those which contain categories corresponding to the passed boolean values</span>
-<span class="sd">    only.</span>
+<div class="viewcode-block" id="ManualGrouper"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.ManualGrouper.html#paralytics.preprocessing.ManualGrouper">[docs]</a><span class="k">class</span> <span class="nc">ManualGrouper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Groups columns in accordance with the guidelines provided.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    keywords_{true, false}: list, optional (default=None)</span>
-<span class="sd">        List of categories&#39; names corresponding to {True, False} logical</span>
-<span class="sd">        values.</span>
+<span class="sd">    replace : dict-like</span>
+<span class="sd">        Dictionary-like object where key is the value that will be imputed</span>
+<span class="sd">        to the selected values. Values&#39; selection is defined in the values</span>
+<span class="sd">        assigned to key, which should also be a dictionary containing two</span>
+<span class="sd">        keys. First key: `regex` with regex sentence assigned as string,</span>
+<span class="sd">        second key: `case` is the boolean value mentioning whether regex</span>
+<span class="sd">        should be case-sensitive. Alternatively you can pass a string</span>
+<span class="sd">        instead of dictionary-like object but then automatically regex will</span>
+<span class="sd">        be case-insensitive.</span>
+<span class="sd">    group_columns : string or list-like, optional (default=None)</span>
+<span class="sd">        Columns for which not matched records will be grouped into a separate</span>
+<span class="sd">        category. Left by default doesn&#39;t group any column. If:</span>
+
+<span class="sd">        - `all`:</span>
+
+<span class="sd">          Groups all of the categorical columns selected for grouping.</span>
+
+<span class="sd">    other_name : string, optional (default=&quot;Other&quot;)</span>
+<span class="sd">        Name of the group for unselected records. Valid only if</span>
+<span class="sd">        `group_others` is set to `True`.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    columns_binarylike_: list</span>
-<span class="sd">        List of column names that should be mapped to boolean.</span>
+<span class="sd">    categorical_columns_ : list</span>
+<span class="sd">        List of categorical columns in a given dataset that has been selected</span>
+<span class="sd">        for sparsity grouping.</span>
+<span class="sd">    group_columns_ : list</span>
+<span class="sd">        List of categorical columns where no matching was found in the provided</span>
+<span class="sd">        replace sentence that has been grouped into a separate category.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keywords_true</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keywords_false</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keywords_true</span> <span class="o">=</span> <span class="n">keywords_true</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keywords_false</span> <span class="o">=</span> <span class="n">keywords_false</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replace</span><span class="p">,</span> <span class="n">group_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">other_name</span><span class="o">=</span><span class="s2">&quot;Other&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">replace</span> <span class="o">=</span> <span class="n">replace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span> <span class="o">=</span> <span class="n">group_columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">other_name</span> <span class="o">=</span> <span class="n">other_name</span>
 
-<div class="viewcode-block" id="CategoricalBinarizer.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.CategoricalBinarizer.html#paralytics.preprocessing.CategoricalBinarizer.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fits selection of binary-like columns.</span>
+<div class="viewcode-block" id="ManualGrouper.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.ManualGrouper.html#paralytics.preprocessing.ManualGrouper.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        X: pd.DataFrame, shape = (n_samples, n_features)</span>
-<span class="sd">            Data with n_samples as its number of samples and n_features as its</span>
-<span class="sd">            number of features.</span>
+        <span class="n">_categorical_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">replace</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">_categorical_columns</span><span class="p">)</span>
 
-<span class="sd">        y: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span> <span class="o">=</span> <span class="n">_categorical_columns</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self: object</span>
-<span class="sd">            Returns the instance itself.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_binarylike_</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywords_true</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">keywords_true</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;YES&#39;</span><span class="p">,</span> <span class="s1">&#39;Yes&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywords_false</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">keywords_false</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="s1">&#39;NO&#39;</span><span class="p">,</span> <span class="s1">&#39;No&#39;</span><span class="p">]</span>
-
-        <span class="n">keywords_binarylike</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords_true</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">keywords_false</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">binarylike_only</span> <span class="o">=</span> \
-                    <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">keywords_binarylike</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">binarylike_only</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">columns_binarylike_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_columns_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_columns_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_columns_</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span><span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;Columns to group must be a subset &quot;</span>
+                <span class="s2">&quot;of selected categorical columns.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">group_columns_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_columns</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="CategoricalBinarizer.transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.CategoricalBinarizer.html#paralytics.preprocessing.CategoricalBinarizer.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Applies boolean convertion to binary-like category columns.</span>
-
-<span class="sd">        X columns that match the condition of containing only binary-like</span>
-<span class="sd">        string values are mapped to boolean values corresponding to the</span>
-<span class="sd">        passed strings expected to be interpreted as binary response.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        X: pd.DataFrame, shape = (n_samples, n_features)</span>
-<span class="sd">            Data with n_samples as its number of samples and n_features as its</span>
-<span class="sd">            number of features.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        X_new: pd.DataFrame, shape = (n_samples, n_features)</span>
-<span class="sd">            X data with substituted binary-like category columns with its</span>
-<span class="sd">            corresponding binary values.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;columns_binarylike_&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">Fitting is necessary before &#39;</span>
-                <span class="s1">&#39;you do the transformation!&#39;</span>
-            <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
-            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()!&#39;</span>
+<div class="viewcode-block" id="ManualGrouper.transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.ManualGrouper.html#paralytics.preprocessing.ManualGrouper.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;categorical_columns_&quot;</span><span class="p">,</span> <span class="s2">&quot;group_columns_&quot;</span><span class="p">])</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span><span class="p">)</span>
 
         <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">pair</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">pair</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;pat&quot;</span><span class="p">:</span> <span class="n">params</span><span class="p">,</span>
+                        <span class="s2">&quot;case&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                        <span class="s2">&quot;regex&quot;</span><span class="p">:</span> <span class="kc">True</span>
+                    <span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_find_and_replace</span><span class="p">(</span>
+                    <span class="n">df</span><span class="o">=</span><span class="n">X_new</span><span class="p">,</span>
+                    <span class="n">column</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                    <span class="n">replace_value</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">contains_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_columns_</span><span class="p">:</span>
+                <span class="n">other_sentence</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;^(?:&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pair</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                    <span class="o">+</span> <span class="s2">&quot;)$&quot;</span>
+                <span class="p">)</span>
+                <span class="n">X_new</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                    <span class="o">~</span><span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">other_sentence</span><span class="p">,</span> <span class="n">case</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">col</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">other_name</span>
 
-        <span class="n">dict_true</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords_true</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">dict_false</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keywords_false</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X_new</span></div>
 
-        <span class="n">translator_binarylike</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">dict_true</span><span class="p">,</span> <span class="o">**</span><span class="n">dict_false</span><span class="p">}</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_find_and_replace</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">replace_value</span><span class="p">,</span> <span class="n">contains_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">inplace</span><span class="p">:</span>
+            <span class="n">df_new</span> <span class="o">=</span> <span class="n">df</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df_new</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">is_matched</span> <span class="o">=</span> <span class="n">df_new</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="o">**</span><span class="n">contains_params</span><span class="p">)</span>
+        <span class="n">df_new</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">is_matched</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">replace_value</span>
 
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns_binarylike_</span><span class="p">:</span>
-            <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">translator_binarylike</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">X_new</span></div></div>
+        <span class="k">return</span> <span class="n">df_new</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">inplace</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="CategoricalGrouper"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.CategoricalGrouper.html#paralytics.preprocessing.CategoricalGrouper">[docs]</a><span class="k">class</span> <span class="nc">CategoricalGrouper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="SparsityGrouper"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.SparsityGrouper.html#paralytics.preprocessing.SparsityGrouper">[docs]</a><span class="k">class</span> <span class="nc">SparsityGrouper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Groups sparse observations in a categorical columns into one category.</span>
+
+<span class="sd">    Counts the frequency against each category. Retains categories whose</span>
+<span class="sd">    cumulative share (with respect to descending sort) in the total dataset is</span>
+<span class="sd">    equal or higher than the percentile threshold.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    method: string {&#39;freq&#39;}, optional (default=&#39;freq&#39;)</span>
-<span class="sd">        The sparse categories grouping method:</span>
+<span class="sd">    columns : list-like, optional (default=None)</span>
+<span class="sd">        Columns to check for sparsity. If None then groups all columns of</span>
+<span class="sd">        `object` or `category` dtypes.</span>
 
-<span class="sd">        - `freq`:</span>
+<span class="sd">    percentile_thresh : float, optional (default=.05)</span>
+<span class="sd">        Defines the percentile threshold.</span>
 
-<span class="sd">          Counts the frequency against each category. Retains categories</span>
-<span class="sd">          whose cumulative share (with respect to descending sort) in the</span>
-<span class="sd">          total dataset is equal or higher than the percentile threshold.</span>
-
-<span class="sd">    percentile_thresh: float, optional (default=.05)</span>
-<span class="sd">        Defines the percentile threshold for &#39;freq&#39; method.</span>
-
-<span class="sd">    new_cat: string or int, optional (default=&#39;Other&#39;)</span>
+<span class="sd">    new_category : string or int, optional (default=&#39;Other&#39;)</span>
 <span class="sd">        Specifies the category name that will be imputed to the chosen sparse</span>
 <span class="sd">        observations.</span>
 
-<span class="sd">    include_cols: list, optional (default=None)</span>
-<span class="sd">        Specifies column names that should be treated like categorical</span>
-<span class="sd">        features. If None then estimator is executed only on the automatically</span>
-<span class="sd">        selected categorical columns.</span>
-
-<span class="sd">    exclude_cols: list, optional (default=None)</span>
-<span class="sd">        Specifies categorical column names that should not be treated like</span>
-<span class="sd">        categorical features. If None then no column is excluded from</span>
-<span class="sd">        transformation.</span>
-
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
-<span class="sd">    cat_cols_: list</span>
-<span class="sd">        List of categorical columns in a given dataset.</span>
+<span class="sd">    categorical_columns_ : list</span>
+<span class="sd">        List of categorical columns in a given dataset that has been selected</span>
+<span class="sd">        for sparsity grouping.</span>
 
-<span class="sd">    imp_cats_: dict</span>
+<span class="sd">    imputed_categories_ : dict</span>
 <span class="sd">        Dictionary that keeps track of replaced category names with the new</span>
 <span class="sd">        category for every feature in the dataset.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;freq&#39;</span><span class="p">,</span> <span class="n">percentile_thresh</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">new_cat</span><span class="o">=</span><span class="s1">&#39;Other&#39;</span><span class="p">,</span>
-                 <span class="n">include_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">percentile_thresh</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> 
+                 <span class="n">new_category</span><span class="o">=</span><span class="s2">&quot;Other&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">percentile_thresh</span> <span class="o">=</span> <span class="n">percentile_thresh</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">new_cat</span> <span class="o">=</span> <span class="n">new_cat</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">include_cols</span> <span class="o">=</span> <span class="n">include_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exclude_cols</span> <span class="o">=</span> <span class="n">exclude_cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_category</span> <span class="o">=</span> <span class="n">new_category</span>
 
-<div class="viewcode-block" id="CategoricalGrouper.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.CategoricalGrouper.html#paralytics.preprocessing.CategoricalGrouper.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SparsityGrouper.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.SparsityGrouper.html#paralytics.preprocessing.SparsityGrouper.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits grouping with X by using given method.</span>
 
 <span class="sd">        Parameters</span>
@@ -334,31 +331,32 @@
 <span class="sd">            Returns the instance itself.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
-            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()!&#39;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Input data can not be empty!&#39;</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">cat_cols_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cat_cols_selection</span><span class="p">(</span>
-            <span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_cols</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_cols</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span>
+                <span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;category&quot;</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">imp_cats_</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat_cols_</span><span class="p">:</span>
-                <span class="n">tracker</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-                <span class="n">sorted_series</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="k">while</span> <span class="n">tracker</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentile_thresh</span><span class="p">:</span>
-                    <span class="n">tracker</span> <span class="o">+=</span> <span class="n">sorted_series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">sparse_cats</span> <span class="o">=</span> <span class="n">sorted_series</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sparse_cats</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">imp_cats_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">sparse_cats</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">imp_cats_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imputed_categories_</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span><span class="p">:</span>
+            <span class="n">tracker</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="n">sorted_series</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">while</span> <span class="n">tracker</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">percentile_thresh</span><span class="p">:</span>
+                <span class="n">tracker</span> <span class="o">+=</span> <span class="n">sorted_series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">sparse_categories</span> <span class="o">=</span> <span class="n">sorted_series</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">idx</span><span class="p">:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sparse_categories</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">imputed_categories_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">sparse_categories</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">imputed_categories_</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="CategoricalGrouper.transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.CategoricalGrouper.html#paralytics.preprocessing.CategoricalGrouper.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="SparsityGrouper.transform"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.SparsityGrouper.html#paralytics.preprocessing.SparsityGrouper.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply grouping of sparse categories on X.</span>
 
 <span class="sd">        Parameters</span>
@@ -372,61 +370,32 @@
 <span class="sd">            X data with substituted sparse categories to new_cat.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;imp_cats_&#39;</span><span class="p">)</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;cat_cols_&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find the attribute.</span><span class="se">\n</span><span class="s1">&#39;</span>
-                               <span class="s1">&#39;Fitting is necessary before you do &#39;</span>
-                               <span class="s1">&#39;the transformation.&#39;</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
-            <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
+        <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;categorical_columns_&quot;</span><span class="p">,</span> <span class="s2">&quot;imputed_categories_&quot;</span><span class="p">])</span>
+        <span class="n">check_is_dataframe</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">check_column_existence</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span><span class="p">)</span>
 
         <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cat_cols_</span><span class="p">:</span>
-            <span class="n">row_indices</span> <span class="o">=</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imp_cats_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;category&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">categorical_columns_</span><span class="p">:</span>
+            <span class="n">row_indices</span> <span class="o">=</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imputed_categories_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;category&quot;</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">new_cat</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s1">&#39;You need to specify different &quot;new_cat&quot; value, &#39;</span>
-                        <span class="s1">&#39;because the current one is already included in the &#39;</span>
-                        <span class="s1">&#39;category names.&#39;</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">with_traceback</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
-                <span class="n">cat_removals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-                    <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imp_cats_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                    <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">new_category</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="n">categories_to_remove</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imputed_categories_</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
                         <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">categories</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">X_new</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">remove_categories</span><span class="p">(</span>
-                    <span class="n">cat_removals</span><span class="p">,</span>
+                    <span class="n">categories_to_remove</span><span class="p">,</span>
                     <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
                 <span class="p">)</span>
-            <span class="n">X_new</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row_indices</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_cat</span>
+            <span class="n">X_new</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row_indices</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_category</span>
 
-        <span class="k">return</span> <span class="n">X_new</span></div>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_cat_cols_selection</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">exclude</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns categorical columns including the user&#39;s corrections.&quot;&quot;&quot;</span>
-        <span class="n">cat_cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">include</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> \
-                <span class="s1">&#39;Columns to include must be given as an instance of a list!&#39;</span>
-            <span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
-                <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cat_cols</span> <span class="ow">or</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">include</span>
-            <span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> \
-                <span class="s1">&#39;Columns to exclude must be given as an instance of a list!&#39;</span>
-            <span class="n">cat_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cat_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">cat_cols</span></div>
-
+        <span class="k">return</span> <span class="n">X_new</span></div></div>
 
 <div class="viewcode-block" id="ColumnProjector"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.ColumnProjector.html#paralytics.preprocessing.ColumnProjector">[docs]</a><span class="k">class</span> <span class="nc">ColumnProjector</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Projects variable types onto basic dtypes.</span>
@@ -436,7 +405,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    manual_projection: dictionary, optional (default=None)</span>
+<span class="sd">    manual_projection: dict-like, optional (default=None)</span>
 <span class="sd">        Dictionary where keys are dtype names onto which specified columns</span>
 <span class="sd">        will be projected and values are lists containing names of variables to</span>
 <span class="sd">        be projected onto given dtype. Example usage:</span>
@@ -539,13 +508,7 @@
             <span class="n">skip_columns</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="n">projection_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">projection_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-                <span class="s1">&#39;projection_dict must be an instance of the dictionary!&#39;</span>
             <span class="k">for</span> <span class="n">col_type</span><span class="p">,</span> <span class="n">col_names</span> <span class="ow">in</span> <span class="n">projection_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col_names</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span> <span class="p">(</span>
-                    <span class="s1">&#39;Values of projection_dict must be an instance &#39;</span>
-                    <span class="s1">&#39;of the list!&#39;</span>
-                <span class="p">)</span>
                 <span class="n">cols_to_project</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">col_names</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skip_columns</span>
                 <span class="p">]</span>
@@ -633,7 +596,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    col_type: string or list-like</span>
+<span class="sd">    column_type: string or list-like</span>
 <span class="sd">        Names of types to be selected.</span>
 
 <span class="sd">    References</span>
@@ -643,8 +606,8 @@
 <span class="sd">    April 16, 2018</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col_type</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">col_type</span> <span class="o">=</span> <span class="n">col_type</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_type</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_type</span> <span class="o">=</span> <span class="n">column_type</span>
 
 <div class="viewcode-block" id="TypeSelector.fit"><a class="viewcode-back" href="../../../source/reference/api/paralytics.preprocessing.TypeSelector.html#paralytics.preprocessing.TypeSelector.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fits types selection to X.</span>
@@ -680,7 +643,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">),</span> \
             <span class="s1">&#39;Input must be an instance of pandas.DataFrame()&#39;</span>
-        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">col_type</span><span class="p">])</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">column_type</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">X_new</span></div></div>
 </pre></div>

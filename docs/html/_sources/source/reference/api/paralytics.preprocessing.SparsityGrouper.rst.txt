@@ -1,0 +1,19 @@
+SparsityGrouper
+===============
+
+.. currentmodule:: paralytics.preprocessing
+
+.. autoclass:: SparsityGrouper
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SparsityGrouper.fit
+      ~SparsityGrouper.transform
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: fit
+   .. automethod:: transform

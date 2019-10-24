@@ -156,9 +156,12 @@
 <span class="sd">This module includes all custom warnings and error classes used across</span>
 <span class="sd">paralytics.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;UniqueValuesError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;NothingSelectedWarning&#39;</span>
+    <span class="s2">&quot;UniqueValuesError&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NothingSelectedWarning&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DevelopmentStageWarning&quot;</span>
 <span class="p">]</span>
 
 
@@ -175,6 +178,14 @@
 
 <span class="sd">    For example we can thus emphasize that the user forgot to implement the</span>
 <span class="sd">    appropriate step in the pipeline.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="DevelopmentStageWarning"><a class="viewcode-back" href="../../source/reference/api/paralytics.DevelopmentStageWarning.html#paralytics.DevelopmentStageWarning">[docs]</a><span class="k">class</span> <span class="nc">DevelopmentStageWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Warning used to notify that functionality is in the development stage.</span>
+
+<span class="sd">    Warning raised when functionality has not yet been fully implemented and</span>
+<span class="sd">    tested, and thus may cause unexpected errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
 </pre></div>
 

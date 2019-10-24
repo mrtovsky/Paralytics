@@ -6,6 +6,9 @@ X.Y.Z (DD.MM.YYYY)
 * Created ``DevelopmentStageWarning``
     * Creates custom warning raised when the functionality is to some extent put into use,
       but not yet fully implemented.
+* Created ``utils.toolkits`` module
+    * Adds ``utils.upload_to_google_drive`` functionality that provides multiple files upload to
+      Google Drive.
 
 0.3.2 (03.10.2019)
 ------------------

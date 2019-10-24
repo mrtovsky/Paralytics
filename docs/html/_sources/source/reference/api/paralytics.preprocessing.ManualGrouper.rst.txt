@@ -1,0 +1,19 @@
+ManualGrouper
+=============
+
+.. currentmodule:: paralytics.preprocessing
+
+.. autoclass:: ManualGrouper
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ManualGrouper.fit
+      ~ManualGrouper.transform
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: fit
+   .. automethod:: transform

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>TypeSelector &mdash; Paralytics 0.3.2 documentation</title>
+  <title>ManualGrouper &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Utilities" href="../utils.html" />
-    <link rel="prev" title="SparsityGrouper" href="paralytics.preprocessing.SparsityGrouper.html" /> 
+    <link rel="next" title="SparsityGrouper" href="paralytics.preprocessing.SparsityGrouper.html" />
+    <link rel="prev" title="Imputer" href="paralytics.preprocessing.Imputer.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -98,9 +98,9 @@
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ColumnProjector.html">ColumnProjector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ColumnSelector.html">ColumnSelector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.Imputer.html">Imputer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ManualGrouper.html">ManualGrouper</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ManualGrouper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.SparsityGrouper.html">SparsityGrouper</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">TypeSelector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.TypeSelector.html">TypeSelector</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
@@ -158,13 +158,13 @@
         
           <li><a href="../preprocessing.html">Preprocessing</a> &raquo;</li>
         
-      <li>TypeSelector</li>
+      <li>ManualGrouper</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../../_sources/source/reference/api/paralytics.preprocessing.TypeSelector.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/source/reference/api/paralytics.preprocessing.ManualGrouper.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -177,24 +177,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="typeselector">
-<h1>TypeSelector<a class="headerlink" href="#typeselector" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="manualgrouper">
+<h1>ManualGrouper<a class="headerlink" href="#manualgrouper" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="paralytics.preprocessing.TypeSelector">
-<em class="property">class </em><code class="sig-prename descclassname">paralytics.preprocessing.</code><code class="sig-name descname">TypeSelector</code><span class="sig-paren">(</span><em class="sig-param">column_type</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#TypeSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.TypeSelector" title="Permalink to this definition">¶</a></dt>
+<dt id="paralytics.preprocessing.ManualGrouper">
+<em class="property">class </em><code class="sig-prename descclassname">paralytics.preprocessing.</code><code class="sig-name descname">ManualGrouper</code><span class="sig-paren">(</span><em class="sig-param">replace</em>, <em class="sig-param">group_columns=None</em>, <em class="sig-param">other_name='Other'</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#ManualGrouper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.ManualGrouper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code></p>
-<p>Limits the X to selected types.</p>
-<dl class="field-list simple">
+<p>Groups columns in accordance with the guidelines provided.</p>
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>column_type: string or list-like</strong></dt><dd><p>Names of types to be selected.</p>
+<dd class="field-odd"><dl>
+<dt><strong>replace</strong><span class="classifier">dict-like</span></dt><dd><p>Dictionary-like object where key is the value that will be imputed
+to the selected values. Values’ selection is defined in the values
+assigned to key, which should also be a dictionary containing two
+keys. First key: <cite>regex</cite> with regex sentence assigned as string,
+second key: <cite>case</cite> is the boolean value mentioning whether regex
+should be case-sensitive. Alternatively you can pass a string
+instead of dictionary-like object but then automatically regex will
+be case-insensitive.</p>
+</dd>
+<dt><strong>group_columns</strong><span class="classifier">string or list-like, optional (default=None)</span></dt><dd><p>Columns for which not matched records will be grouped into a separate
+category. Left by default doesn’t group any column. If:</p>
+<ul>
+<li><p><cite>all</cite>:</p>
+<p>Groups all of the categorical columns selected for grouping.</p>
+</li>
+</ul>
+</dd>
+<dt><strong>other_name</strong><span class="classifier">string, optional (default=”Other”)</span></dt><dd><p>Name of the group for unselected records. Valid only if
+<cite>group_others</cite> is set to <cite>True</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>categorical_columns_</strong><span class="classifier">list</span></dt><dd><p>List of categorical columns in a given dataset that has been selected
+for sparsity grouping.</p>
+</dd>
+<dt><strong>group_columns_</strong><span class="classifier">list</span></dt><dd><p>List of categorical columns where no matching was found in the provided
+replace sentence that has been grouped into a separate category.</p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p class="rubric">References</p>
-<p>[1] J. Ramey, <a class="reference external" href="https://ramhiser.com/post/2018-04-16-building-scikit-learn-pipeline-with-pandas-dataframe/">Building Scikit-Learn Pipelines With Pandas DataFrame</a>,
-April 16, 2018</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -202,55 +227,24 @@ April 16, 2018</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.TypeSelector.fit" title="paralytics.preprocessing.TypeSelector.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
-<td><p>Fits types selection to X.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#paralytics.preprocessing.ManualGrouper.fit" title="paralytics.preprocessing.ManualGrouper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X[, y])</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.TypeSelector.transform" title="paralytics.preprocessing.TypeSelector.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
-<td><p>Apply types selection to X.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#paralytics.preprocessing.ManualGrouper.transform" title="paralytics.preprocessing.ManualGrouper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
-<dt id="paralytics.preprocessing.TypeSelector.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#TypeSelector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.TypeSelector.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fits types selection to X.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>X: pd.DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>Training data of independent variable values.</p>
-</dd>
-<dt><strong>y: ignore</strong></dt><dd></dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt>self: object</dt><dd><p>Returns the instance itself.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
+<dt id="paralytics.preprocessing.ManualGrouper.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#ManualGrouper.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.ManualGrouper.fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
-<dt id="paralytics.preprocessing.TypeSelector.transform">
-<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#TypeSelector.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.TypeSelector.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply types selection to X.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>X: pd.DataFrame, shape = (n_samples, n_features)</strong></dt><dd><p>New data with n_samples as its number of samples.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt>X_new: pd.DataFrame, shape = (n_samples, n_features)</dt><dd><p>X data limited to selected types only.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
+<dt id="paralytics.preprocessing.ManualGrouper.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/preprocessing/transformation.html#ManualGrouper.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.preprocessing.ManualGrouper.transform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -264,10 +258,10 @@ April 16, 2018</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../utils.html" class="btn btn-neutral float-right" title="Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="paralytics.preprocessing.SparsityGrouper.html" class="btn btn-neutral float-right" title="SparsityGrouper" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="paralytics.preprocessing.SparsityGrouper.html" class="btn btn-neutral float-left" title="SparsityGrouper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="paralytics.preprocessing.Imputer.html" class="btn btn-neutral float-left" title="Imputer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

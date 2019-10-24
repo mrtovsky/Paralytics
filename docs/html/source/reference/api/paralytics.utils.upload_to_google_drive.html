@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>custom_round &mdash; Paralytics 0.3.2 documentation</title>
+  <title>upload_to_google_drive &mdash; Paralytics 0.3.2 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
   <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="lcm" href="paralytics.utils.lcm.html" />
-    <link rel="prev" title="check_prime" href="paralytics.utils.check_prime.html" /> 
+    <link rel="next" title="BaseSeleniumBrowser" href="paralytics.utils.BaseSeleniumBrowser.html" />
+    <link rel="prev" title="multipleplots" href="paralytics.utils.multipleplots.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -95,14 +95,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../utils.html">Utilities</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../utils.html#importing">Importing</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#mathy">Mathy</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.check_prime.html">check_prime</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">custom_round</a></li>
-<li class="toctree-l4"><a class="reference internal" href="paralytics.utils.lcm.html">lcm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils.html#mathy">Mathy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils.html#plotting">Plotting</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../utils.html#toolkits">Toolkits</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">upload_to_google_drive</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#plotting">Plotting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../utils.html#toolkits">Toolkits</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils.html#scraping">Scraping</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../utils.html#validation">Validation</a></li>
 </ul>
@@ -161,13 +159,13 @@
         
           <li><a href="../utils.html">Utilities</a> &raquo;</li>
         
-      <li>custom_round</li>
+      <li>upload_to_google_drive</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../../_sources/source/reference/api/paralytics.utils.custom_round.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/source/reference/api/paralytics.utils.upload_to_google_drive.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -180,12 +178,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="custom-round">
-<h1>custom_round<a class="headerlink" href="#custom-round" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="upload-to-google-drive">
+<h1>upload_to_google_drive<a class="headerlink" href="#upload-to-google-drive" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="paralytics.utils.custom_round">
-<code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">custom_round</code><span class="sig-paren">(</span><em class="sig-param">value_list</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/mathy.html#custom_round"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.custom_round" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rounds n to the closest value from the given value_list.</p>
+<dt id="paralytics.utils.upload_to_google_drive">
+<code class="sig-prename descclassname">paralytics.utils.</code><code class="sig-name descname">upload_to_google_drive</code><span class="sig-paren">(</span><em class="sig-param">client_secrets_path</em>, <em class="sig-param">files_paths</em>, <em class="sig-param">folder_id='root'</em>, <em class="sig-param">credentials_path=None</em>, <em class="sig-param">save_credentials=False</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/paralytics/utils/toolkits.html#upload_to_google_drive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paralytics.utils.upload_to_google_drive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload specified files to Google Drive.</p>
+<p>Support uploading files to Google Drive from Python after the project has
+been created in Google Developers Console. Guide explaining the
+configuration of the project is available on <a class="reference external" href="https://medium.com/&#64;annissouames99/how-to-upload-files-automatically-to-drive-with-python-ee19bb13dda/">medium.com</a>.</p>
+<p>After successful configuration you should save your client ID and the
+secret key to the <code class="docutils literal notranslate"><span class="pre">client_secrets.json</span></code> file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>client_secrets_path: string or pathlib.Path</strong></dt><dd><p>Path to <code class="docutils literal notranslate"><span class="pre">client_secrets.json</span></code> file where client ID and the secret key
+for the project created via Google Developers Console are saved.</p>
+</dd>
+<dt><strong>files_paths: string or pathlib.Path or list of those objects</strong></dt><dd><p>Paths to files that will be uploaded to Google Drive.</p>
+</dd>
+<dt><strong>folder_id: string, optional (default=”root”)</strong></dt><dd><p>Receiving Google Drive folder id.</p>
+</dd>
+<dt><strong>credentials_path: string, optional (default=None)</strong></dt><dd><p>Path to the credentials json file where your Google credentials are or
+will be saved. Allows to avoid manual authentication every time files
+are uploaded which leads to full automation of this process.</p>
+</dd>
+<dt><strong>save_credentials: optional (default=False)</strong></dt><dd><p>Whether to save credentials to file specified in the
+<cite>credentials_path</cite> parameter.</p>
+</dd>
+<dt><strong>verbose: optional (default=False)</strong></dt><dd><p>Turn on/off function verbosity.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -198,10 +223,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="paralytics.utils.lcm.html" class="btn btn-neutral float-right" title="lcm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="paralytics.utils.BaseSeleniumBrowser.html" class="btn btn-neutral float-right" title="BaseSeleniumBrowser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="paralytics.utils.check_prime.html" class="btn btn-neutral float-left" title="check_prime" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="paralytics.utils.multipleplots.html" class="btn btn-neutral float-left" title="multipleplots" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

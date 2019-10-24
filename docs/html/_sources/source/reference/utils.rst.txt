@@ -30,6 +30,15 @@ Plotting
 
    api/*utils.multipleplots
 
+Toolkits
+--------
+
+.. toctree::
+   :glob:
+   :maxdepth: 1
+
+   api/*utils.upload_to_google_drive
+
 Scraping
 --------
 

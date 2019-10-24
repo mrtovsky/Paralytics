@@ -1,0 +1,6 @@
+DevelopmentStageWarning
+=======================
+
+.. currentmodule:: paralytics
+
+.. autoexception:: DevelopmentStageWarning

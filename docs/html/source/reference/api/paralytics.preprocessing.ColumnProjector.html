@@ -98,6 +98,8 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ColumnProjector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ColumnSelector.html">ColumnSelector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.Imputer.html">Imputer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.ManualGrouper.html">ManualGrouper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.SparsityGrouper.html">SparsityGrouper</a></li>
 <li class="toctree-l3"><a class="reference internal" href="paralytics.preprocessing.TypeSelector.html">TypeSelector</a></li>
 </ul>
 </li>
@@ -187,7 +189,7 @@ and categorical onto ‘category’ dtypes.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>manual_projection: dictionary, optional (default=None)</strong></dt><dd><p>Dictionary where keys are dtype names onto which specified columns
+<dt><strong>manual_projection: dict-like, optional (default=None)</strong></dt><dd><p>Dictionary where keys are dtype names onto which specified columns
 will be projected and values are lists containing names of variables to
 be projected onto given dtype. Example usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">manual_projection</span> <span class="o">=</span> <span class="p">{</span>

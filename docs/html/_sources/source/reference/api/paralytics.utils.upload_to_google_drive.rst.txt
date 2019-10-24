@@ -1,0 +1,6 @@
+upload_to_google_drive
+======================
+
+.. currentmodule:: paralytics.utils
+
+.. autofunction:: upload_to_google_drive
