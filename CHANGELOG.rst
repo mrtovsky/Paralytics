@@ -3,6 +3,9 @@ History
 
 X.Y.Z (DD.MM.YYYY)
 ------------------
+* Created ``utils.check_is_series``
+    * Projects object passed as a function's parameter onto pandas.Series and if the operation is
+      successful returns projected object otherwise raises TypeError.
 * Created ``DevelopmentStageWarning``
     * Creates custom warning raised when the functionality is to some extent put into use,
       but not yet fully implemented.

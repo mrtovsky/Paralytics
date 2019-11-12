@@ -11,35 +11,37 @@ __all__ = [
     "check_uniq",
     "check_column_existence",
     "check_is_dataframe",
+    "check_is_series",
     "is_numeric",
     "find_sparsity",
     "check_continuity"
 ]
 
 
-def check_uniq(X):
-    """Checks whether all input data values are unique.
+def check_uniq(series):
+    """Check whether all input data values are unique.
 
     Parameters
     ----------
-    X: array-like, shape = (n_samples, )
+    series: array-like, shape = (n_samples, )
         Vector to check whether it cointains unique values.
 
     Returns
     -------
-    boolean: Whether all input data values are unique.
+    boolean:
+        Whether all input data values are unique.
 
     """
-    s = set()
-    return not any(x in s or s.add(x) for x in X)
+    unique = set()
+    return not any(elem in unique or unique.add(elem) for elem in series)
 
 
-def check_column_existence(X, columns):
-    """Checks whether all listed columns are in a given DataFrame.
+def check_column_existence(df, columns):
+    """Check whether all listed columns are in a given DataFrame.
 
     Parameters
     ----------
-    X: pandas.DataFrame
+    df: pandas.DataFrame
         Data with columns to be checked for occurrence.
 
     columns: single label or list-like
@@ -52,28 +54,28 @@ def check_column_existence(X, columns):
     Raises
     ------
     ValueError
-        If one of the elements of `cols` is not found in the `X` columns.
+        If one of the elements of `columns` is not found in the `df` columns.
 
     """
     if isinstance(columns, str):
         columns = [columns]
 
-    exist = all(col in X.columns for col in columns)
+    exist = all(col in df.columns for col in columns)
 
     if not exist:
-        cols_error = list(set(columns) - set(X.columns))
+        cols_error = list(set(columns) - set(df.columns))
         raise ValueError(
             "Columns not found in the DataFrame: {}"
             .format(", ".join(cols_error))
         )
 
 
-def check_is_dataframe(X):
-    """Checks whether object is a pandas.DataFrame.
+def check_is_dataframe(df):
+    """Check whether object is a pandas.DataFrame.
 
     Parameters
     ----------
-    X: object
+    df: object
         Object suspected of being a pandas.DataFrame.
 
     Returns
@@ -86,17 +88,47 @@ def check_is_dataframe(X):
         If object is not a pandas.DataFrame.
 
     """
-    if not isinstance(X, pd.DataFrame):
+    if not isinstance(df, pd.DataFrame):
         raise TypeError("Input must be an instance of pandas.DataFrame.")
 
 
-def is_numeric(X, project=True):
+def check_is_series(series):
+    """Check whether object is a pandas.Series or can be project onto one.
+
+    Parameters
+    ----------
+    series: object
+        Object suspected of being a pandas.Series.
+
+    Returns
+    -------
+    series: pandas.Series
+        Input object projected onto pandas.Series.
+
+    Raises
+    ------
+    TypeError
+        If object is not a pandas.Series and cannot be projected onto one.
+
+    """
+    try:
+        series = pd.Series(series)
+    except Exception as err:
+        raise TypeError(
+            "Input is not an instance of pandas.Series "
+            "and cannot be projected onto one of them."
+        ).with_traceback(err.__traceback__)
+
+    return series
+
+
+def is_numeric(series, project=True):
     """Checks whether given vector contains numeric-only values excluding
     boolean vectors.
 
     Parameters
     ----------
-    X: array-like, shape = (n_samples, )
+    series: array-like, shape = (n_samples, )
         Vector where n_samples is the number of samples.
 
     project: bool, optional (default=True)
@@ -105,19 +137,21 @@ def is_numeric(X, project=True):
 
     Returns
     -------
-    bool
+    boolean:
+        Whether series is numeric or can be projected to numeric if ``project``
+        is set to True.
 
     """
-    if project and not is_categorical_dtype(X):
+    if project and not is_categorical_dtype(series):
         try:
-            X = np.array(X).astype(np.number)
+            series = np.array(series).astype(np.number)
         except ValueError:
             return False
 
-    return is_numeric_dtype(X) and not set(X) <= {0, 1}
+    return is_numeric_dtype(series) and not set(series) <= {0, 1}
 
 
-def find_sparsity(X, thresh=.01):
+def find_sparsity(df, thresh=.01):
     """Finds columns with highly sparse categories.
 
     For categorical and binary features finds columns where categories with
@@ -128,7 +162,7 @@ def find_sparsity(X, thresh=.01):
 
     Parameters
     ----------
-    X: pandas.DataFrame
+    df: pandas.DataFrame
         Data to be checked for sparsity.
 
     thresh: float, optional (default=.01)
@@ -138,26 +172,26 @@ def find_sparsity(X, thresh=.01):
     Returns
     -------
     sparse_{num, bin, cat}: list
-        List of {numerical, binary, categorical} X column names where high
+        List of {numerical, binary, categorical} df column names where high
         sparsity was detected.
 
     """
-    assert isinstance(X, pd.DataFrame), \
+    assert isinstance(df, pd.DataFrame), \
         'Input must be an instance of pandas.DataFrame()'
-    assert len(X) > 0, 'Input data can not be empty!'
+    assert len(df) > 0, 'Input data can not be empty!'
 
     sparse_num, sparse_bin, sparse_cat = [[] for _ in range(3)]
 
-    for col in X.columns:
-        tab_counter = X[col].value_counts(normalize=True, dropna=False)
-        if is_numeric(X[col]):
+    for col in df.columns:
+        tab_counter = df[col].value_counts(normalize=True, dropna=False)
+        if is_numeric(df[col]):
             most_freq = tab_counter.index[0]
             if most_freq != most_freq or most_freq == 0:
                 sparse_num.append(col)
         else:
             min_frac = tab_counter.iloc[-1]
             if min_frac < thresh:
-                if set(X[col]) <= {0, 1}:
+                if set(df[col]) <= {0, 1}:
                     sparse_bin.append(col)
                 else:
                     sparse_cat.append(col)
@@ -165,12 +199,12 @@ def find_sparsity(X, thresh=.01):
     return sparse_num, sparse_bin, sparse_cat
 
 
-def check_continuity(X, thresh=.5):
+def check_continuity(series, thresh=.5):
     """Checks whether input variable is continuous.
 
     Parameters
     ----------
-    X: array-like, shape = (n_samples, )
+    series: array-like, shape = (n_samples, )
         Vector to check for continuity.
 
     thresh: float, optional (default=.5)
@@ -182,4 +216,6 @@ def check_continuity(X, thresh=.5):
     boolean: Whether variable is continuous.
 
     """
-    return is_numeric(X) and len(np.unique(X)) / len(X) >= 1 - thresh
+    numerator = len(np.unique(series))
+    denominator = len(series) >= 1 - thresh
+    return is_numeric(series) and numerator / denominator
