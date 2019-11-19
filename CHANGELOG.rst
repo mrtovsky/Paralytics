@@ -3,6 +3,13 @@ History
 
 X.Y.Z (DD.MM.YYYY)
 ------------------
+* Extracted more specific discretization estimators
+    * Implements base class ``BaseDiscretizer`` for all discretization estimators.
+    * Implements base class ``TreeDiscretizer`` for all tree-based estimators.
+    * In place of the collective class for discretization creates smaller estimators that reflect
+      more accurately addressed functionality, including a manual discretizer ``ManualDiscretizer``
+      and discretizers based on tree algorithms: ``ClassificationTreeDiscretizer`` and
+      ``RegressionTreeDiscretizer``.
 * Created ``utils.check_is_series``
     * Projects object passed as a function's parameter onto pandas.Series and if the operation is
       successful returns projected object otherwise raises TypeError.

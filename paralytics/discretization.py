@@ -1,137 +1,152 @@
+from abc import ABCMeta, abstractmethod
+
 import numpy as np
 import pandas as pd
-import pandas.core.algorithms as algos
-import scipy.stats as stats
 
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.tree import DecisionTreeClassifier
+from joblib import Parallel, delayed
+from sklearn.base import BaseEstimator, TransformerMixin, clone
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.utils.validation import check_is_fitted
 
-from .exceptions import UniqueValuesError
-from .utils.validation import is_numeric
+from .utils.validation import check_is_dataframe, check_is_series
 
 
 __all__ = [
-    'Discretizer'
+    "ManualDiscretizer",
+    "ClassificationTreeDiscretizer",
+    "RegressionTreeDiscretizer",
+    "discretize"
 ]
 
 
-class Discretizer(BaseEstimator, TransformerMixin):
-    """Discretizes variables in a given data set.
+def discretize(series, cut_points=None, n_quantiles=4,
+               labels=None, min_val=None, max_val=None):
+    """Manually bins continuous variable into the declared intervals.
 
-    Reduces continuous variables to a finite number of intervals with use of
-    declared methods.
+    If the cut-off points are not declared the split is made using
+    quantiles.
 
     Parameters
     ----------
-    method: string: {'sapling', 'spearman'}, optional (default='sapling')
-        The discretization method:
+    series: array-like, shape = (n_samples, )
+        Vector passed as an one-dimensional array-like object where
+        n_samples in the number of samples.
 
-        - `sapling`:
+    cut_points: array-like, optional (default=None)
+        Increasing monotonic sequence generating right-closed intervals.
+        Values not allocated to any of the categories will be assigned to
+        the empty set. For example given: cut_points=[1, 5, 9] will
+        generate intervals: [-inf, 1], (1, 5], (5, 9], (9, inf].
+        If you want to specify lower and upper limitations, set parameters:
+        "min_val", "max_val" to a specific value.
 
-          Submethod based on the DecisionTreeClassifier.
+    n_quantiles: int, optional (default=4)
+        When cut_points are not declared it sets the number of quantiles
+        to which the variable will be splitted. For example setting
+        n_quantiles = 4 will return quartiles of X values between min_val
+        and max_val.
 
-        - `spearman`:
+    labels: string: {'auto'} or list, optional (default=None)
+        Specifies returned bucket names, needs to be the same length as the
+        number of created buckets:
 
-          Submethod based on the Spearman's rang correlation. Divides the
-          values into subsequent quartiles as long as it doesn't get full
-          monotonicity. If this doesn't happen, it divides values with use
-          of quantiles into the declared minimum number of buckets.
-          Using this method with parameter formula set to 'median' may throw
-          RuntimeWarning for fixed vector values in one of the input vectors
-          becuase there is no point in tracking mutual change of two vectors
-          when one vector doesn't change.
+        - `auto`:
 
-    formula: string: {'mean', 'median'}, optional (default='mean')
-        Chooses the formula that representatives will be chosen to check the
-        Spearman's rank correlation:
+            Assigns default values to group names by numbering them.
 
-        - `mean`:
+    min_val: float, optional (default=None)
+        Determines lower limit value. If not specified takes -np.inf.
 
-          Takes the mean in every group as a representative value.
+    max_val: float, optional (default=None)
+        Determines upper limit value. If not specified takes np.inf.
 
-        - `median`:
+    Returns
+    -------
+    series_new: array, shape = (n_samples, )
+        Input data with its original values ​​being substituted with their
+        respective labels.
 
-          Takes the median in every group as a representative value.
+    """
+    series = check_is_series(series)
 
-    max_bins: int, optional (default=20)
-        Maximum number of bins that will be created.
+    if min_val is None:
+        min_val = -np.inf
 
-    min_bins: int, optional (default=3)
-        Minimum number of bins that will be created.
+    if max_val is None:
+        max_val = np.inf
 
-    max_tree_depth: int, optional (default=None)
-        Specifies maximum tree depth.
+    # Default break_points in case of no declaration of cut_points.
+    if cut_points is None:
+        _series = series[~pd.isna(series)]
+        _series = _series[(_series >= min_val) & (_series <= max_val)]
+        break_points = np.quantile(
+            _series.reset_index(drop=True), np.linspace(0, 1, n_quantiles + 1)
+        )
+    else:
+        break_points = np.insert(
+            cut_points,
+            [0, len(cut_points)],
+            [min_val, max_val]
+        )
+    break_points = np.unique(break_points)
 
-    min_samples_leaf: float, optional (default=.05)
-        Specifies the minimum part of the entire population that must be
-        included in the leaf.
+    if labels == "auto":
+        labels = range(len(break_points) - 1)
 
-    random_state: int, optional (default=None)
-        Random state for sklearn algorithms.
+    series_new = pd.cut(
+        series,
+        bins=break_points,
+        labels=labels,
+        include_lowest=True
+    )
+
+    return series_new
+
+
+class BaseDiscretizer(BaseEstimator, TransformerMixin, metaclass=ABCMeta):
+    """Base class for all discretization classes.
+
+    Warning: This class should not be used directly. Use derived classes
+    instead.
+
+    Parameters
+    ----------
+    columns: string {<column-name>, all} or list
+        The collection of discretized column names. If string value is passed
+        requires numeric column name or ``all`` value ordering the selection
+        of all numeric columns.
+
+    n_jobs: int
+        The number of jobs to run in parallel for both ``fit`` and
+        ``transform``.
 
     Attributes
     ----------
-    bins_: dictionary, length = n_features
-        Dictionary of upper limits of successive intervals excluding the
-        maximum value which length equals the number of features in the data
-        passed.
+    columns_: list
+        The collection of discretized columns with enforced type.
 
-    Examples
-    --------
-    >>> import numpy as np
-    >>> import pandas as pd
-    >>> import paralytics as prl
+    cuts_: dictionary-like
+        The collection of cut points for every discretized column, used to
+        determine bins, where the key is the column name and the value is the
+        collection of corresponding cut points.
 
-
-    >>> # Fix the seed for reproducibility.
-    >>> SEED = 42
-    >>> np.random.seed(SEED)
-
-    >>> # Create available categories for non-numeric variable.
-    >>> sexes = ['female', 'male', 'child']
-
-    >>> # Generate example DataFrame.
-    >>> X = pd.DataFrame({
-    >>>     'NormalVariable': np.random.normal(loc=0, scale=10, size=100),
-    >>>     'UniformVariable': np.random.uniform(low=0, high=100, size=100),
-    >>>     'IntVariable': np.random.randint(low=0, high=100, size=100),
-    >>>     'Sex': np.random.choice(sexes, 100, p=[.5, .3, .2])
-    >>> })
-
-    >>> # Generate response variable.
-    >>> y = np.random.randint(low=0, high=2, size=100)
-
-    >>> # Do discretization.
-    >>> discretizer = prl.Discretizer(max_bins=5, random_state=SEED)
-    >>> X_discretized = discretizer.fit_transform(X, y)
-    >>> print(X_discretized.head())
-      NormalVariable UniformVariable   IntVariable     Sex
-    0  (-3.886, inf]   (33.151, inf]   (63.5, inf]   child
-    1  (-3.886, inf]  (-inf, 24.071]  (-inf, 28.0]  female
-    2  (-3.886, inf]  (-inf, 24.071]  (28.0, 63.5]  female
-    3  (-3.886, inf]   (33.151, inf]   (63.5, inf]    male
-    4  (-3.886, inf]   (33.151, inf]  (-inf, 28.0]    male
+    Notes
+    -----
+    Inheriting classes' fit method needs to define ``self.cuts_`` dictionary.
 
     """
+    @abstractmethod
+    def __init__(self, columns, n_jobs):
+        self.columns = columns
+        self.n_jobs = n_jobs
 
-    def __init__(self, method='sapling', formula='mean',
-                 max_bins=20, min_bins=3, max_tree_depth=None,
-                 min_samples_leaf=.05, random_state=None):
-        self.method = method
-        self.formula = formula
-        self.max_bins = max_bins
-        self.min_bins = min_bins
-        self.max_tree_depth = max_tree_depth
-        self.min_samples_leaf = min_samples_leaf
-        self.random_state = random_state
-
+    @abstractmethod
     def fit(self, X, y=None):
-        """Fit the binning with X by extracting upper limits of right-closed
-        intervals.
+        """Fit discretization with X by extracting cut points.
 
         Parameters
         ----------
-        X: pd.DataFrame, shape = (n_samples, n_features)
+        X: pandas.DataFrame, shape = (n_samples, n_features)
             Training data of independent variable values.
 
         y: array-like, shape = (n_samples, )
@@ -143,29 +158,31 @@ class Discretizer(BaseEstimator, TransformerMixin):
             Returns the instance itself.
 
         """
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pandas.DataFrame()'
-
-        call_method = getattr(self, self.method)
-        self.bins_ = {}
-        for col in X.columns.values:
-            # Checking whether columns are non-binary numeric (excluding nans)
-            if is_numeric(X[col]):
-                try:
-                    self.bins_[col] = call_method(
-                        X[col], np.asarray(y).ravel()
-                    ).astype(float)
-                except UniqueValuesError as e:
-                    e.args += (f'The problem occured for the column: {col}.',)
-                    print(' '.join(e.args))
-                    self.bins_[col] = np.unique(X[col]).astype(float)
+        check_is_dataframe(X)
+        numeric_columns = X.select_dtypes(include=np.number).columns.tolist()
+        if self.columns == "all":
+            self.columns_ = X.select_dtypes(include=np.number).columns.tolist()
+        else:
+            if isinstance(self.columns, str):
+                columns = [self.columns]
+            else:
+                columns = list(self.columns)
+            assert set(columns).issubset(numeric_columns), (
+                "Columns chosen for discretization need to be of numeric "
+                "dtype.\nThe following columns do not satisfy this condition:\n"
+                "{}.\n\nMake sure column names are passed correctly."
+                .format(
+                    " ,".join(set(numeric_columns).difference(columns))
+                )
+            )
+            self.columns_ = columns
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, y=None):
         """Apply discretization on X.
 
-        X is projected on the bins previously extracted from a training set.
+        X is projected on the previously extracted cut points.
 
         Parameters
         ----------
@@ -179,230 +196,384 @@ class Discretizer(BaseEstimator, TransformerMixin):
             string type.
 
         """
-        try:
-            getattr(self, 'bins_')
-        except AttributeError:
-            raise RuntimeError('Could not find the attribute.\n'
-                               'Fitting is necessary before you do '
-                               'the transformation.')
+        check_is_fitted(self, ["columns_", "cuts_"])
+        check_is_dataframe(X)
 
-        assert isinstance(X, pd.DataFrame), \
-            'Input must be an instance of pd.DataFrame()'
-
-        X_new = X.copy()
-        for col, cutoffs in self.bins_.items():
-            cut_points = cutoffs[1:-1]
-            try:
-                cut_points = cut_points.tolist()
-            except AttributeError:
-                cut_points = list(cut_points)
-
-            if not cut_points:
-                cut_points = cutoffs
-
-            X_new[col] = self.finger(
-                X[col],
-                cut_points=np.array(cut_points)
-            ).astype(str)
-
+        X_new = pd.concat(
+            Parallel(n_jobs=self.n_jobs)(
+                delayed(self._discretize)(X[column])
+                for column in X.columns
+            ),
+            axis="columns"
+        )
         return X_new
 
-    def sapling(self, X, y):
-        """Creates finitely many intervals for a continuous vector using
-        DecisionTreeClassifier optimizing splits with respect to Gini impurity
-        criterium.
+    def _discretize(self, series):
+        """Discretize continuous feature, otherwise project onto category."""
+        name = series.name
+        if name in self.columns_:
+            return discretize(series, cut_points=self.cuts_[name])
+        else:
+            return series
+
+
+class ManualDiscretizer(BaseDiscretizer):
+    """Manually discretize continuous features.
+
+    Parameters
+    ----------
+    columns: string {<column-name>, all} or list, optional (default="all")
+        The collection of discretized column names. If string value is passed
+        requires numeric column name or ``all`` value ordering the selection
+        of all numeric columns.
+
+    n_jobs: int, optional (default=None)
+        The number of jobs to run in parallel for both ``fit`` and
+        ``transform``.
+
+    cut_points: string {quantiles} or array-like, optional (default="quantiles")
+        The collection of cut points corresponding to column selected for
+        discretization. Length must be equal to ``columns`` length.
+        By default takes quantiles of corresponding columns as cut points.
+
+    n_quantiles: int, optional(default=4)
+        Number of quantiles taken as cut points if ``cut_points`` parameter
+        is set to ``quantiles``. Left by default takes quartiles.
+
+    Attributes
+    ----------
+    columns_: list
+        The collection of discretized columns with enforced type.
+
+    cut_points_: list
+        The collection of cut points for corresponding columns.
+
+    cuts_: dictionary-like
+        The collection of cut points for every discretized column, used to
+        determine bins, where the key is the column name and the value is the
+        collection of corresponding cut points.
+
+    """
+    def __init__(self, columns="all", n_jobs=None, cut_points="quantiles",
+                 n_quantiles=4):
+        super().__init__(columns, n_jobs)
+        self.cut_points = cut_points
+        self.n_quantiles = n_quantiles
+
+    def fit(self, X, y=None):
+        """Fit manual discretization with X.
 
         Parameters
         ----------
-        X: array-like, shape = (n_samples, )
-            Vector passed as an one-dimensional array-like object where
-            n_samples in the number of samples.
+        X: pandas.DataFrame, shape = (n_samples, n_features)
+            Training data of independent variable values.
 
         y: array-like, shape = (n_samples, )
-            Vector of corresponding to X values passed as an one-dimensional
-            array-like object where n_samples is the number of samples.
+            Vector of target variable values corresponding to X data.
 
         Returns
         -------
-        bins: array, shape = (n_bins, )
-            Vector of successive cut-off points being upper limits of the
-            corresponding intervals as well as containing a minimum value.
+        self: object
+            Returns the instance itself.
 
         """
-        y = np.asarray(y)
-        X = np.asarray(X)
-        y = y[~np.isnan(X)]
-        X = X[~np.isnan(X)]
-
-        if len(np.unique(X)) < self.min_bins:
-            raise UniqueValuesError(
-                'Not enough unique values in the array. '
-                'Minimum {} unique values required.'.format(self.min_bins)
+        super().fit(X)
+        if self.cut_points == "quantiles":
+            assert isinstance(self.n_quantiles, int) and self.n_quantiles > 0, (
+                "Parameter ``n_quantiles`` takes natural numbers only."
             )
+            cut_points = [
+                np.quantile(
+                    X[column][~pd.isna(X[column])],
+                    np.delete(
+                        np.linspace(0, 1, self.n_quantiles + 1),
+                        [0, self.n_quantiles]
+                    )
+                )
+                for column in self.columns_
+            ]
+        else:
+            cut_points = list(np.atleast_2d(self.cut_points))
+            assert len(self.columns_) == len(cut_points), (
+                "Number of cut points collections passed to the ``cut_points`` "
+                "parameter must be equal to number of columns selected for "
+                "discretization.\n{} columns and {} cut points collections are "
+                "currently specified."
+                .format(len(self.columns_), len(cut_points))
+            )
+        self.cut_points_ = cut_points
+        self.cuts_ = dict(zip(self.columns_, self.cut_points_))
 
-        clf = DecisionTreeClassifier(
-            max_depth=self.max_tree_depth,
-            min_samples_leaf=self.min_samples_leaf,
-            max_leaf_nodes=self.max_bins,
-            random_state=self.random_state
+        return self
+
+
+class TreeDiscretizer(BaseDiscretizer, metaclass=ABCMeta):
+    """Base class for decision tree discretizers.
+
+    Warning: This class should not be used directly. Use derived classes
+    instead.
+
+    """
+    @abstractmethod
+    def __init__(self, columns, n_jobs, base_estimator, criterion, splitter,
+                 max_depth, min_samples_split, min_samples_leaf,
+                 min_weight_fraction_leaf, max_features, max_leaf_nodes,
+                 min_impurity_decrease, min_impurity_split, class_weight=None,
+                 presort=False, random_state=None, estimator_params=tuple(),
+                 save_estimators=False):
+        super().__init__(columns, n_jobs)
+        self.base_estimator = base_estimator
+        self.criterion = criterion
+        self.splitter = splitter
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+        self.min_weight_fraction_leaf = min_weight_fraction_leaf
+        self.max_features = max_features
+        self.max_leaf_nodes = max_leaf_nodes
+        self.min_impurity_decrease = min_impurity_decrease
+        self.min_impurity_split = min_impurity_split
+        self.class_weight = class_weight
+        self.presort = presort
+        self.random_state = random_state
+        self.estimator_params = estimator_params
+        self.save_estimators = save_estimators
+
+    def fit(self, X, y, sample_weight=None, check_input=True,
+            X_idx_sorted=None):
+        """Fit tree discretization with X.
+
+        Parameters
+        ----------
+        X: pandas.DataFrame, shape = (n_samples, n_features)
+            Training data of independent variable values.
+
+        y: array-like, shape = (n_samples, )
+            Vector of target variable values corresponding to X data.
+
+        **tree_params: **kwargs
+            Fit method parameters of ``sklearn.tree.BaseDecisionTree``.
+
+        Returns
+        -------
+        self: object
+            Returns the instance itself.
+
+        """
+        super().fit(X)
+        y = check_is_series(y)
+
+        estimator = clone(self.base_estimator)
+        estimator.set_params(**{
+            param: getattr(self, param) for param in self.estimator_params
+        })
+        self.estimator_ = estimator
+
+        if self.save_estimators:
+            self.estimators_ = []
+
+        self.cut_points_ = Parallel(n_jobs=self.n_jobs)(
+            delayed(self._find_cut_points)(
+                X[column], y, sample_weight, check_input, X_idx_sorted
+            )
+            for column in self.columns_
         )
-        X = X.reshape(-1, 1)
+        self.cuts_ = dict(zip(self.columns_, self.cut_points_))
 
-        clf.fit(X, y)
+        return self
 
-        min_val = min(X)
-        max_val = max(X)
+    def _find_cut_points(self, series, y, sample_weight, check_input,
+                         X_idx_sorted):
+        """Find cut points for a single feature."""
+        series = check_is_series(series)
+        _series = series[~pd.isna(series)].reset_index(drop=True)
+        _y = y[~pd.isna(series)].reset_index(drop=True)
+
+        estimator = clone(self.estimator_)
+        estimator.fit(
+            _series.values.reshape(-1, 1), _y,
+            sample_weight=sample_weight,
+            check_input=check_input,
+            X_idx_sorted=X_idx_sorted
+        )
+        if self.save_estimators:
+            self.estimators_.append(estimator)
 
         # Excluding leaves.
-        bins = clf.tree_.threshold[clf.tree_.feature != -2]
-        np.append(bins, [min_val, max_val])
-        bins = np.unique(bins)
+        cut_points = estimator.tree_.threshold[estimator.tree_.feature != -2]
 
-        cols_out_idx = []
-        for idx, val in enumerate(bins):
-            if not (min_val <= val <= max_val):
-                cols_out_idx.append(idx)
+        min_val = _series.min()
+        max_val = _series.max()
 
-        bins = np.delete(bins, cols_out_idx)
-
-        return bins
-
-    def spearman(self, X, y):
-        """Creates finitely many intervals for a continuous vector with use of
-        Spearman's rang correlation (supervised).
-
-        Parameters
-        ----------
-        X: array-like, shape = (n_samples, )
-            Vector passed as an one-dimensional array-like object where
-            n_samples is the number of samples.
-
-        y: array-like, shape = (n_samples, )
-            Vector of corresponding to X values passed as an one-dimensional
-            array-like object where n_samples is the number of samples.
-
-        Returns
-        -------
-        bins: array, shape = (n_bins, )
-            Vector of successive cut-off points being upper limits of the
-            corresponding intervals as well as containing a minimum value.
-
-        """
-        y = np.asarray(y)
-        X = np.asarray(X)
-        y = y[~np.isnan(X)]
-        X = X[~np.isnan(X)]
-
-        if len(np.unique(X)) < self.min_bins:
-            raise UniqueValuesError(
-                'Not enough unique values in the array. '
-                'Minimum {} unique values required.'.format(self.min_bins)
-            )
-
-        r = 0
-        n = self.max_bins + 1
-        while np.abs(r) < 1:
-            bins = algos.quantile(np.unique(X), np.linspace(0, 1, n))
-            df = pd.DataFrame({
-                'X': X,
-                'y': y,
-                'Bucket': pd.cut(X, bins=bins, include_lowest=True)
-            })
-            df_gr = df.groupby(by='Bucket', as_index=True)
-            if not (df_gr.agg('count').X == 0).any():
-                r, _ = stats.spearmanr(
-                    getattr(df_gr, self.formula)().X,
-                    getattr(df_gr, self.formula)().y
-                )
-
-            if n == self.min_bins + 1:
-                break
-
-            n -= 1
-
-        return bins
-
-    @staticmethod
-    def finger(X, y=None, cut_points=None,
-               n_quantiles=4, labels=None,
-               min_val=None, max_val=None):
-        """Manually bins continuous variable into the declared intervals.
-
-        If the cut-off points are not declared the split is made using
-        quantiles.
-
-        Parameters
-        ----------
-        X: array-like, shape = (n_samples, )
-            Vector passed as an one-dimensional array-like object where
-            n_samples in the number of samples.
-
-        y: Ignore
-
-        cut_points: array-like, optional (default=None)
-            Increasing monotonic sequence generating right-closed intervals.
-            Values not allocated to any of the categories will be assigned to
-            the empty set. For example given: cut_points=[1, 5, 9] will
-            generate intervals: [X.min(), 1], (1, 5], (5, 9], (9, X.max()].
-            If you want to specify lower and upper limitations, set parameters:
-            "min_val", "max_val" to a specific value.
-
-        n_quantiles: int, optional (default=4)
-            When cut_points are not declared it sets the number of quantiles
-            to which the variable will be splitted. For example setting
-            n_quantiles = 4 will return quartiles of X values between min_val
-            and max_val.
-
-        labels: string: {'auto'} or list, optional (default=None)
-            Specifies returned bucket names, needs to be the same length as the
-            number of created buckets:
-
-            - `auto`:
-
-              Assigns default values to group names by numbering them.
-
-        min_val: float, optional (default=None)
-            Determines lower limit value. If not specified takes -np.inf.
-
-        max_val: float, optional (default=None)
-            Determines upper limit value. If not specified takes np.inf.
-
-        Returns
-        -------
-        X_new: array, shape = (n_samples, )
-            Input data with its original values ​​being substituted with their
-            respective labels.
-
-        """
-        X = np.asarray(X)
-        x = X[~np.isnan(X)]
-
-        if min_val is None:
-            min_val = -np.inf
-
-        if max_val is None:
-            max_val = np.inf
-
-        # Default break_points in case of no declaration of cut_points
-        if cut_points is None:
-            x = x[(x >= min_val) & (x <= max_val)]
-            break_points = algos.quantile(
-                np.unique(x),
-                np.linspace(0, 1, n_quantiles + 1)
-            )
-        else:
-            break_points = np.insert(
-                cut_points.astype(float),
-                [0, len(cut_points)],
-                [min_val, max_val]
-            )
-        break_points = np.unique(break_points)
-
-        if labels == 'auto':
-            labels = range(len(break_points) - 1)
-
-        X_new = pd.cut(
-            X, bins=break_points, labels=labels, include_lowest=True
+        cut_points = np.delete(
+            cut_points,
+            np.asarray(
+                (min_val > cut_points)
+                | (max_val < cut_points)
+            ).nonzero()[0]
         )
 
-        return X_new
+        return cut_points
+
+
+class ClassificationTreeDiscretizer(TreeDiscretizer):
+    """Discretize continuous features with use of decision tree algorithm.
+
+    Parameters
+    ----------
+    columns: string {<column-name>, all} or list, optional (default="all")
+        The collection of discretized column names. If string value is passed
+        requires numeric column name or ``all`` value ordering the selection
+        of all numeric columns.
+
+    n_jobs: int, optional (default=None)
+        The number of jobs to run in parallel for both ``fit`` and
+        ``transform``.
+
+    **tree_params: **kwargs, optional
+        Parameters passed to ``sklearn.tree.DecisionTreeClassifier``.
+
+    save_estimators: boolean, optional (default=False)
+        Determine whether each tree for a single continuous feature specified
+        is to be saved into ``estimators_``.
+
+    Attributes
+    ----------
+    columns_: list
+        The collection of discretized columns with enforced type.
+
+    estimator_: scikit-learn estimator
+        Estimator used for acquiring single feature's cut points.
+
+    estimators_: list
+        List of fitted estimators for corresponding continuous column. Exists
+        only when ``save_estimators`` was set to ``True``.
+
+    cut_points_: list
+        The collection of cut points for corresponding columns.
+
+    cuts_: dictionary-like
+        The collection of cut points for every discretized column, used to
+        determine bins, where the key is the column name and the value is the
+        collection of corresponding cut points.
+
+    """
+    def __init__(self, columns="all", n_jobs=None, criterion="gini",
+                 splitter="best", max_depth=None, min_samples_split=2,
+                 min_samples_leaf=1, min_weight_fraction_leaf=0,
+                 max_features=None, max_leaf_nodes=None,
+                 min_impurity_decrease=0, min_impurity_split=None,
+                 class_weight=None, presort=False, random_state=None,
+                 save_estimators=False):
+        super().__init__(
+            columns=columns,
+            n_jobs=n_jobs,
+            base_estimator=DecisionTreeClassifier(),
+            estimator_params=(
+                "criterion", "splitter", "max_depth", "min_samples_split",
+                "min_samples_leaf", "min_weight_fraction_leaf", "max_features",
+                "max_leaf_nodes", "min_impurity_decrease", "min_impurity_split",
+                "class_weight", "presort", "random_state"
+            ),
+            criterion=criterion,
+            splitter=splitter,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            min_weight_fraction_leaf=min_weight_fraction_leaf,
+            max_features=max_features,
+            max_leaf_nodes=max_leaf_nodes,
+            class_weight=class_weight,
+            min_impurity_decrease=min_impurity_decrease,
+            min_impurity_split=min_impurity_split,
+            presort=presort,
+            random_state=random_state,
+            save_estimators=save_estimators
+        )
+
+
+class RegressionTreeDiscretizer(TreeDiscretizer):
+    """Discretize continuous features with use of decision tree algorithm.
+
+    Parameters
+    ----------
+    columns: string {<column-name>, all} or list, optional (default="all")
+        The collection of discretized column names. If string value is passed
+        requires numeric column name or ``all`` value ordering the selection
+        of all numeric columns.
+
+    n_jobs: int, optional (default=None)
+        The number of jobs to run in parallel for both ``fit`` and
+        ``transform``.
+
+    **tree_params: **kwargs, optional
+        Parameters passed to ``sklearn.tree.DecisionTreeRegressor``.
+
+    save_estimators: boolean, optional (default=False)
+        Determine whether each tree for a single continuous feature specified
+        is to be saved into ``estimators_``.
+
+    Attributes
+    ----------
+    columns_: list
+        The collection of discretized columns with enforced type.
+
+    estimator_: scikit-learn estimator
+        Estimator used for acquiring single feature's cut points.
+
+    estimators_: list
+        List of fitted estimators for corresponding continuous column. Exists
+        only when ``save_estimators`` was set to ``True``.
+
+    cut_points_: list
+        The collection of cut points for corresponding columns.
+
+    cuts_: dictionary-like
+        The collection of cut points for every discretized column, used to
+        determine bins, where the key is the column name and the value is the
+        collection of corresponding cut points.
+
+    """
+    def __init__(self, columns="all", n_jobs=None, criterion="mse",
+                 splitter="best", max_depth=None, min_samples_split=2,
+                 min_samples_leaf=1, min_weight_fraction_leaf=0,
+                 max_features=None, max_leaf_nodes=None,
+                 min_impurity_decrease=0, min_impurity_split=None,
+                 presort=False, random_state=None, save_estimators=False):
+        super().__init__(
+            columns=columns,
+            n_jobs=n_jobs,
+            base_estimator=DecisionTreeRegressor(),
+            estimator_params=(
+                "criterion", "splitter", "max_depth", "min_samples_split",
+                "min_samples_leaf", "min_weight_fraction_leaf", "max_features",
+                "max_leaf_nodes", "min_impurity_decrease", "min_impurity_split",
+                "presort", "random_state"
+            ),
+            criterion=criterion,
+            splitter=splitter,
+            max_depth=max_depth,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            min_weight_fraction_leaf=min_weight_fraction_leaf,
+            max_features=max_features,
+            max_leaf_nodes=max_leaf_nodes,
+            min_impurity_decrease=min_impurity_decrease,
+            min_impurity_split=min_impurity_split,
+            presort=presort,
+            random_state=random_state,
+            save_estimators=save_estimators
+        )
+
+
+class SpearmanDiscretizer(BaseDiscretizer):
+        import warnings
+
+        from .exceptions import DevelopmentStageWarning
+
+
+        warnings.warn(
+            "This funcitonality is still in the development stage, "
+            "you are using it on your own risk.",
+            DevelopmentStageWarning
+        )
