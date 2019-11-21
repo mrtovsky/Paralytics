@@ -192,8 +192,7 @@ class BaseDiscretizer(BaseEstimator, TransformerMixin, metaclass=ABCMeta):
         Returns
         -------
         X_new: pd.DataFrame, shape = (n_samples_new, n_features)
-            X data with substituted values to their respective labels being
-            string type.
+            X data with substituted values to their respective labels.
 
         """
         check_is_fitted(self, ["columns_", "cuts_"])
@@ -209,7 +208,7 @@ class BaseDiscretizer(BaseEstimator, TransformerMixin, metaclass=ABCMeta):
         return X_new
 
     def _discretize(self, series):
-        """Discretize continuous feature, otherwise project onto category."""
+        """Discretize continuous feature, otherwise return the series itself."""
         name = series.name
         if name in self.columns_:
             return discretize(series, cut_points=self.cuts_[name])
@@ -567,6 +566,7 @@ class RegressionTreeDiscretizer(TreeDiscretizer):
 
 
 class SpearmanDiscretizer(BaseDiscretizer):
+    def __init__(self):
         import warnings
 
         from .exceptions import DevelopmentStageWarning
