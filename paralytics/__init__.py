@@ -5,6 +5,7 @@ from .encoding import *
 from .exceptions import *
 from .feature_selection import *
 from .feature_union import *
+from .scraping import *
 
 
 __version__ = '0.3.2'

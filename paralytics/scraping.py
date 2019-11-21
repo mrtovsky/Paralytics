@@ -11,7 +11,7 @@ else:
 
 
 __all__ = [
-    'BaseSeleniumBrowser'
+    "BaseSeleniumBrowser"
 ]
 
 
@@ -54,8 +54,8 @@ class BaseSeleniumBrowser(object):
             self.browser = getattr(webdriver, browser_name)()
         except FileNotFoundError:
             print(
-                'Executable not found in the PATH. Trying execution with '
-                'the path defined in the `executable_path` instead.'
+                "Executable not found in the PATH. Trying execution with "
+                "the path defined in the `executable_path` instead."
             )
             self.browser = getattr(webdriver, browser_name)(executable_path)
 
@@ -67,13 +67,14 @@ class BaseSeleniumBrowser(object):
         try:
             self.browser.get(url)
         except WebDriverException:
-            print('URL provided is not existing!')
+            print("URL provided is not existing!")
             raise
         page_title = self.browser.title
         if title.lower() not in page_title.lower():
             raise ValueError(
-                'Expected title: "{}" is not included in the '
-                'page title: "{}".'.format(title, page_title)
+                "Expected title: '{}' is not included in the "
+                "page title: '{}'."
+                .format(title, page_title)
             )
 
     def __exit__(self, exc_type, exc_value, traceback):
