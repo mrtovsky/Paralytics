@@ -1,13 +1,13 @@
-"""Utilities for web scraping."""
+"""Web scraping module."""
 
 
 try:
     from selenium import webdriver
     from selenium.common.exceptions import WebDriverException
-except ImportError as e:
-    _has_selenium = e
+except ImportError as err:
+    _HAS_SELENIUM = err
 else:
-    _has_selenium = True
+    _HAS_SELENIUM = True
 
 
 __all__ = [
@@ -43,13 +43,13 @@ class BaseSeleniumBrowser(object):
 
     """
     def __init__(self, browser_name, executable_path=None):
-        if isinstance(_has_selenium, ImportError):
+        if isinstance(_HAS_SELENIUM, ImportError):
             raise ImportError(
                 "`BaseSeleniumBrowser` requires extra requirements installed. "
                 "Reinstall paralytics package with 'browser' extra "
                 "specified or install the dependencies directly "
                 "from the source."
-            ).with_traceback(_has_selenium.__traceback__)
+            ).with_traceback(_HAS_SELENIUM.__traceback__)
         try:
             self.browser = getattr(webdriver, browser_name)()
         except FileNotFoundError:
