@@ -3,6 +3,11 @@ History
 
 X.Y.Z (DD.MM.YYYY)
 ------------------
+* Pulled ``scraping`` module out of ``utils`` subpackage
+    * Takes the module one level up in the import hierarchy.
+* Removed unused ``utils`` modules
+    * Delete ``utils.plotting`` and ``utils.importing`` module because their functionalities were
+      impractical.
 * Extracted more specific discretization estimators
     * Implements base class ``BaseDiscretizer`` for all discretization estimators.
     * Implements base class ``TreeDiscretizer`` for all tree-based estimators.
