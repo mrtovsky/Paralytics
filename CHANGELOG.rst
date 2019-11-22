@@ -3,6 +3,10 @@ History
 
 X.Y.Z (DD.MM.YYYY)
 ------------------
+* Created ``utils.storage`` module
+    * Implements ``utils.downcast_dataframe`` function that infers minimal necessary dtypes for
+      every pandas.DataFrame column and makes a projection. Simplifies data files storage by
+      drastically reducing memory usage.
 * Pulled ``scraping`` module out of ``utils`` subpackage
     * Takes the module one level up in the import hierarchy.
 * Removed unused ``utils`` modules
