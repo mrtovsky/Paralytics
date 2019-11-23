@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 
-from .validation import check_is_dataframe
+from . import check_is_dataframe
 
 
 __all__ = [
@@ -74,48 +74,56 @@ def downcast_dataframe(df, tolerance=1e-5, errors="ignore", category_thresh=.3):
     check_is_dataframe(df)
 
     df_num = df.select_dtypes(include=np.number).copy()
-    df_num_nan_count = df_num.isnull().sum()
-    num_with_nan_columns = df_num_nan_count.index[df_num_nan_count > 0].tolist()
 
-    _nan_mapping = (df_num.min() - 1).to_dict()
+    if df_num.shape[1]:
+        df_num_nan_count = df_num.isnull().sum()
+        num_with_nan_columns = df_num_nan_count.index[
+            df_num_nan_count > 0
+        ].tolist()
 
-    df_num.fillna(df_num.min() - 1, inplace=True)
-    df_num_int = df_num.astype(np.int64)
+        # In the presence of NaN values only in the column, fill it with -1.
+        _nan_filler = (df_num.min() - 1).fillna(-1)
+        _nan_mapping = _nan_filler.to_dict()
 
-    # Find float columns that can be expressed as integers.
-    df_num_diff = (df_num - df_num_int).abs().sum()
-    int_columns = df_num_diff.index[df_num_diff < tolerance].tolist()
+        df_num.fillna(_nan_filler, inplace=True)
+        df_num_int = df_num.astype(np.int64)
 
-    nan_mapping = {
-        column: int(value) for column, value in _nan_mapping.items()
-        if column in set(int_columns).intersection(num_with_nan_columns)
-    }
+        # Find float columns that can be expressed as integers.
+        df_num_diff = (df_num - df_num_int).abs().sum()
+        int_columns = df_num_diff.index[df_num_diff < tolerance].tolist()
 
-    df_dc = df.copy()
-    for column in int_columns:
-        series_int = df_num_int[column]
-        if series_int.min() >= 0:
+        nan_mapping = {
+            column: int(value) for column, value in _nan_mapping.items()
+            if column in set(int_columns).intersection(num_with_nan_columns)
+        }
+
+        df_dc = df.copy()
+        for column in int_columns:
+            series_int = df_num_int[column]
+            if series_int.min() >= 0:
+                df_dc[column] = pd.to_numeric(
+                    series_int, errors=errors, downcast="unsigned"
+                )
+            else:
+                df_dc[column] = pd.to_numeric(
+                    series_int, errors=errors, downcast="signed"
+                )
+        for column in list(set(df_num.columns).difference(int_columns)):
             df_dc[column] = pd.to_numeric(
-                series_int, errors=errors, downcast="unsigned"
+                df_dc[column], errors=errors, downcast="float"
             )
-        else:
-            df_dc[column] = pd.to_numeric(
-                series_int, errors=errors, downcast="signed"
-            )
-    for column in list(set(df_num.columns).difference(int_columns)):
-        df_dc[column] = pd.to_numeric(
-            df_dc[column], errors=errors, downcast="float"
-        )
 
-    # Find columns where number of unique values divided by total column length
-    # is smaller than the threshold.
-    # Those columns will be projected onto 'category' dtype.
     df_obj = df.select_dtypes(include="object").copy()
-    df_obj_unique_ratio = df_obj.nunique(dropna=False) / df_obj.shape[0]
-    category_columns = df_obj_unique_ratio.index[
-        df_obj_unique_ratio < category_thresh
-    ].tolist()
 
-    df_dc[category_columns] = df[category_columns].astype("category")
+    if df_obj.shape[1]:
+        # Find columns where number of unique values divided by total column
+        # length is smaller than the threshold.
+        # Those columns will be projected onto 'category' dtype.
+        df_obj_unique_ratio = df_obj.nunique(dropna=False) / df_obj.shape[0]
+        category_columns = df_obj_unique_ratio.index[
+            df_obj_unique_ratio < category_thresh
+        ].tolist()
+        if category_columns:
+            df_dc[category_columns] = df[category_columns].astype("category")
 
     return df_dc, nan_mapping
