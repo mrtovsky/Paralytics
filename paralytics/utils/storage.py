@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 
-from . import check_is_dataframe
+from .validation import check_is_dataframe
 
 
 __all__ = [
