@@ -74,6 +74,7 @@ def downcast_dataframe(df, tolerance=1e-5, errors="ignore", category_thresh=.3):
     check_is_dataframe(df)
 
     df_num = df.select_dtypes(include=np.number).copy()
+    df_dc, nan_mapping = df.copy(), dict()
 
     if df_num.shape[1]:
         df_num_nan_count = df_num.isnull().sum()
@@ -97,7 +98,6 @@ def downcast_dataframe(df, tolerance=1e-5, errors="ignore", category_thresh=.3):
             if column in set(int_columns).intersection(num_with_nan_columns)
         }
 
-        df_dc = df.copy()
         for column in int_columns:
             series_int = df_num_int[column]
             if series_int.min() >= 0:
